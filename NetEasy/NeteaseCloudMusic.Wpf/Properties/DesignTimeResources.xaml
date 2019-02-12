@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.Properties">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/NeteaseCloudMusic.Wpf;component/ResourceDictionary/MenuPartResource.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

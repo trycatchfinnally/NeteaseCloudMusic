@@ -1,0 +1,298 @@
+﻿<ContentControl x:Class="NeteaseCloudMusic.Wpf.View.FriendView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View"
+                xmlns:componet="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid Margin=" 10,0">
+        <Grid.Resources>
+            <CollectionViewSource x:Key="ttt" Source="{Binding Items}">
+                <CollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription Converter="{x:Static local:SortHelper.SortByPinYinConverter}"/>
+                </CollectionViewSource.GroupDescriptions>
+                <CollectionViewSource.SortDescriptions>
+                    <componet:SortDescription Direction="Ascending" />
+                </CollectionViewSource.SortDescriptions>
+            </CollectionViewSource>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <DockPanel LastChildFill="False">
+            <TextBlock Style="{StaticResource DarkBottomTextBoxStyle}"  Text="动态"  />
+            <Button   Style="{StaticResource EmptyButtonWithFocusStyle}" DockPanel.Dock="Right">
+                <Grid>
+                    <Ellipse Width=" 15" Height=" 15"  Stroke="{Binding RelativeSource={RelativeSource AncestorLevel=1,AncestorType=Button},Path=Foreground }"/>
+                </Grid>
+            </Button>
+            <Button DockPanel.Dock="Right" Style="{StaticResource EmptyButtonStyle}">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value=" 10"/>
+                        <Setter Property="BorderThickness" Value=" 0.5"/>
+                        <Setter Property="SnapsToDevicePixels" Value="True" />
+                        <Setter Property="Margin" Value=" 3"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" >
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="{StaticResource WindowFocusColor}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Resources>
+                <Border >
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                    </Border.BorderBrush>
+
+                    <StackPanel  Orientation="Horizontal">
+                        <Path Stretch="Uniform" Width="10" Data="M0,50 L100,50 M50,0 L50,100"  StrokeThickness="2" Margin="3,0">
+                            <Path.Stroke >
+                                <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                            </Path.Stroke>
+                        </Path>
+                        <TextBlock Text="发动态" 
+                                   VerticalAlignment="Center"  
+                                   Margin="0,2,3,2"
+                                   FontSize="{StaticResource WindowGrayFontSize}"
+                                   Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                    </StackPanel>
+                </Border>
+            </Button>
+        </DockPanel>
+        <Rectangle Style="{StaticResource HorizontalDecorationRectangleStyle}" Grid.Row="0" VerticalAlignment="Bottom"/>
+        <ListBox Grid.Row="1" ItemsSource="{Binding Source={StaticResource ttt}}"  Visibility="Hidden">
+            <ListBox.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Style="{StaticResource DarkBottomTextBoxStyle}" Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListBox.GroupStyle>
+           
+        </ListBox>
+        <StackPanel Grid.Row=" 1"  Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="Path" >
+                    <Setter Property="Stretch" Value="Uniform" />
+                    <Setter Property="Width" Value=" 15"/>
+                    <Setter Property="Stroke" Value="Red"/>
+                </Style>
+            </StackPanel.Resources>
+           
+            <Path   Data="F1M16998,7516L17049,7465 16624,7081 16599,7106 16571,7129z M16722,6827L16718,6778 16709,6730 16693,6683 16671,6639 16644,6598 16611,6560 16574,6528 16533,6500 16489,6478 16442,6463 16393,6453 16344,6450 16295,6453 16246,6463 16200,6478 16155,6500 16114,6528 16077,6560 16045,6598 16017,6639 15995,6683 15979,6730 15970,6778 15967,6827 15970,6877 15979,6925 15995,6972 16017,7016 16045,7057 16077,7095 16114,7127 16155,7155 16200,7176 16246,7192 16295,7202 16344,7205 16393,7202 16442,7192 16489,7176 16533,7155 16574,7127 16611,7095 16644,7057 16671,7016 16693,6972 16709,6925 16718,6877z M16624,7081L17049,7465 M16571,7129L16998,7516 M16998,7516L17049,7465" Stroke="Red"/>
+           
+            <Path Data="F1M12681,7287L13095,7273 13095,7782 12283,7796 12283,7287 M12681,7287L12681,7147 M12283,7287L12283,7147 M12283,7147L12681,7147 M12512,7535L12866,7535 M12689,7712L12689,7357"/>
+            <Image Stretch="Uniform">
+                <Image.Resources>
+                    <SolidColorBrush x:Key="brush" Color="{StaticResource WindowTitleColor}"/>
+                </Image.Resources>
+                <Image.Source>
+                    <DrawingImage>
+                        <DrawingImage.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="{StaticResource brush}"  Geometry="F1M10329,9127L10343,9128 10313,9128z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10313,9128L10344,9128z M10313,9128L10343,9128 10344,9128z M10313,9128L10358,9131 10299,9131z M10313,9128L10344,9128 10358,9131z M10299,9131L10358,9132 10298,9132z M10299,9131L10358,9131 10358,9132z M10298,9132L10371,9137 10285,9137z M10298,9132L10358,9132 10371,9137z M10285,9137L10372,9137z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10285,9137L10371,9137 10372,9137z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10285,9137L10383,9144 10273,9144z M10285,9137L10372,9137 10383,9144z M10273,9144L10384,9144z M10273,9144L10383,9144 10384,9144z M10273,9144L10393,9152 10264,9152z M10273,9144L10384,9144 10393,9152z M10264,9152L10393,9152z M10264,9152L10393,9152 10393,9152z M10264,9152L10400,9162 10257,9162z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10264,9152L10393,9152 10400,9162z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10257,9162L10401,9162 10256,9162z M10257,9162L10400,9162 10401,9162z M10256,9162L10405,9172 10252,9172z M10256,9162L10401,9162 10405,9172z M10252,9172L10405,9173 10252,9173z M10252,9172L10405,9172 10405,9173z M10252,9173L10406,9183 10251,9183z M10252,9173L10405,9173 10406,9183z M10251,9183L10406,9184 10251,9184z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10251,9183L10406,9183 10406,9184z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10251,9184L10406,9184z M10251,9184L10406,9184 10406,9184z M10251,9184L10405,9195 10252,9195z M10251,9184L10406,9184 10405,9195z M10252,9195L10405,9195z M10252,9195L10405,9195 10405,9195z M10252,9195L10401,9205 10257,9205z M10252,9195L10405,9195 10401,9205z M10257,9205L10401,9205z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10257,9205L10401,9205 10401,9205z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10257,9205L10393,9215 10264,9215z M10257,9205L10401,9205 10393,9215z M10264,9215L10393,9215z M10264,9215L10393,9215 10393,9215z M10264,9215L10384,9223 10273,9223z M10264,9215L10393,9215 10384,9223z M10273,9223L10384,9223 10274,9223z M10273,9223L10384,9223 10384,9223z M10274,9223L10372,9230 10285,9230z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10274,9223L10384,9223 10372,9230z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10285,9230L10372,9230 10286,9230z M10285,9230L10372,9230 10372,9230z M10286,9230L10359,9236 10299,9236z M10286,9230L10372,9230 10359,9236z M10299,9236L10358,9236z M10299,9236L10359,9236 10358,9236z M10299,9236L10344,9239 10313,9239z M10299,9236L10358,9236 10344,9239z M10314,9239L10344,9239 10329,9240z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10313,9239L10344,9239 10314,9239z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10313,9239L10344,9239 10344,9239z M10051,9816L10065,9816 10050,9816z M10050,9816L10079,9819 10037,9819z M10050,9816L10065,9816 10079,9819z M10037,9819L10080,9819z M10037,9819L10079,9819 10080,9819z M10037,9819L10095,9825 10026,9825z M10037,9819L10080,9819 10095,9825z M10026,9825L10095,9825 10025,9825z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10026,9825L10095,9825 10095,9825z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10025,9825L10109,9832 10016,9832z M10025,9825L10095,9825 10109,9832z M10016,9832L10110,9833 10016,9833z M10016,9832L10109,9832 10110,9833z M10016,9833L10124,9843 10008,9843z M10016,9833L10110,9833 10124,9843z M10008,9843L10124,9843z M10008,9843L10124,9843 10124,9843z M10008,9843L10136,9855 10004,9855z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10008,9843L10124,9843 10136,9855z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10004,9855L10137,9856 10003,9856z M10004,9855L10136,9855 10137,9856z M10003,9856L10147,9868 10001,9868z M10003,9856L10137,9856 10147,9868z M10001,9868L10148,9870 10001,9870z M10001,9868L10147,9868 10148,9870z M10001,9870L10155,9882 10002,9882z M10001,9870L10148,9870 10155,9882z M10002,9882L10156,9885 10002,9885z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10002,9882L10155,9882 10156,9885z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10002,9885L10161,9897 10006,9897z M10002,9885L10156,9885 10161,9897z M10006,9897L10162,9901 10006,9901z M10006,9897L10161,9897 10162,9901z M10006,9901L10165,9913 10012,9913z M10006,9901L10162,9901 10165,9913z M10012,9913L10165,9916 10014,9916z M10012,9913L10165,9913 10165,9916z M10014,9916L10165,9928 10021,9928z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10014,9916L10165,9916 10165,9928z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10021,9928L10165,9931 10023,9931z M10021,9928L10165,9928 10165,9931z M10023,9931L10163,9942 10033,9942z M10023,9931L10165,9931 10163,9942z M10033,9942L10161,9945 10035,9945z M10033,9942L10163,9942 10161,9945z M10035,9945L10157,9954 10046,9954z M10035,9945L10161,9945 10157,9954z M10046,9954L10155,9956 10049,9956z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10046,9954L10157,9954 10155,9956z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10049,9956L10149,9964 10061,9964z M10049,9956L10155,9956 10149,9964z M10061,9964L10146,9966 10064,9966z M10061,9964L10149,9964 10146,9966z M10064,9966L10138,9972 10077,9972z M10064,9966L10146,9966 10138,9972z M10077,9972L10135,9973 10079,9973z M10077,9972L10138,9972 10135,9973z M10079,9973L10125,9977 10093,9977z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10079,9973L10135,9973 10125,9977z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M10095,9977L10120,9977 10111,9978z M10093,9977L10120,9977 10095,9977z M10093,9977L10125,9977 10120,9977z"/>
+                                <GeometryDrawing Geometry="F1M10251,9184L10252,9195 10257,9205 10264,9215 10273,9223 10285,9230 10299,9236 10313,9239 10329,9240 10344,9239 10358,9236 10372,9230 10384,9223 10393,9215 10401,9205 10405,9195 10406,9184 10405,9173 10401,9162 10393,9152 10384,9144 10372,9137 10358,9132 10344,9128 10329,9127 10313,9128 10299,9131 10285,9137 10273,9144 10264,9152 10257,9162 10252,9172 10251,9183z M10161,9897L10155,9882 10147,9868 10136,9855 10124,9843 10110,9833 10095,9825 10080,9819 10065,9816 10051,9816 10037,9819 10026,9825 10016,9832 10008,9843 10003,9856 10001,9870 10002,9885 10006,9901 10014,9916 10023,9931 10035,9945 10049,9956 10064,9966 10079,9973 10095,9977 10111,9978 10125,9977 10138,9972 10149,9964 10157,9954 10163,9942 10165,9928 10165,9913z M10251,9183L10252,9194 10256,9204 10263,9214 10272,9222 10283,9229 10296,9235 10310,9238 10325,9240 10339,9239 10354,9237 10367,9232 10379,9226 10390,9219 10398,9210 10403,9200 10406,9189 10406,9178 10403,9168 10398,9158 10390,9149 10380,9141 10368,9135 10354,9130 10340,9128 10325,9127 10310,9129 10296,9132 10283,9137 10272,9144 10263,9153 10256,9162 10252,9173z M10016,9832L10008,9843 10003,9855 10001,9869 10002,9884 10006,9899 10013,9915 10022,9929 10033,9943 10047,9955 10061,9965 10076,9972 10092,9977 10107,9978 10122,9977 10135,9973 10146,9966 10155,9957 10161,9946 10165,9933 10165,9918 10163,9903 10158,9888 10150,9872 10139,9858 10127,9846 10113,9835 10098,9826 10082,9820 10067,9817 10052,9816 10038,9819 10026,9824z M10251,9184L10161,9897 M9657,9309L10056,9309 M9657,9491L10056,9491 M9657,9672L10056,9672" Brush="{StaticResource brush}">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="{StaticResource brush}" Thickness="5.64322900772095" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                               
+                               
+                            </DrawingGroup>
+                        </DrawingImage.Drawing>
+                    </DrawingImage>
+                </Image.Source>
+            </Image>
+            <Image Stretch="Uniform" Width=" 40">
+                <Image.Resources >
+                    <SolidColorBrush Color="{StaticResource WindowTitleColor}" x:Key="brush"/>
+                </Image.Resources>
+                <Image.Source>
+                    <DrawingImage>
+                        <DrawingImage.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12480,9051L12494,9052 12465,9052z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12465,9052L12495,9052 12464,9052z M12465,9052L12494,9052 12495,9052z M12464,9052L12509,9055 12450,9055z M12464,9052L12495,9052 12509,9055z M12450,9055L12510,9055z M12450,9055L12509,9055 12510,9055z M12450,9055L12523,9060 12437,9060z M12450,9055L12510,9055 12523,9060z M12437,9060L12523,9060 12436,9060z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12437,9060L12523,9060 12523,9060z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12436,9060L12534,9067 12425,9067z M12436,9060L12523,9060 12534,9067z M12425,9067L12535,9067 12424,9067z M12425,9067L12534,9067 12535,9067z M12424,9067L12544,9075 12415,9075z M12424,9067L12535,9067 12544,9075z M12415,9075L12545,9076 12415,9076z M12415,9075L12544,9075 12545,9076z M12415,9076L12552,9085 12408,9085z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12415,9076L12545,9076 12552,9085z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12408,9085L12552,9086 12408,9086z M12408,9085L12552,9085 12552,9086z M12408,9086L12556,9096 12403,9096z M12408,9086L12552,9086 12556,9096z M12403,9096L12556,9096z M12403,9096L12556,9096 12556,9096z M12403,9096L12558,9107 12402,9107z M12403,9096L12556,9096 12558,9107z M12402,9107L12558,9107z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12402,9107L12558,9107 12558,9107z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12402,9107L12558,9107z M12402,9107L12558,9107 12558,9107z M12402,9107L12556,9118 12403,9118z M12402,9107L12558,9107 12556,9118z M12403,9118L12556,9118z M12403,9118L12556,9118 12556,9118z M12403,9118L12552,9129 12408,9129z M12403,9118L12556,9118 12552,9129z M12408,9129L12552,9129z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12408,9129L12552,9129 12552,9129z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12408,9129L12545,9138 12415,9138z M12408,9129L12552,9129 12545,9138z M12415,9138L12545,9138z M12415,9138L12545,9138 12545,9138z M12415,9138L12535,9147 12425,9147z M12415,9138L12545,9138 12535,9147z M12425,9147L12535,9147z M12425,9147L12535,9147 12535,9147z M12425,9147L12523,9154 12437,9154z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12425,9147L12535,9147 12523,9154z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12437,9154L12523,9154z M12437,9154L12523,9154 12523,9154z M12437,9154L12510,9159 12450,9159z M12437,9154L12523,9154 12510,9159z M12450,9159L12510,9159z M12450,9159L12510,9159 12510,9159z M12450,9159L12495,9162 12465,9162z M12450,9159L12510,9159 12495,9162z M12465,9162L12495,9162 12480,9163z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12465,9162L12495,9162z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12465,9162L12495,9162 12495,9162z M12262,9303L12277,9303 12260,9303z M12260,9303L12287,9305 12248,9305z M12260,9303L12277,9303 12287,9305z M12248,9305L12293,9307 12245,9307z M12248,9305L12287,9305 12293,9307z M12245,9307L12303,9311 12236,9311z M12245,9307L12293,9307 12303,9311z M12236,9311L12309,9313 12233,9313z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12236,9311L12303,9311 12309,9313z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12233,9313L12319,9319 12226,9319z M12233,9313L12309,9313 12319,9319z M12226,9319L12324,9322 12223,9322z M12226,9319L12319,9319 12324,9322z M12223,9322L12333,9329 12218,9329z M12223,9322L12324,9322 12333,9329z M12218,9329L12338,9333 12216,9333z M12218,9329L12333,9329 12338,9333z M12216,9333L12346,9341 12213,9341z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12216,9333L12338,9333 12346,9341z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12213,9341L12350,9346 12212,9346z M12213,9341L12346,9341 12350,9346z M12212,9346L12357,9355 12211,9355z M12212,9346L12350,9346 12357,9355z M12211,9355L12360,9361 12211,9361z M12211,9355L12357,9355 12360,9361z M12211,9361L12365,9370 12212,9370z M12211,9361L12360,9361 12365,9370z M12212,9370L12368,9376 12213,9376z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12212,9370L12365,9370 12368,9376z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12213,9376L12371,9385 12216,9385z M12213,9376L12368,9376 12371,9385z M12216,9385L12373,9391 12218,9391z M12216,9385L12371,9385 12373,9391z M12218,9391L12374,9401 12222,9401z M12218,9391L12373,9391 12374,9401z M12222,9401L12375,9406 12226,9406z M12222,9401L12374,9401 12375,9406z M12226,9406L12375,9415 12231,9415z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12226,9406L12375,9406 12375,9415z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12231,9415L12374,9421 12236,9421z M12231,9415L12375,9415 12374,9421z M12236,9421L12372,9429 12242,9429z M12236,9421L12374,9421 12372,9429z M12242,9429L12370,9434 12248,9434z M12242,9429L12372,9429 12370,9434z M12248,9434L12366,9441 12256,9441z M12248,9434L12370,9434 12366,9441z M12256,9441L12364,9445 12262,9445z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12256,9441L12366,9441 12364,9445z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12262,9445L12358,9451 12270,9451z M12262,9445L12364,9445 12358,9451z M12270,9451L12355,9454 12277,9454z M12270,9451L12358,9451 12355,9454z M12277,9454L12347,9458 12285,9458z M12277,9454L12355,9454 12347,9458z M12285,9458L12343,9460 12292,9460z M12285,9458L12347,9458 12343,9460z M12292,9460L12334,9463 12301,9463z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M12292,9460L12343,9460 12334,9463z"/>
+                                <GeometryDrawing Brush="{StaticResource  brush}" Geometry="F1M12309,9464L12330,9464 12316,9465z M12301,9463L12330,9464 12309,9464z M12301,9463L12334,9463 12330,9464z"/>
+                                <GeometryDrawing Geometry="F1M12402,9107L12403,9118 12408,9129 12415,9138 12425,9147 12437,9154 12450,9159 12465,9162 12480,9163 12495,9162 12510,9159 12523,9154 12535,9147 12545,9138 12552,9129 12556,9118 12558,9107 12556,9096 12552,9086 12545,9076 12535,9067 12523,9060 12510,9055 12495,9052 12480,9051 12465,9052 12450,9055 12437,9060 12425,9067 12415,9075 12408,9085 12403,9096z M12368,9376L12360,9361 12350,9346 12338,9333 12324,9322 12309,9313 12293,9307 12277,9303 12262,9303 12248,9305 12236,9311 12226,9319 12218,9329 12213,9341 12211,9355 12212,9370 12216,9385 12222,9401 12231,9415 12242,9429 12256,9441 12270,9451 12285,9458 12301,9463 12316,9465 12330,9464 12343,9460 12355,9454 12364,9445 12370,9434 12374,9421 12375,9406 12373,9391z M12402,9107L12403,9117 12407,9128 12414,9137 12423,9146 12434,9153 12447,9158 12461,9162 12476,9163 12491,9163 12505,9160 12519,9156 12531,9150 12541,9142 12549,9133 12555,9123 12557,9113 12557,9102 12555,9091 12549,9081 12541,9072 12531,9065 12519,9058 12506,9054 12491,9051 12476,9051 12462,9052 12448,9056 12435,9061 12424,9068 12414,9076 12408,9086 12403,9096z M12226,9319L12218,9329 12213,9342 12211,9356 12212,9370 12216,9386 12222,9401 12232,9416 12243,9429 12256,9441 12271,9451 12286,9458 12302,9463 12317,9465 12332,9464 12345,9460 12356,9453 12365,9444 12371,9432 12374,9419 12375,9405 12373,9389 12367,9374 12359,9359 12349,9345 12337,9332 12323,9321 12308,9313 12292,9306 12277,9303 12262,9303 12248,9305 12236,9311z M12402,9107L12368,9376 M12602,9250L12626,9226 12644,9199 12658,9169 12666,9136 12668,9103 12665,9070 12655,9038 12640,9008 12621,8982 12596,8959 12568,8941 12538,8928 12505,8920 12472,8919 12439,8923 12408,8933 12378,8948 12352,8969 12329,8993 12312,9022 12299,9052 12293,9085 12292,9118 12297,9151 12307,9183 M12665,9353L12698,9325 12727,9291 12750,9255 12769,9215 12781,9173 12787,9130 12787,9086 12781,9043 12769,9001 12751,8961 12728,8924 12699,8890 12666,8862 12630,8838 12590,8819 12549,8806 12505,8800 12462,8799 12418,8805 12376,8817 12336,8834 12299,8857 12266,8885 12236,8918 12212,8954 12193,8994 12180,9035 12173,9079 12172,9122 12177,9166 12189,9208 12206,9248">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="{StaticResource brush}" Thickness="5.64322900772095" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                               
+                            </DrawingGroup>
+                        </DrawingImage.Drawing>
+                    </DrawingImage>
+                </Image.Source>
+            </Image>
+            
+            <Path Data="F1M15498,9904L15495,9838 15485,9773 15469,9709 15447,9646 15419,9587 15385,9530 15345,9477 15301,9428 15252,9384 15199,9345 15143,9311 15083,9282 15021,9260 14957,9244 14892,9235 14826,9231 14760,9235 14695,9244 14631,9260 14569,9282 14509,9311 14452,9345 14399,9384 14350,9428 14306,9477 14267,9530 14233,9587 14205,9646 14183,9709 14167,9773 14157,9838 14154,9904 14157,9970 14167,10035 14183,10099 14205,10161 14233,10221 14267,10278 14306,10331 14350,10380 14399,10424 14452,10463 14509,10497 14569,10525 14631,10548 14695,10564 14760,10573 14826,10577 14892,10573 14957,10564 15021,10548 15083,10525 15143,10497 15199,10463 15252,10424 15301,10380 15345,10331 15385,10278 15419,10221 15447,10161 15469,10099 15485,10035 15495,9970z M14826,9904L14826,9339 M15213,10127L14826,9904"/>
+            
+            <Path Data="F1M18741,10558L18792,10555 18841,10545 18889,10529 18934,10507 18976,10478 19014,10445 19048,10407 19076,10365 19098,10320 19114,10272 19124,10222 19127,10172 19124,10121 19114,10072 19098,10024 19076,9979 19048,9937 19014,9899 18976,9865 18934,9837 18889,9815 18841,9798 18792,9789 18741,9785 M17462,9611L17405,9620 17351,9635 17298,9657 17249,9685 17203,9719 17161,9758 17124,9801 17093,9849 17068,9900 17049,9954 17036,10009 17030,10066 17031,10123 17038,10179 17052,10234 17073,10287 17100,10338 17132,10384 17170,10427 17213,10465 17260,10497 17310,10524 17363,10544 17418,10558 M17418,10558L18741,10558 M18741,9785L18754,9722 18760,9658 18760,9594 18753,9530 18741,9467 18722,9406 18697,9347 18666,9290 18631,9237 18589,9187 18544,9142 18494,9102 18440,9067 18383,9037 18324,9013 18262,8995 18199,8983 18135,8978 18071,8978 18007,8985 17944,8999 17883,9018 17824,9044 17768,9075 17715,9112 17666,9153 17622,9200 17582,9250 17547,9304 17518,9362 17495,9421 17478,9483 17466,9547 17462,9611"/>
+            <Image Stretch="Uniform" Width=" 80">
+                <Image.Resources>
+                    <SolidColorBrush x:Key="brush" Color="{StaticResource WindowTitleColor}"/>
+                </Image.Resources>
+                <Image.Source>
+                    <DrawingImage>
+                        <DrawingImage.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Geometry="F1M23280,9624L23277,9558 23267,9493 23251,9429 23229,9367 23201,9307 23167,9251 23127,9198 23083,9149 23034,9104 22981,9065 22925,9031 22865,9003 22803,8981 22739,8965 22674,8955 22608,8952 22542,8955 22477,8965 22413,8981 22351,9003 22291,9031 22234,9065 22181,9104 22132,9149 22088,9198 22049,9251 22015,9307 21987,9367 21965,9429 21949,9493 21939,9558 21936,9624 21939,9690 21949,9756 21965,9820 21987,9882 22015,9941 22049,9998 22088,10051 22132,10100 22181,10144 22234,10184 22291,10218 22351,10246 22413,10268 22477,10284 22542,10294 22608,10297 22674,10294 22739,10284 22803,10268 22865,10246 22925,10218 22981,10184 23034,10144 23083,10100 23127,10051 23167,9998 23201,9941 23229,9882 23251,9820 23267,9756 23277,9690z">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="{StaticResource brush}" Thickness="30" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M22598,9524L22635,9527 22580,9527z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M22598,9524L22617,9524 22635,9527z M22580,9527L22653,9534 22563,9534z M22580,9527L22635,9527 22653,9534z M22563,9534L22669,9544 22547,9544z M22563,9534L22653,9534 22669,9544z M22547,9544L22682,9556 22533,9556z M22547,9544L22669,9544 22682,9556z M22533,9556L22694,9571 22522,9571z M22533,9556L22682,9556 22694,9571z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M22522,9571L22702,9588 22514,9588z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M22522,9571L22694,9571 22702,9588z M22514,9588L22707,9606 22508,9606z M22514,9588L22702,9588 22707,9606z M22508,9606L22709,9624 22507,9624z M22508,9606L22707,9606 22709,9624z M22507,9624L22707,9643 22508,9643z M22507,9624L22709,9624 22707,9643z M22508,9643L22702,9661 22514,9661z M22508,9643L22707,9643 22702,9661z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M22514,9661L22694,9678 22522,9678z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M22514,9661L22702,9661 22694,9678z M22522,9678L22682,9692 22533,9692z M22522,9678L22694,9678 22682,9692z M22533,9692L22669,9705 22547,9705z M22533,9692L22682,9692 22669,9705z M22547,9705L22653,9715 22563,9715z M22547,9705L22669,9705 22653,9715z M22563,9715L22635,9722 22580,9722z M22563,9715L22653,9715 22635,9722z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M22580,9722L22617,9725 22598,9725z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M22580,9722L22635,9722 22617,9725z"/>
+                                <GeometryDrawing Geometry="F1M22507,9624L22508,9643 22514,9661 22522,9678 22533,9692 22547,9705 22563,9715 22580,9722 22598,9725 22617,9725 22635,9722 22653,9715 22669,9705 22682,9692 22694,9678 22702,9661 22707,9643 22709,9624 22707,9606 22702,9588 22694,9571 22682,9556 22669,9544 22653,9534 22635,9527 22617,9524 22598,9524 22580,9527 22563,9534 22547,9544 22533,9556 22522,9571 22514,9588 22508,9606z M22709,9624L22705,9598 22695,9574 22679,9553 22658,9537 22634,9527 22608,9523 22582,9527 22557,9537 22536,9553 22520,9574 22510,9598 22507,9624 22510,9650 22520,9675 22536,9696 22557,9712 22582,9722 22608,9725 22634,9722 22658,9712 22679,9696 22695,9675 22705,9650z M22709,9624L22709,8959">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="{StaticResource brush}" Thickness="30" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingImage.Drawing>
+                    </DrawingImage>
+                </Image.Source>
+            </Image>
+            <Image Stretch="Uniform" Width=" 80">
+                <Image.Resources>
+                    <SolidColorBrush x:Key="brush" Color="{StaticResource WindowTitleColor}"/>
+                </Image.Resources>
+                <Image.Source>
+                    <DrawingImage>
+                        <DrawingImage.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M27513.8216145039,9010C27513.8216145039,9011.55833466038 27512.5583346604,9012.82161450386 27511,9012.82161450386 27509.4416653396,9012.82161450386 27508.1783854961,9011.55833466038 27508.1783854961,9010 27508.1783854961,9008.44166533962 27509.4416653396,9007.17838549614 27511,9007.17838549614 27512.5583346604,9007.17838549614 27513.8216145039,9008.44166533962 27513.8216145039,9010z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M26840.8216145039,9010C26840.8216145039,9011.55833466038 26839.5583346604,9012.82161450386 26838,9012.82161450386 26836.4416653396,9012.82161450386 26835.1783854961,9011.55833466038 26835.1783854961,9010 26835.1783854961,9008.44166533962 26836.4416653396,9007.17838549614 26838,9007.17838549614 26839.5583346604,9007.17838549614 26840.8216145039,9008.44166533962 26840.8216145039,9010z"/>
+                                <GeometryDrawing Geometry="F1M27511,9010L27914,9010 M27175,9898L27914,9010 M28309,10050L28309,10252 M28309,10252L27185,10252 M26818,8302L26838,9010 M26838,9010L26435,9010 M27175,9898L26435,9010 M27490,8302L27511,9010 M26818,8302L27490,8302 M26060,10050L26060,10252 M27185,10252L26060,10252">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="{StaticResource brush}" Thickness="40" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                              
+                            </DrawingGroup>
+                        </DrawingImage.Drawing>
+                    </DrawingImage>
+                </Image.Source>
+            </Image>
+            <Image Stretch="Uniform" Width="80">
+                <Image.Resources>
+                    <SolidColorBrush x:Key="brush" Color="{StaticResource WindowTitleColor}"/>
+                </Image.Resources>
+                <Image.Source>
+                    <DrawingImage>
+                        <DrawingImage.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Geometry="F1M15785,5864L16602,5540 M15785,5864L15796,6754 M16602,5540L16613,6430">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="{StaticResource brush}" Thickness="40" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16560,6422L16586,6424 16540,6424z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16540,6424L16589,6424 16535,6424z M16540,6424L16586,6424 16589,6424z M16535,6424L16613,6430 16516,6430z M16535,6424L16589,6424 16613,6430z M16516,6430L16616,6431 16513,6431z M16516,6430L16613,6430 16616,6431z M16513,6431L16643,6441 16492,6441z M16513,6431L16616,6431 16643,6441z M16492,6441L16644,6442 16492,6442z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16492,6441L16643,6441 16644,6442z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16492,6442L16669,6456 16475,6456z M16492,6442L16644,6442 16669,6456z M16475,6456L16675,6459 16473,6459z M16475,6456L16669,6456 16675,6459z M16473,6459L16698,6476 16460,6476z M16473,6459L16675,6459 16698,6476z M16460,6476L16703,6480 16458,6480z M16460,6476L16698,6476 16703,6480z M16458,6480L16723,6501 16450,6501z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16458,6480L16703,6480 16723,6501z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16450,6501L16728,6506 16449,6506z M16450,6501L16723,6501 16728,6506z M16449,6506L16746,6529 16445,6529z M16449,6506L16728,6506 16746,6529z M16445,6529L16749,6534 16445,6534z M16445,6529L16746,6529 16749,6534z M16445,6534L16763,6558 16446,6558z M16445,6534L16749,6534 16763,6558z M16446,6558L16766,6564 16447,6564z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16446,6558L16763,6558 16766,6564z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16447,6564L16776,6589 16453,6589z M16447,6564L16766,6564 16776,6589z M16453,6589L16778,6594 16455,6594z M16453,6589L16776,6589 16778,6594z M16455,6594L16783,6620 16465,6620z M16455,6594L16778,6594 16783,6620z M16465,6620L16785,6625 16469,6625z M16465,6620L16783,6620 16785,6625z M16469,6625L16785,6650 16483,6650z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16469,6625L16785,6625 16785,6650z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16483,6650L16785,6655 16487,6655z M16483,6650L16785,6650 16785,6655z M16487,6655L16781,6677 16505,6677z M16487,6655L16785,6655 16781,6677z M16505,6677L16780,6682 16509,6682z M16505,6677L16781,6677 16780,6682z M16509,6682L16771,6702 16530,6702z M16509,6682L16780,6682 16771,6702z M16530,6702L16769,6706 16535,6706z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16530,6702L16771,6702 16769,6706z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16535,6706L16756,6723 16559,6723z M16535,6706L16769,6706 16756,6723z M16559,6723L16754,6727 16564,6727z M16559,6723L16756,6723 16754,6727z M16564,6727L16736,6740 16589,6740z M16564,6727L16754,6727 16736,6740z M16589,6740L16733,6742 16595,6742z M16589,6740L16736,6740 16733,6742z M15743,6746L15769,6748 15724,6748z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15724,6748L15772,6748 15718,6748z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15724,6748L15769,6748 15772,6748z M16595,6742L16712,6752 16620,6752z M16595,6742L16733,6742 16712,6752z M16620,6752L16709,6753 16627,6753z M16620,6752L16712,6752 16709,6753z M15718,6748L15796,6754 15699,6754z M15718,6748L15772,6748 15796,6754z M15699,6754L15799,6755 15696,6755z M15699,6754L15796,6754 15799,6755z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16651,6758L16684,6758 16681,6758z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M16627,6753L16684,6758 16651,6758z M16627,6753L16709,6753 16684,6758z M15696,6755L15826,6766 15675,6766z M15696,6755L15799,6755 15826,6766z M15675,6766L15827,6766z M15675,6766L15826,6766 15827,6766z M15675,6766L15852,6780 15658,6780z M15675,6766L15827,6766 15852,6780z M15658,6780L15858,6783 15656,6783z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15658,6780L15852,6780 15858,6783z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15656,6783L15881,6801 15643,6801z M15656,6783L15858,6783 15881,6801z M15643,6801L15886,6805 15641,6805z M15643,6801L15881,6801 15886,6805z M15641,6805L15906,6825 15633,6825z M15641,6805L15886,6805 15906,6825z M15633,6825L15911,6830 15632,6830z M15633,6825L15906,6825 15911,6830z M15632,6830L15929,6853 15628,6853z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15632,6830L15911,6830 15929,6853z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15628,6853L15933,6858 15628,6858z M15628,6853L15929,6853 15933,6858z M15628,6858L15946,6882 15629,6882z M15628,6858L15933,6858 15946,6882z M15629,6882L15949,6888 15631,6888z M15629,6882L15946,6882 15949,6888z M15631,6888L15959,6913 15636,6913z M15631,6888L15949,6888 15959,6913z M15636,6913L15961,6919 15638,6919z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15636,6913L15959,6913 15961,6919z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15638,6919L15966,6944 15648,6944z M15638,6919L15961,6919 15966,6944z M15648,6944L15968,6949 15652,6949z M15648,6944L15966,6944 15968,6949z M15652,6949L15968,6974 15666,6974z M15652,6949L15968,6949 15968,6974z M15666,6974L15968,6979 15670,6979z M15666,6974L15968,6974 15968,6979z M15670,6979L15964,7002 15688,7002z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15670,6979L15968,6979 15964,7002z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15688,7002L15963,7006 15692,7006z M15688,7002L15964,7002 15963,7006z M15692,7006L15954,7026 15713,7026z M15692,7006L15963,7006 15954,7026z M15713,7026L15952,7030 15719,7030z M15713,7026L15954,7026 15952,7030z M15719,7030L15939,7048 15742,7048z M15719,7030L15952,7030 15939,7048z M15742,7048L15937,7051 15747,7051z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15742,7048L15939,7048 15937,7051z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15747,7051L15919,7064 15772,7064z M15747,7051L15937,7051 15919,7064z M15772,7064L15916,7067 15778,7067z M15772,7064L15919,7064 15916,7067z M15778,7067L15895,7076 15803,7076z M15778,7067L15916,7067 15895,7076z M15803,7076L15892,7077 15811,7077z M15803,7076L15895,7076 15892,7077z M15834,7082L15867,7082 15864,7082z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15811,7077L15867,7082 15834,7082z"/>
+                                <GeometryDrawing Brush="{StaticResource brush}" Geometry="F1M15811,7077L15892,7077 15867,7082z"/>
+                                <GeometryDrawing Geometry="F1M15658,6780L15643,6801 15633,6825 15628,6853 15629,6882 15636,6913 15648,6944 15666,6974 15688,7002 15713,7026 15742,7048 15772,7064 15803,7076 15834,7082 15864,7082 15892,7077 15916,7067 15937,7051 15952,7030 15963,7006 15968,6979 15968,6949 15961,6919 15949,6888 15933,6858 15911,6830 15886,6805 15858,6783 15827,6766 15796,6754 15769,6748 15743,6746 15718,6748 15696,6755 15675,6766z M16475,6456L16460,6476 16450,6501 16445,6529 16446,6558 16453,6589 16465,6620 16483,6650 16505,6677 16530,6702 16559,6723 16589,6740 16620,6752 16651,6758 16681,6758 16709,6753 16733,6742 16754,6727 16769,6706 16780,6682 16785,6655 16785,6625 16778,6594 16766,6564 16749,6534 16728,6506 16703,6480 16675,6459 16644,6442 16613,6430 16586,6424 16560,6422 16535,6424 16513,6431 16492,6441z M15658,6780L15646,6796 15636,6815 15630,6835 15628,6858 15629,6882 15634,6906 15642,6931 15654,6955 15669,6978 15686,7000 15706,7020 15728,7038 15752,7054 15776,7066 15801,7075 15825,7081 15850,7083 15873,7081 15894,7076 15914,7068 15931,7056 15945,7041 15956,7024 15964,7004 15968,6982 15968,6959 15965,6935 15959,6911 15949,6886 15935,6862 15919,6840 15900,6818 15880,6799 15857,6783 15833,6769 15808,6758 15783,6751 15759,6747 15735,6746 15713,6750 15692,6756 15674,6767z M16475,6456L16463,6472 16453,6490 16447,6511 16445,6534 16446,6557 16451,6582 16459,6606 16471,6631 16486,6654 16503,6676 16523,6696 16545,6714 16568,6729 16593,6742 16618,6751 16642,6757 16667,6759 16690,6757 16711,6752 16731,6744 16748,6732 16762,6717 16773,6700 16781,6680 16785,6658 16785,6635 16782,6611 16776,6586 16766,6562 16752,6538 16736,6515 16717,6494 16697,6475 16674,6458 16650,6445 16625,6434 16600,6426 16576,6423 16552,6422 16530,6425 16509,6432 16491,6442z">
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="{StaticResource brush}" Thickness="40" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                              
+                            </DrawingGroup>
+                        </DrawingImage.Drawing>
+                    </DrawingImage>
+                </Image.Source>
+            </Image>
+        </StackPanel>
+      
+    </Grid>
+</ContentControl>

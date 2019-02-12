@@ -1,0 +1,38 @@
+﻿<ContentControl x:Class="NeteaseCloudMusic.Wpf.View.FindMusicView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View"
+               
+        mc:Ignorable="d" d:DesignHeight="350" d:DesignWidth="600"
+        >
+    <Grid Margin="10,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+       
+        <TextBlock Text ="发现音乐" Style="{StaticResource GrayTopTextBoxStyle}" FontSize=" 8"  VerticalAlignment="Bottom"/>
+        <TabControl Grid.Row=" 1"  Style="{StaticResource TabControlStyle}" SelectedIndex="0">
+            <TabItem Header="个性推荐" IsSelected="{Binding IsPersonalityRecommendViewModelActived }">
+                <local:PersonalityRecommendView DataContext="{Binding RecommendViewModel}" />
+
+            </TabItem>
+            <TabItem Header="歌单"  IsSelected="{Binding IsMusicListViewModelActived }">
+                <local:MusicListView   DataContext="{Binding MusicListViewModel}"/>
+            </TabItem>
+            <TabItem Header="主播电台" IsSelected="{Binding IsAnchorRadioViewModelActived}">
+                <local:AnchorRadioView DataContext="{Binding AnchorRadioViewModel}"/>
+            </TabItem>
+            <TabItem Header="最新音乐" IsSelected="{Binding IsNewMusicViewModelActived}">
+                <local:NewMusicView DataContext="{Binding NewMusicViewModel}"/>
+            </TabItem>
+            <TabItem Header="歌手" IsSelected="{Binding IsArtistViewModelActived}">
+                <local:ArtistView DataContext="{Binding ArtistViewModel}"/>
+            </TabItem>
+          
+
+        </TabControl>
+    </Grid>
+</ContentControl>

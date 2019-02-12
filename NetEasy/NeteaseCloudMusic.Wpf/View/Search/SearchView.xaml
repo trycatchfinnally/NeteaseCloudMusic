@@ -1,0 +1,229 @@
+﻿<ContentControl x:Class="NeteaseCloudMusic.Wpf.View.SearchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+                xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
+                xmlns:controls="clr-namespace:NeteaseCloudMusic.Controls;assembly=NeteaseCloudMusic.Controls"
+                xmlns:prism="http://www.codeplex.com/prism"
+                xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="500">
+    <Grid Margin="10,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBox Margin=" 0,10"  x:Name="TxtInput"  
+                 Text="{Binding KeyWord,UpdateSourceTrigger=PropertyChanged}"   >
+
+            <TextBox.Resources>
+                <VisualBrush x:Key="HintText" TileMode="None" Opacity="0.5" Stretch="None" AlignmentX="Left">
+                    <VisualBrush.Visual>
+                        <TextBlock 
+                            Style="{StaticResource GrayTopTextBoxStyle}" FontSize="{StaticResource WindowMainFontSize}"
+                            Text="搜索音乐、歌手、歌词、用户"/>
+                    </VisualBrush.Visual>
+                </VisualBrush>
+            </TextBox.Resources>
+            <TextBox.Style>
+                <Style TargetType="TextBox" >
+                    <Setter Property="FontFamily" Value="{StaticResource WindowMainFont}"/>
+                    <Setter Property="FontSize" Value="{StaticResource WindowMainFontSize}"/>
+                    <Setter Property="Tag" Value="True"/>
+                    <Setter Property="Foreground">
+                        <Setter.Value >
+                            <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Template">
+                        <Setter.Value >
+                            <ControlTemplate TargetType="TextBox">
+                                <Border BorderThickness="0.5"
+                                        Background="{TemplateBinding Background}"
+                                        SnapsToDevicePixels="True">
+                                    <Border.BorderBrush>
+                                        <SolidColorBrush Color="{StaticResource  WindowForeGrayColor}"/>
+                                    </Border.BorderBrush>
+                                    <DockPanel >
+                                        <Button DockPanel.Dock="Right"   
+                                                Style="{StaticResource EmptyButtonWithFocusStyle}" 
+                                                Command="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DataContext.KeyWordComplete}">
+                                            <Path  Width=" 12" Stretch="Uniform" Data="F1M16998,7516L17049,7465 16624,7081 16599,7106 16571,7129z M16722,6827L16718,6778 16709,6730 16693,6683 16671,6639 16644,6598 16611,6560 16574,6528 16533,6500 16489,6478 16442,6463 16393,6453 16344,6450 16295,6453 16246,6463 16200,6478 16155,6500 16114,6528 16077,6560 16045,6598 16017,6639 15995,6683 15979,6730 15970,6778 15967,6827 15970,6877 15979,6925 15995,6972 16017,7016 16045,7057 16077,7095 16114,7127 16155,7155 16200,7176 16246,7192 16295,7202 16344,7205 16393,7202 16442,7192 16489,7176 16533,7155 16574,7127 16611,7095 16644,7057 16671,7016 16693,6972 16709,6925 16718,6877z M16624,7081L17049,7465 M16571,7129L16998,7516 M16998,7516L17049,7465" >
+                                                <Path.Stroke>
+                                                    <Binding RelativeSource="{RelativeSource AncestorLevel=1 ,AncestorType=Button}" Path="Foreground"/>
+                                                </Path.Stroke>
+                                            </Path>
+                                        </Button>
+                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                    </DockPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="Text" Value="{x:Null}">
+                            <Setter Property="Background" Value="{StaticResource HintText}"/>
+                            <Setter Property="Tag" Value="False"/>
+                        </Trigger>
+                        <Trigger Property="Text" Value="">
+                            <Setter Property="Background" Value="{StaticResource HintText}"/>
+                            <Setter Property="Tag" Value="False"/>
+                        </Trigger>
+
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <controls:TopmostPopup IsOpen="{Binding  KeyWord,Converter={x:Static converter:ValueConverterFactory.Text2PopupIsOpenConverter},Mode=OneWay}"  Grid.Row=" 1" 
+                               PlacementTarget="{Binding ElementName=TxtInput }"  
+               Placement="Bottom" VerticalOffset="5"   
+               >
+            <Border Background="White" BorderThickness=" 0.5" >
+                <ScrollViewer Margin="2,1">
+                    <Grid   >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height=" 20"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Button Style="{StaticResource EmptyButtonStyle}" Command="{Binding KeyWordComplete}">
+                            <StackPanel  Orientation="Horizontal">
+                                <StackPanel.Resources>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DarkBottomTextBoxStyle}">
+                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                    </Style>
+                                </StackPanel.Resources>
+                                <Path Width=" 10" Stretch="Uniform" Stroke="{Binding ElementName=TxtInput,Path=Foreground,Mode=OneTime}" Data="M0,0 L10,0 L10,10 L0,10 Z"/>
+                                <TextBlock Text="搜索“" />
+                        <TextBlock Text="{Binding KeyWord}" Foreground="Blue" />
+                                <TextBlock Text="”"/>
+                </StackPanel>
+                        </Button>
+                        <ListBox Grid.Row=" 1" ItemsSource="{Binding SearchResult}" BorderThickness="0"></ListBox>
+                    </Grid>
+                </ScrollViewer>
+            </Border>
+        </controls:TopmostPopup>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="10" />
+                <RowDefinition  />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition  />
+                <ColumnDefinition  />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="热门搜索" Style="{StaticResource GrayTopTextBoxStyle}" VerticalAlignment="Bottom" Margin="0"/>
+            <TextBlock Text="搜索历史" 
+                       Style="{StaticResource GrayTopTextBoxStyle}"
+                       VerticalAlignment="Bottom"
+                       Grid.Column="1" Grid.Row="0"  />
+            <ListBox Grid.Row=" 2" Grid.Column="0" Background="Transparent"   BorderThickness=" 0" ItemsSource="{Binding SearchRecomend}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <prism:InvokeCommandAction  Command="{Binding SelectedSuggestCommand}" TriggerParameterPath="AddedItems" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DataTemplate.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value=" 5"/>
+                                <Setter Property="BorderThickness" Value=" 0.5"/>
+                                <Setter Property="SnapsToDevicePixels" Value="True" />
+                                <Setter Property="Margin" Value=" 2"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" >
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="{StaticResource WindowFocusColor}"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataTemplate.Resources>
+                        <Border >
+                            <Border.BorderBrush>
+                                <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                            </Border.BorderBrush>
+
+                            <TextBlock Text="{Binding }" 
+                                       VerticalAlignment="Center"
+                                       Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                        </Border>
+
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                    <ContentPresenter/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background">
+                                    <Setter.Value >
+                                        <SolidColorBrush Color="{StaticResource WindowFocusColor}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.Template>
+                    <ControlTemplate TargetType="ListBox">
+                        <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
+                    </ControlTemplate>
+                </ListBox.Template>
+            </ListBox>
+            <ListBox Grid.Column="1" Grid.Row="2" Background="Transparent"  BorderThickness=" 0" ItemsSource="{Binding SearchHistory}">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <Button Style="{StaticResource EmptyButtonWithFocusStyle}"  
+                                    CommandParameter="{Binding}"
+                                    Command="{Binding RelativeSource={RelativeSource AncestorLevel=1,AncestorType=ListBox},Path=DataContext.DeleteHistoryCommand}"
+                                    DockPanel.Dock="Right"  >
+                                <Canvas Width="10" Height="10" >
+                                    <Canvas.Resources>
+                                        <Style TargetType="Path" >
+                                            <Setter Property="StrokeThickness" Value=" 1.2"/>
+                                            <Setter Property="Stroke">
+                                                <Setter.Value >
+                                                    <Binding RelativeSource="{RelativeSource AncestorLevel=1,AncestorType=Button}" Path="Foreground"/>
+                                                </Setter.Value>
+                                            </Setter>
+
+                                        </Style>
+                                    </Canvas.Resources>
+                                    <Path   Data="M0,0 L10,10 M0,10 L10,0"/>
+                                </Canvas>
+                            </Button>
+                            <TextBlock Text="{Binding }"  
+                                       VerticalAlignment="Center"
+                                       Style="{StaticResource DarkBottomTextBoxStyle}"/>
+
+                        </DockPanel>
+
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Height" Value=" 20"/>
+                        <Setter Property="Padding" Value=" 0,0,5,0"/>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+        </Grid>
+    </Grid>
+</ContentControl>

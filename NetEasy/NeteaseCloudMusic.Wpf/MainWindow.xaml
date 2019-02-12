@@ -1,0 +1,763 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     x:Class="NeteaseCloudMusic.Wpf.MainWindow"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:be="clr-namespace:NeteaseCloudMusic.Wpf.Behaviors"
+    xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
+        xmlns:controls="clr-namespace:NeteaseCloudMusic.Wpf.Controls"
+         xmlns:prism="http://www.codeplex.com/prism"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+    xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf"
+    xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing" 
+   
+    xmlns:controls1="clr-namespace:NeteaseCloudMusic.Controls;assembly=NeteaseCloudMusic.Controls"
+    mc:Ignorable="d"
+        Title="MainWindow" MinHeight="500" Width="800" WindowStyle="None" AllowsTransparency="True" MinWidth=" 660"
+        Background="Transparent"  Topmost="False"  Icon="Assets/Icon.png"   ResizeMode="CanResizeWithGrip">
+    <Window.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="Styles/MenuPartControlStyle.xaml"/>
+                <ResourceDictionary Source="Styles/LikeToggleButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/VolumnSliderStyle.xaml"/>
+                <ResourceDictionary Source="Styles/ControlButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/ImageButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/TitleButtonStyle.xaml"/>
+
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
+
+    </Window.Resources>
+
+    <DockPanel   Margin=" 5">
+        <DockPanel.Background>
+            <SolidColorBrush Color="{StaticResource WindowBackColor}"/>
+        </DockPanel.Background>
+
+        <Grid x:Name="titlePart" DockPanel.Dock="Top" Height="30"  MouseMove="Grid_MouseMove" MouseDown="Grid_MouseDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+            <Grid.Background>
+                <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+            </Grid.Background>
+            <DockPanel Grid.ColumnSpan=" 2">
+                <Button   Width=" 50" Command="{Binding NavBackCommand}"   Loaded="BtnNavBack_Loaded">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource EmptyButtonStyle}">
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="FontSize" Value=" 18"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background" Value="Red"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <ed:BlockArrow Width="15" Height=" 7" Fill="White" ArrowBodySize="0.125" StrokeEndLineCap="Flat"></ed:BlockArrow>
+                </Button>
+                <TextBlock Text="网易云音乐" Foreground="White" Margin="5,8,3,2"  />
+            </DockPanel>
+            <Grid    Grid.Column="2"    >
+                <Grid.Resources>
+                    <Style BasedOn="{StaticResource titleButton}" TargetType="{x:Type controls:TitleButton}"/>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  />
+                    <ColumnDefinition  />
+                    <ColumnDefinition  />
+                </Grid.ColumnDefinitions>
+                <controls:TitleButton   Click="btnMin_Click" 
+                                      
+                                     >
+                    <Path   Stroke="White" StrokeThickness="1.5">
+                        <Path.Data>
+                            <LineGeometry StartPoint=" 0,0" EndPoint=" 12,0"/>
+                        </Path.Data>
+                    </Path>
+                </controls:TitleButton>
+                <controls:TitleButton    Grid.Column=" 1" Click="btnSize_Click">
+                    <Rectangle Width="10" Height="10" Stroke="White" StrokeThickness="1"/>
+                </controls:TitleButton>
+                <controls:TitleButton    Grid.Column=" 2" Click="btnClose_Click" MouseOverBackground="Red"
+                                       >
+                    <Canvas Width="10" Height="10">
+                        <Polyline Stroke="White" Points="0,0 10,10" StrokeThickness=" 1.2"/>
+                        <Polyline Stroke="White" Points="0,10 10,0" StrokeThickness=" 1.2"/>
+                    </Canvas>
+                </controls:TitleButton>
+            </Grid>
+        </Grid>
+        <Grid x:Name="bottomControls" DockPanel.Dock="Bottom" Height=" 60" Background="Transparent"  >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+            <Grid  >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition  />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <!--按钮的相同UI-->
+                    <Style TargetType="StackPanel" >
+                        <Setter Property="Orientation"  Value="Horizontal"/>
+                    </Style>
+                    <Style TargetType="Rectangle">
+                        <Setter Property="Width" Value=" 2"/>
+                        <Setter Property="Height" Value=" 10"/>
+                        <Setter Property="Fill" >
+                            <Setter.Value >
+                                <SolidColorBrush Color="{StaticResource WindowBackColor}"/>
+                            </Setter.Value>
+                        </Setter>
+
+                    </Style>
+                    <Style TargetType="Button"  BasedOn="{StaticResource ControlPartButton}">
+                        <Setter Property="Background" >
+                            <Setter.Value >
+                                <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style TargetType="ed:RegularPolygon">
+                        <Setter Property="PointCount" Value=" 3"/>
+                        <Setter Property="RenderTransformOrigin" Value=" 0.5,0.5"/>
+                        <Setter Property="Width" Value=" 7"/>
+                        <Setter Property="Height" Value=" 10"/>
+                        <Setter Property="Fill" >
+                            <Setter.Value >
+                                <SolidColorBrush Color="{StaticResource WindowBackColor}"/>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Grid.Resources>
+                <controls:ImageButton Margin="2" 
+                                       
+                                      Style="{StaticResource DefaultImageButtonStyle}"
+                                      Command="{Binding OpenPlayPanelCommand}">
+
+                </controls:ImageButton>
+                <Button Grid.Column=" 1"   Width=" 30" Height=" 30" Command="{x:Static local:Context.PrevTrackCommand}">
+                    <StackPanel >
+                        <Rectangle />
+
+                        <ed:RegularPolygon    >
+                            <ed:RegularPolygon.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="-90"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </ed:RegularPolygon.RenderTransform>
+
+                        </ed:RegularPolygon>
+                    </StackPanel>
+                </Button>
+                <ToggleButton Style="{StaticResource ControlPartToggleButton}" Grid.Column=" 2"   Width=" 40" Height=" 40" 
+                              IsChecked="{Binding IsPlaying}"
+                              >
+                    <Grid>
+                        <StackPanel      Visibility="{Binding IsChecked, Converter={x:Static converter:ValueConverterFactory.Boolean2VisibilityConverter}, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}}" >
+                            <Rectangle />
+                            <Rectangle Width=" 3"  Fill="Transparent" />
+                            <Rectangle  />
+                        </StackPanel>
+                        <StackPanel Background="Transparent"  
+                                    Visibility="{Binding IsChecked, ConverterParameter=1, Converter={x:Static converter:ValueConverterFactory.Boolean2VisibilityConverter}, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}}" >
+                            <ed:RegularPolygon PointCount=" 3" RenderTransformOrigin="0.5,0.5" Margin="2,0,0,0"
+                                               Width =" 15" Height=" 13">
+                                <ed:RegularPolygon.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="90"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </ed:RegularPolygon.RenderTransform>
+
+                                <ed:RegularPolygon.Fill>
+                                    <SolidColorBrush Color="{StaticResource WindowBackColor}"/>
+                                </ed:RegularPolygon.Fill>
+                            </ed:RegularPolygon>
+                        </StackPanel>
+                    </Grid>
+                    <ToggleButton.Background >
+                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                    </ToggleButton.Background>
+                </ToggleButton>
+                <Button Grid.Column=" 3"   Width=" 30" Height=" 30" Command="{x:Static local:Context.NextTrackCommand}">
+                    <StackPanel  >
+                        <ed:RegularPolygon   >
+                            <ed:RegularPolygon.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="90"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </ed:RegularPolygon.RenderTransform>
+
+                        </ed:RegularPolygon>
+
+                        <Rectangle />
+
+                    </StackPanel>
+                </Button>
+            </Grid>
+            <Grid Grid.Column=" 1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid >
+                    <Grid.Resources >
+                        <Style TargetType="TextBlock"  BasedOn="{StaticResource GrayTopTextBoxStyle}">
+                            <Setter Property="VerticalAlignment" Value="Bottom"/>
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition  />
+                        <ColumnDefinition Width="60"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel DataContext="{Binding CurrentPlayMusic}">
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Orientation" Value="Horizontal"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Converter={x:Static converter:ValueConverterFactory.Text2PopupIsOpenConverter}}" Value="false">
+                                        <Setter Property="Visibility"  Value="Hidden" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock  Text ="{Binding Name  }"  />
+                        <TextBlock Text="-"/>
+                        <TextBlock  Text ="{Binding  ArtistName  }"  />
+
+                    </StackPanel>
+                    <TextBlock  Width="60"  Grid.Column=" 1">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{x:Static converter:MultiValueConverterFactory.TimeSpan2TextConverter}">
+                                <Binding Path="CurrentTimeSpan" />
+
+                                <Binding Path="TotalTimeSpan" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Grid>
+                <Slider Grid.Row=" 1"  Maximum="{Binding TotalTimeSpan,Converter={x:Static converter:ValueConverterFactory.TimeSpan2MillSecondsConverter}}"  
+                        Value="{Binding CurrentTimeSpan,Converter={x:Static converter:ValueConverterFactory.TimeSpan2MillSecondsConverter}}" />
+
+
+            </Grid>
+            <Grid Grid.Column=" 2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  />
+                    <ColumnDefinition  />
+                    <ColumnDefinition />
+                    <ColumnDefinition  />
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <Style TargetType="controls1:CycleTypeButton">
+                        <Setter Property="Width" Value=" 15"/>
+                        <Setter Property="Height" Value=" 15"/>
+                        <Setter Property="Background" Value="Transparent" />
+                    </Style>
+                    <Style TargetType="Image">
+                        <Setter Property="Stretch" Value="Uniform"/>
+                    </Style>
+                    <Style TargetType="Path" >
+                        <Setter Property="Stretch" Value="Uniform"/>
+                    </Style>
+                    <SolidColorBrush x:Key="Fore"  Color="{StaticResource WindowForeGrayColor}"></SolidColorBrush>
+                    <SolidColorBrush x:Key="DefaultLikeBrush" Color="Red"/>
+                </Grid.Resources>
+                <controls1:CycleTypeButton    SelectIndex="{Binding IsLike,Converter={x:Static converter:ValueConverterFactory.BoolOrEnum2Int32Converter},Mode=TwoWay}">
+                    <Path Stroke="{StaticResource Fore }"   
+                              HorizontalAlignment="Center" VerticalAlignment="Center"
+                               
+                              StrokeThickness="1"
+                             
+                              
+                              Data=" F1M16844,6398L16879,6361 16913,6322 16945,6282 16974,6240 17002,6197 17027,6153 17050,6107 17071,6060 17090,6012 17106,5964 17120,5915 17132,5865 17141,5814 17147,5763 17151,5712 17153,5661 17152,5610 17149,5559 17143,5508 17134,5458 17123,5407 17110,5358 17094,5309 17076,5261 17056,5214 17033,5168 17008,5124 16981,5080 16952,5038 16921,4997 16888,4958 16853,4921 16816,4885 16777,4852 16737,4820 16696,4790 16653,4762 16608,4736 16563,4713 16516,4692 16469,4673 16420,4656 16371,4642 16321,4630 16271,4621 16220,4614 16169,4610 16118,4608 16066,4609 16015,4612 15964,4618 15914,4626 15864,4636 15814,4649 15765,4665 15717,4683 15670,4703 15624,4725 15579,4750 15536,4777 15493,4806 15453,4837 15413,4870 15376,4905 15340,4941 15306,4980 15274,5019 15244,5061 15216,5104 15190,5148 15166,5193 15145,5240 15126,5287 15109,5336 M15009,5335L15014,5346 15022,5355 15031,5363 15041,5368 15053,5371 15065,5371 15077,5368 15087,5363 15096,5355 15104,5346 15109,5335 M15009,5336L14992,5287 14973,5240 14952,5193 14928,5148 14902,5104 14874,5061 14844,5019 14812,4980 14778,4941 14742,4905 14705,4870 14665,4837 14625,4806 14582,4777 14539,4750 14494,4725 14448,4703 14401,4683 14353,4665 14304,4649 14254,4636 14204,4626 14154,4618 14103,4612 14052,4609 14000,4608 13949,4610 13898,4614 13847,4621 13797,4630 13747,4642 13698,4656 13649,4673 13602,4692 13555,4713 13510,4736 13465,4762 13422,4790 13381,4820 13341,4852 13302,4885 13265,4921 13230,4958 13197,4997 13166,5038 13137,5080 13110,5124 13085,5168 13062,5214 13042,5261 13024,5309 13008,5358 12995,5407 12984,5458 12975,5508 12969,5559 12966,5610 12965,5661 12967,5712 12971,5763 12977,5814 12986,5865 12998,5915 13012,5964 13028,6012 13047,6060 13068,6107 13091,6153 13116,6197 13144,6240 13173,6282 13205,6322 13239,6361 13274,6398 M13274,6398L15022,8136 M15022,8136L15031,8143 15042,8148 15053,8151 15065,8151 15076,8148 15087,8143 15096,8136 M15096,8136L16844,6398" >
+
+                    </Path>
+                    <Image     >
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup>
+
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush }"  Geometry="F1M9080,4567L9147,4569 9044,4569z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M11194,4567L11230,4569 11128,4569z M11194,4567L11230,4569 11230,4569z M11128,4569L11261,4570 11113,4570z M11128,4569L11230,4569 11261,4570z M9044,4569L9161,4570 9014,4570z M9044,4569L9147,4569 9161,4570z M11113,4570L11303,4574 11061,4574z M11113,4570L11261,4570 11303,4574z M9014,4570L9213,4574 8971,4574z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M9014,4570L9161,4570 9213,4574z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M11061,4574L11327,4577 11045,4577z M11061,4574L11303,4574 11327,4577z M8971,4574L9229,4577 8948,4577z M8971,4574L9213,4574 9229,4577z M11045,4577L11370,4584 10996,4584z M11045,4577L11327,4577 11370,4584z M8948,4577L9279,4584 8904,4584z M8948,4577L9229,4577 9279,4584z M10996,4584L11392,4588 10978,4588z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M10996,4584L11370,4584 11392,4588z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8904,4584L9296,4588 8882,4588z M8904,4584L9279,4584 9296,4588z M10978,4588L11436,4598 10931,4598z M10978,4588L11392,4588 11436,4598z M8882,4588L9344,4598 8838,4598z M8882,4588L9296,4588 9344,4598z M10931,4598L11457,4603 10913,4603z M10931,4598L11436,4598 11457,4603z M8838,4598L9361,4603 8817,4603z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8838,4598L9344,4598 9361,4603z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10913,4603L11501,4617 10867,4617z M10913,4603L11457,4603 11501,4617z M8817,4603L9408,4617 8774,4617z M8817,4603L9361,4603 9408,4617z M10867,4617L11521,4623 10849,4623z M10867,4617L11501,4617 11521,4623z M8774,4617L9425,4623 8754,4623z M8774,4617L9408,4617 9425,4623z M10849,4623L11563,4639 10804,4639z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M10849,4623L11521,4623 11563,4639z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8754,4623L9470,4639 8711,4639z M8754,4623L9425,4623 9470,4639z M10804,4639L11583,4646 10787,4646z M10804,4639L11563,4639 11583,4646z M8711,4639L9488,4646 8691,4646z M8711,4639L9470,4639 9488,4646z M10787,4646L11625,4665 10743,4665z M10787,4646L11583,4646 11625,4665z M8691,4646L9532,4665 8650,4665z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8691,4646L9488,4646 9532,4665z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10743,4665L11644,4673 10726,4673z M10743,4665L11625,4665 11644,4673z M8650,4665L9548,4673 8631,4673z M8650,4665L9532,4665 9548,4673z M10726,4673L11684,4695 10683,4695z M10726,4673L11644,4673 11684,4695z M8631,4673L9591,4695 8590,4695z M8631,4673L9548,4673 9591,4695z M10683,4695L11702,4704 10667,4704z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M10683,4695L11684,4695 11702,4704z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8590,4695L9607,4704 8572,4704z M8590,4695L9591,4695 9607,4704z M10667,4704L11742,4728 10626,4728z M10667,4704L11702,4704 11742,4728z M8572,4704L9648,4728 8533,4728z M8572,4704L9607,4704 9648,4728z M10626,4728L11759,4739 10610,4739z M10626,4728L11742,4728 11759,4739z M8533,4728L9664,4739 8515,4739z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8533,4728L9648,4728 9664,4739z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10610,4739L11797,4766 10571,4766z M10610,4739L11759,4739 11797,4766z M8515,4739L9703,4766 8477,4766z M8515,4739L9664,4739 9703,4766z M10571,4766L11814,4777 10556,4777z M10571,4766L11797,4766 11814,4777z M8477,4766L9719,4777 8461,4777z M8477,4766L9703,4766 9719,4777z M10556,4777L11850,4806 10518,4806z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M10556,4777L11814,4777 11850,4806z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8461,4777L9756,4806 8425,4806z M8461,4777L9719,4777 9756,4806z M10518,4806L11865,4819 10504,4819z M10518,4806L11850,4806 11865,4819z M8425,4806L9770,4819 8409,4819z M8425,4806L9756,4806 9770,4819z M10504,4819L11900,4850 10468,4850z M10504,4819L11865,4819 11900,4850z M8409,4819L9806,4850 8375,4850z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8409,4819L9770,4819 9806,4850z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10468,4850L11915,4864 10455,4864z M10468,4850L11900,4850 11915,4864z M8375,4850L9820,4864 8360,4864z M8375,4850L9806,4850 9820,4864z M10455,4864L11947,4897 10421,4897z M10455,4864L11915,4864 11947,4897z M8360,4864L9853,4897 8328,4897z M8360,4864L9820,4864 9853,4897z M10421,4897L11961,4912 10409,4912z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M10421,4897L11947,4897 11961,4912z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8328,4897L9866,4912 8314,4912z M8328,4897L9853,4897 9866,4912z M10409,4912L11991,4947 10377,4947z M10409,4912L11961,4912 11991,4947z M8314,4912L9897,4947 8284,4947z M8314,4912L9866,4912 9897,4947z M10377,4947L12004,4963 10366,4963z M10377,4947L11991,4947 12004,4963z M8284,4947L9909,4963 8271,4963z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8284,4947L9897,4947 9909,4963z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10366,4963L12032,5000 10337,5000z M10366,4963L12004,4963 12032,5000z M8271,4963L9938,5000 8243,5000z M8271,4963L9909,4963 9938,5000z M10337,5000L12044,5016 10326,5016z M10337,5000L12032,5000 12044,5016z M8243,5000L9949,5016 8231,5016z M8243,5000L9938,5000 9949,5016z M10326,5016L12069,5055 10299,5055z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M10326,5016L12044,5016 12069,5055z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8231,5016L9975,5055 8205,5055z M8231,5016L9949,5016 9975,5055z M10299,5055L12080,5072 10289,5072z M10299,5055L12069,5055 12080,5072z M8205,5055L9985,5072 8195,5072z M8205,5055L9975,5055 9985,5072z M10289,5072L12103,5112 10266,5112z M10289,5072L12080,5072 12103,5112z M8195,5072L10009,5112 8172,5112z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8195,5072L9985,5072 10009,5112z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10266,5112L12112,5130 10257,5130z M10266,5112L12103,5112 12112,5130z M8172,5112L10018,5130 8162,5130z M8172,5112L10009,5112 10018,5130z M10257,5130L12133,5172 10236,5172z M10257,5130L12112,5130 12133,5172z M8162,5130L10039,5172 8142,5172z M8162,5130L10018,5130 10039,5172z M10236,5172L12141,5190 10228,5190z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M10236,5172L12133,5172 12141,5190z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8142,5172L10047,5190 8133,5190z M8142,5172L10039,5172 10047,5190z M10228,5190L12159,5233 10209,5233z M10228,5190L12141,5190 12159,5233z M8133,5190L10065,5233 8115,5233z M8133,5190L10047,5190 10065,5233z M10209,5233L12166,5251 10203,5251z M10209,5233L12159,5233 12166,5251z M8115,5233L10072,5251 8108,5251z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8115,5233L10065,5233 10072,5251z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10203,5251L12181,5295 10187,5295z M10203,5251L12166,5251 12181,5295z M8108,5251L10087,5295 8093,5295z M8108,5251L10072,5251 10087,5295z M10187,5295L12184,5305 10183,5305z M10187,5295L12181,5295 12184,5305z M8093,5295L10091,5305 8090,5305z M8093,5295L10087,5295 10091,5305z M10183,5305L12187,5313 10177,5313z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M10183,5305L12184,5305 12187,5313z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8090,5305L10097,5313 8087,5313z M8090,5305L10091,5305 10097,5313z M10177,5313L12188,5314 10176,5314z M10177,5313L12187,5313 12188,5314z M8087,5313L10098,5314 8087,5314z M8087,5313L10097,5313 10098,5314z M10176,5314L12189,5320 10170,5320z M10176,5314L12188,5314 12189,5320z M8087,5314L10104,5320 8085,5320z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8087,5314L10098,5314 10104,5320z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10170,5320L12191,5326 10162,5326z M10170,5320L12189,5320 12191,5326z M8085,5320L10113,5326 8084,5326z M8085,5320L10104,5320 10113,5326z M10162,5326L12192,5330 10152,5330z M10162,5326L12191,5326 12192,5330z M8084,5326L10122,5330 8083,5330z M8084,5326L10113,5326 10122,5330z M10152,5330L12192,5332 10142,5332z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M10152,5330L12192,5330 12192,5332z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8083,5330L10132,5332 8082,5332z M8083,5330L10122,5330 10132,5332z M8082,5332L12205,5379 8070,5379z M8082,5332L12192,5332 12205,5379z M8070,5379L12218,5444 8057,5444z M8070,5379L12205,5379 12218,5444z M8057,5444L12226,5510 8048,5510z M8057,5444L12218,5444 12226,5510z M8048,5510L12231,5576 8044,5576z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8048,5510L12226,5510 12231,5576z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8044,5576L12231,5643 8043,5643z M8044,5576L12231,5576 12231,5643z M8043,5643L12227,5709 8047,5709z M8043,5643L12231,5643 12227,5709z M8047,5709L12219,5775 8055,5775z M8047,5709L12227,5709 12219,5775z M8055,5775L12207,5841 8067,5841z M8055,5775L12219,5775 12207,5841z M8067,5841L12191,5905 8084,5905z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8067,5841L12207,5841 12191,5905z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8084,5905L12170,5969 8104,5969z M8084,5905L12191,5905 12170,5969z M8104,5969L12146,6030 8129,6030z M8104,5969L12170,5969 12146,6030z M8129,6030L12117,6091 8157,6091z M8129,6030L12146,6030 12117,6091z M8157,6091L12085,6149 8189,6149z M8157,6091L12117,6091 12085,6149z M8189,6149L12050,6205 8225,6205z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}"  Geometry="F1M8189,6149L12085,6149 12050,6205z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M8225,6205L12011,6259 8264,6259z M8225,6205L12050,6205 12011,6259z M8264,6259L11968,6310 8306,6310z M8264,6259L12011,6259 11968,6310z M8306,6310L11922,6358 8352,6358z M8306,6310L11968,6310 11922,6358z M8352,6358L10174,8096 10100,8096z M8352,6358L11922,6358 10174,8096z M10100,8096L10166,8102 10108,8102z"/>
+
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10108,8102L10157,8107 10117,8107z M10108,8102L10166,8102 10157,8107z M10127,8110L10147,8110 10137,8111z M10117,8107L10147,8110 10127,8110z M10117,8107L10157,8107 10147,8110z"/>
+                                        <GeometryDrawing Brush="{StaticResource DefaultLikeBrush}" Geometry="F1M10187,5295L10183,5305 10177,5313 10170,5320 10162,5326 10152,5330 10142,5332 10132,5332 10122,5330 10113,5326 10104,5320 10097,5313 10091,5305 10087,5295 10065,5233 10039,5172 10009,5112 9975,5055 9938,5000 9897,4947 9853,4897 9806,4850 9756,4806 9703,4766 9648,4728 9591,4695 9532,4665 9470,4639 9408,4617 9344,4598 9279,4584 9213,4574 9147,4569 9080,4567 9014,4570 8948,4577 8882,4588 8817,4603 8754,4623 8691,4646 8631,4673 8572,4704 8515,4739 8461,4777 8409,4819 8360,4864 8314,4912 8271,4963 8231,5016 8195,5072 8162,5130 8133,5190 8108,5251 8087,5314 8070,5379 8057,5444 8048,5510 8044,5576 8043,5643 8047,5709 8055,5775 8067,5841 8084,5905 8104,5969 8129,6030 8157,6091 8189,6149 8225,6205 8264,6259 8306,6310 8352,6358 10100,8096 10108,8102 10117,8107 10127,8110 10137,8111 10147,8110 10157,8107 10166,8102 10174,8096 11922,6358 11968,6310 12011,6259 12050,6205 12085,6149 12117,6091 12146,6030 12170,5969 12191,5905 12207,5841 12219,5775 12227,5709 12231,5643 12231,5576 12226,5510 12218,5444 12205,5379 12188,5314 12166,5251 12141,5190 12112,5130 12080,5072 12044,5016 12004,4963 11961,4912 11915,4864 11865,4819 11814,4777 11759,4739 11702,4704 11644,4673 11583,4646 11521,4623 11457,4603 11392,4588 11327,4577 11261,4570 11194,4567 11128,4569 11061,4574 10996,4584 10931,4598 10867,4617 10804,4639 10743,4665 10683,4695 10626,4728 10571,4766 10518,4806 10468,4850 10421,4897 10377,4947 10337,5000 10299,5055 10266,5112 10236,5172 10209,5233z">
+
+                                        </GeometryDrawing>
+
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                </controls1:CycleTypeButton>
+                <controls1:CycleTypeButton  Grid.Column=" 1"  SelectIndex="{Binding CycleType,Converter={x:Static converter:ValueConverterFactory.BoolOrEnum2Int32Converter},Mode=TwoWay}">
+
+                    <Image   >
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Geometry="F1M14828,9422L14783,9414 14738,9407 14693,9403 14648,9401 14602,9400 14556,9401 14511,9404 14466,9409 14421,9416 14377,9425 14333,9435 14290,9447 14249,9461 14208,9477 14168,9494 14130,9513 14093,9533 14058,9555 14024,9578 13992,9602 13962,9628 13934,9655 13908,9683 13884,9712 13862,9742 13842,9773 13824,9805 13809,9837 13796,9870 13786,9904 13778,9937 13772,9971 13769,10006 13768,10040 13770,10074 13774,10108 13781,10142 13790,10176 13802,10209 13816,10242 13832,10274 13851,10305 13871,10335 13894,10365 13919,10394 13947,10421 13976,10448 14007,10473 14039,10497 14074,10519 14110,10540 14147,10560 14186,10578 14226,10595 14267,10609 14310,10622 14353,10634 14397,10643 14441,10651 14486,10657 14531,10661 14577,10664 14623,10664 14668,10662 14714,10659 14759,10654 14804,10647 14848,10638 14891,10628 14934,10615 14976,10601 15016,10586 15056,10568 15094,10549 15130,10529 15166,10507 15199,10484 15231,10459 15261,10433 15289,10406 15315,10378 15339,10349">
+                                            <GeometryDrawing.Pen>
+                                                <Pen Brush="{StaticResource Fore}" Thickness="80" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Brush="{StaticResource Fore}" Geometry="F1M14864,9322L15034,9496 14792,9520z">
+
+                                        </GeometryDrawing>
+
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                    <Grid>
+                        <Image  >
+                            <Image.Source>
+                                <DrawingImage>
+                                    <DrawingImage.Drawing>
+                                        <DrawingGroup>
+                                            <GeometryDrawing Geometry="F1M14828,9422L14783,9414 14738,9407 14693,9403 14648,9401 14602,9400 14556,9401 14511,9404 14466,9409 14421,9416 14377,9425 14333,9435 14290,9447 14249,9461 14208,9477 14168,9494 14130,9513 14093,9533 14058,9555 14024,9578 13992,9602 13962,9628 13934,9655 13908,9683 13884,9712 13862,9742 13842,9773 13824,9805 13809,9837 13796,9870 13786,9904 13778,9937 13772,9971 13769,10006 13768,10040 13770,10074 13774,10108 13781,10142 13790,10176 13802,10209 13816,10242 13832,10274 13851,10305 13871,10335 13894,10365 13919,10394 13947,10421 13976,10448 14007,10473 14039,10497 14074,10519 14110,10540 14147,10560 14186,10578 14226,10595 14267,10609 14310,10622 14353,10634 14397,10643 14441,10651 14486,10657 14531,10661 14577,10664 14623,10664 14668,10662 14714,10659 14759,10654 14804,10647 14848,10638 14891,10628 14934,10615 14976,10601 15016,10586 15056,10568 15094,10549 15130,10529 15166,10507 15199,10484 15231,10459 15261,10433 15289,10406 15315,10378 15339,10349">
+                                                <GeometryDrawing.Pen>
+                                                    <Pen Brush="{StaticResource Fore}" Thickness="50" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                                </GeometryDrawing.Pen>
+                                            </GeometryDrawing>
+                                            <GeometryDrawing Brush="{StaticResource Fore}" Geometry="F1M14864,9322L15034,9496 14792,9520z"/>
+
+                                        </DrawingGroup>
+                                    </DrawingImage.Drawing>
+                                </DrawingImage>
+                            </Image.Source>
+                        </Image>
+                        <TextBlock Text="1" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize=" 10"/>
+                    </Grid>
+                    <Image  >
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Geometry="F1M17282,6353L18336,6353 M17282,5931L18336,5931 M17282,6775L18062,6775">
+                                            <GeometryDrawing.Pen>
+                                                <Pen Brush="{StaticResource Fore}" Thickness="80" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+                                        <GeometryDrawing Brush="{StaticResource Fore}" Geometry="F1M18062,6670L18336,6775 18062,6880z"/>
+
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+                    <Image  >
+                        <Image.Source>
+                            <DrawingImage>
+                                <DrawingImage.Drawing>
+                                    <DrawingGroup>
+                                        <GeometryDrawing Brush="{StaticResource Fore}" Geometry="F1M13830,7085L14041,7191 13830,7296z"/>
+                                        <GeometryDrawing Brush="{StaticResource Fore}" Geometry="F1M13830,6586L14041,6691 13830,6797z"/>
+                                        <GeometryDrawing Geometry="F1M12422,7266L12479,7264 12536,7262 12592,7257 12647,7250 12701,7239 12753,7224 12802,7203 12850,7177 12896,7148 12940,7114 12984,7078 13027,7040 13069,7000 13111,6960 13153,6919 13195,6880 13238,6842 13282,6806 13327,6773 13374,6744 13422,6719 13472,6699 13499,6691 13579,6676 13635,6671 13692,6669 13747,6669 13803,6669 13858,6670 M12422,6616L12479,6618 12536,6620 12592,6624 12647,6631 12701,6642 12753,6658 12802,6679 12850,6704 12896,6734 12940,6768 12984,6804 13027,6842 13069,6882 13111,6922 13153,6962 13195,7002 13238,7040 13282,7076 13327,7108 13374,7138 13422,7163 13472,7183 13499,7191 13579,7206 13635,7210 13692,7212 13747,7213 13803,7213 13858,7212">
+                                            <GeometryDrawing.Pen>
+                                                <Pen Brush="{StaticResource Fore}" Thickness="80" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1"/>
+                                            </GeometryDrawing.Pen>
+                                        </GeometryDrawing>
+
+                                    </DrawingGroup>
+                                </DrawingImage.Drawing>
+                            </DrawingImage>
+                        </Image.Source>
+                    </Image>
+
+                </controls1:CycleTypeButton>
+                <!--<controls1:VolumnButton  Grid.Column=" 2"  
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        Volumn="{Binding Volumn}">
+                    <StackPanel  Background="Transparent" Orientation="Horizontal">
+                        <Path   Width=" 10" Height=" 15"   Data="M0,75 L0,100 L25,100 l25,25 l0,-100 l-25,25 l-25,0 l0,25">
+                            <Path.Stroke>
+                                <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                            </Path.Stroke>
+                        </Path>
+                        <Canvas   Width=" 15" >
+                            <Canvas.Resources>
+                                <Style TargetType="ed:Arc">
+                                    <Setter Property="RenderTransformOrigin" Value=" 0.5,0.5"/>
+                                    <Setter Property="RenderTransform" >
+                                        <Setter.Value >
+                                            <TransformGroup>
+                                                <ScaleTransform/>
+                                                <SkewTransform/>
+                                                <RotateTransform Angle="45"/>
+                                                <TranslateTransform/>
+                                            </TransformGroup>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Stroke">
+                                        <Setter.Value >
+                                            <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="StrokeThickness" Value=" 2"/>
+                                </Style>
+                            </Canvas.Resources>
+                            <Canvas.Visibility>
+                                <Binding Converter="{x:Static converter:ValueConverterFactory.Double2VisibilityConverter}" Path="Volumn" RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type controls1:VolumnButton}}"/>
+                            </Canvas.Visibility>
+                            <ed:Arc   Height="7.5"  Width="7.5"     Margin="0,3.5"  />
+                            <ed:Arc   Height="15"   Width="15"    />
+                        </Canvas>
+                    </StackPanel>
+                    <controls1:VolumnButton.Background>
+                        <SolidColorBrush Color="{StaticResource MenuBackGround}"/>
+                    </controls1:VolumnButton.Background>
+                </controls1:VolumnButton>-->
+                <ToggleButton Grid.Column="2" x:Name="TgVolumn" BorderThickness="0" Background="Transparent" >
+                    <Grid  >
+                        <StackPanel  Background="Transparent" Orientation="Horizontal"  HorizontalAlignment="Center">
+                            <Path   Width=" 10" Height=" 15"   Data="M0,75 L0,100 L25,100 l25,25 l0,-100 l-25,25 l-25,0 l0,25">
+                                <Path.Stroke>
+                                    <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                </Path.Stroke>
+                            </Path>
+                            <Grid>
+                                <Canvas   Width=" 15"  VerticalAlignment="Center" Margin="0,0,0,16">
+                                    <Canvas.Resources>
+                                        <Style TargetType="ed:Arc">
+                                            <Setter Property="RenderTransformOrigin" Value=" 0.5,0.5"/>
+                                            <Setter Property="RenderTransform" >
+                                                <Setter.Value >
+                                                    <TransformGroup>
+                                                        <ScaleTransform/>
+                                                        <SkewTransform/>
+                                                        <RotateTransform Angle="45"/>
+                                                        <TranslateTransform/>
+                                                    </TransformGroup>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Stroke">
+                                                <Setter.Value >
+                                                    <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="StrokeThickness" Value=" 2"/>
+                                        </Style>
+                                    </Canvas.Resources>
+                                    <Canvas.Visibility>
+                                        <Binding Converter="{x:Static converter:ValueConverterFactory.Double2VisibilityConverter}" Path="Value" ElementName="volumnSlider"/>
+                                    </Canvas.Visibility>
+                                    <ed:Arc   Height="7.5"  Width="7.5"     Margin="0,3.5"  />
+                                    <ed:Arc   Height="15"   Width="15"    />
+                                </Canvas>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                </ToggleButton>
+
+                <Popup Placement="Top"  
+                               PlacementTarget="{Binding ElementName=TgVolumn}"
+                               HorizontalOffset=" -30" 
+                               VerticalOffset="-2" 
+                               StaysOpen="False" 
+                       IsOpen="{Binding ElementName=TgVolumn ,Path=IsChecked}"
+                       Grid.Column="2">
+                    <Grid   Height="20" >
+                        <Slider x:Name="volumnSlider" Width="80" Margin="10,0"  Value="{Binding Volumn}" Maximum="100"/>
+                    </Grid>
+
+                </Popup>
+                <ToggleButton     Grid.Column=" 3" Background="Transparent" BorderThickness="0"
+                              HorizontalAlignment="Stretch"
+                               IsChecked="{Binding IsExpandCurrentPlayList}">
+                    <StackPanel Orientation="Horizontal"   >
+                        <Border Background="Transparent"    Width="15">
+                            <Path  
+                                   StrokeThickness="1"
+                                 
+                                  Data="M1,1 L51,1 M21,21 L1,31.000001 L1,11 z M21,21 L51,21 M1,41 L51,41"
+                                  Stretch="Uniform" >
+                                <Path.Fill>
+                                    <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                </Path.Fill>
+                                <Path.Stroke>
+                                    <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                </Path.Stroke>
+                            </Path>
+                        </Border>
+                        <Grid>
+                            <Border     CornerRadius=" 5"   >
+                                <Border.Background>
+                                    <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                </Border.Background>
+                                <TextBlock  Text ="{Binding CurrentPlayList.Count,Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                            </Border>
+
+                        </Grid>
+                    </StackPanel>
+                </ToggleButton>
+
+            </Grid>
+        </Grid>
+        <controls:MenuPartControl   
+                               Style="{StaticResource defaultStyle}"   
+                               SysListCommand="{Binding SysListCommand}"
+            CreatedTracks="{Binding CreatedTracks}"   
+            MyMusicCommand="{Binding MyMusicCommand}"
+                                />
+        <Grid>
+            <ContentControl x:Name="MainRegion"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                            prism:RegionManager.RegionName="MainRegion"
+                            Background="#FFFAFAFC" />
+            <Grid Width="400" Height=" 250" 
+                  HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="1"
+                  Visibility="{Binding IsExpandCurrentPlayList,Converter={x:Static converter:ValueConverterFactory.Boolean2VisibilityConverter}}" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition  />
+                </Grid.RowDefinitions>
+                <Grid.Resources>
+                    <!--<Style TargetType="TextBlock" BasedOn="{StaticResource DarkBottomTextBoxStyle}">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Foreground">
+                                    <Setter.Value >
+                                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>-->
+                    <Style TargetType="Path" >
+                        <Setter Property="Width" Value=" 20"/>
+                        <Setter Property="Stretch" Value="Uniform"/>
+                        <Setter Property="Stroke" >
+                            <Setter.Value >
+                                <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource EmptyButtonWithFocusStyle}"/>
+                </Grid.Resources>
+                <DockPanel    Background="White">
+                    <Path DockPanel.Dock="Right" />
+                    <Button DockPanel.Dock="Right" VerticalAlignment="Center"  Command="{Binding ClosePopupCommand}">
+                        <Canvas Width="10" Height="10" >
+                            <Canvas.Resources>
+                                <Style TargetType="Path" >
+                                    <Setter Property="StrokeThickness" Value=" 1.2"/>
+                                    <Setter Property="Stroke">
+                                        <Setter.Value >
+                                            <Binding RelativeSource="{RelativeSource AncestorLevel=1,AncestorType=Button}" Path="Foreground"/>
+                                        </Setter.Value>
+                                    </Setter>
+
+                                </Style>
+                            </Canvas.Resources>
+                            <Path   Data="M0,0 L10,10 M0,10 L10,0"/>
+                        </Canvas>
+                    </Button>
+                    <Path DockPanel.Dock="Right" />
+
+                    <Button  DockPanel.Dock="Right"   Command="{Binding ClearCurrentPlayListCommand}" >
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="清空"/>
+                        </StackPanel>
+                    </Button>
+                    <Path DockPanel.Dock="Right" />
+
+                    <Rectangle SnapsToDevicePixels="True" Width=" 1"   DockPanel.Dock="Right" Height=" 15">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="{StaticResource  WindowForeGrayColor}"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Path DockPanel.Dock="Right" />
+
+                    <Button DockPanel.Dock="Right"  >
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="收藏全部"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock Width=" 20"/>
+                    <TextBlock Text="播放列表" FontSize=" 15"  Style="{StaticResource DarkBottomTextBoxStyle}" VerticalAlignment="Center" />
+                </DockPanel>
+                <ListBox ItemsSource="{Binding CurrentPlayList}"  
+                         SelectedItem="{Binding CurrentPlayMusic}" 
+                         Grid.Row="1" 
+                         BorderThickness="0.5"
+                         SnapsToDevicePixels="True" AlternationCount="2">
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultTwoColorListBoxItemStyle}"/>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <DockPanel 
+                                Height="30"   >
+                                    <DockPanel.Resources>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource GrayTopTextBoxStyle}">
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                            <Setter Property="DockPanel.Dock" Value="Right"/>
+                                        </Style>
+                                    </DockPanel.Resources>
+                                    <TextBlock    Width="80"  x:Name="txtForBinding">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{x:Static converter:MultiValueConverterFactory.TimeSpan2TextConverter}">
+                                                <Binding Path="Duration"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock  Text="{Binding ArtistName}"  Width=" 110" Foreground="{Binding ElementName=txtForBinding ,Path=Foreground}"/>
+                                    <TextBlock  Text="{Binding Name}"   Foreground="{Binding ElementName=txtForBinding ,Path=Foreground}"   Width=" 190" Style="{StaticResource DarkBottomTextBoxStyle}" VerticalAlignment="Center" TextTrimming="WordEllipsis" DockPanel.Dock="Right"  />
+                                    <Grid  Width=" 20"  x:Name="playSymbolPart" Visibility="Hidden">
+                                        <ed:RegularPolygon  Width="8" 
+                                                        PointCount=" 3" 
+                                                        RenderTransformOrigin="0.5,0.5" Height=" 8"
+                                                         >
+                                            <ed:RegularPolygon.Fill>
+                                                <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                            </ed:RegularPolygon.Fill>
+                                            <ed:RegularPolygon.RenderTransform>
+                                                <TransformGroup>
+                                                    <RotateTransform Angle="90"/>
+                                                </TransformGroup>
+                                            </ed:RegularPolygon.RenderTransform>
+                                        </ed:RegularPolygon>
+                                    </Grid>
+                                </DockPanel>
+                                <!--<DockPanel
+                                Height="30"   Visibility="{Binding IsSelected,RelativeSource={RelativeSource AncestorLevel=1,AncestorType=ListBoxItem},Converter={x:Static converter:ValueConverterFactory.Boolean2VisibilityConverter} }">
+                                    <DockPanel.Resources>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource GrayTopTextBoxStyle}">
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                            <Setter Property="DockPanel.Dock" Value="Right"/>
+                                            <Setter Property="Foreground">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DockPanel.Resources>
+                                    <TextBlock  Text="{Binding Duration}"     Width="80"  />
+                                    <TextBlock  Text="{Binding ArtistName}"  Width=" 110"/>
+                                    <TextBlock  Text="{Binding Name}"      Width=" 190" Style="{StaticResource DarkBottomTextBoxStyle}" VerticalAlignment="Center" TextTrimming="WordEllipsis" DockPanel.Dock="Right"  >
+                                        <TextBlock.Foreground>
+                                            <SolidColorBrush Color="{StaticResource  WindowTitleColor}"/>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+
+                                    <Grid  Width=" 20">
+                                        <ed:RegularPolygon  Width="8" 
+                                                        PointCount=" 3" 
+                                                        RenderTransformOrigin="0.5,0.5" Height=" 8"
+                                                         >
+                                            <ed:RegularPolygon.Fill>
+                                                <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                            </ed:RegularPolygon.Fill>
+                                            <ed:RegularPolygon.RenderTransform>
+                                                <TransformGroup>
+                                                    <RotateTransform Angle="90"/>
+                                                </TransformGroup>
+                                            </ed:RegularPolygon.RenderTransform>
+                                        </ed:RegularPolygon>
+                                    </Grid>
+
+                                </DockPanel>-->
+                            </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsSelected,RelativeSource={RelativeSource AncestorLevel=1,AncestorType=ListBoxItem} }" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" TargetName="playSymbolPart"/>
+                                    <Setter Property="Foreground" TargetName="txtForBinding">
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <i:Interaction.Behaviors>
+                        <be:AutoScrollBehavior/>
+                    </i:Interaction.Behaviors>
+                </ListBox>
+
+            </Grid>
+        </Grid>
+
+    </DockPanel>
+</Window>
+
+
+

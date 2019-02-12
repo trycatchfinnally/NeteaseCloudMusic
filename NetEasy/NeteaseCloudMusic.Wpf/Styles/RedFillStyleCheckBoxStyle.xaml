@@ -1,0 +1,38 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter">
+    <Style TargetType="CheckBox" x:Key="RedFillStyleCheckBoxStyle">
+        <Setter Property="Template" >
+            <Setter.Value >
+                <ControlTemplate TargetType="CheckBox">
+                    <Grid  Width=" 10" Height=" 10" Background="Transparent" >
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Unchecked"/>
+                                <VisualState x:Name="Checked">
+                                    <Storyboard >
+                                        <ColorAnimation   Duration="0" To="Red"
+                                                        Storyboard.TargetName="BackRec" 
+                                                        Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"/>
+                                     
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Rectangle StrokeThickness="0.8" Stroke="{TemplateBinding Foreground}" x:Name="BackRec"
+                                   Width=" 10" Height=" 10" SnapsToDevicePixels="True" Fill="Transparent" />
+                        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                            <Path 
+                                Stroke="{TemplateBinding Foreground}" StrokeThickness="1.8" Opacity=" 0.8"
+                                Visibility="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent },Converter={x:Static converter:ValueConverterFactory.Boolean2VisibilityConverter} }"
+                                Stretch="Uniform"  
+                                Data="M0,6 L3,8 L8,1"
+                                SnapsToDevicePixels="True" />
+                        </Canvas>
+                    </Grid>
+                 
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

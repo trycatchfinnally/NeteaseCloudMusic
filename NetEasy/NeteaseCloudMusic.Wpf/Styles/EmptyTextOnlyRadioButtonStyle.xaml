@@ -1,0 +1,26 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    >
+    <Style TargetType="RadioButton" x:Key="EmptyTextOnlyRadioButtonStyle">
+        <Setter Property="FontFamily" Value="{StaticResource WindowMainFont}"/>
+        <Setter Property="FontSize" Value="{StaticResource WindowMainFontSize}"/>
+        <Setter Property="Foreground">
+            <Setter.Value >
+                <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template" >
+            <Setter.Value >
+                <ControlTemplate TargetType="RadioButton">
+                    <Grid >
+                        <TextBlock Text="{TemplateBinding Content}"   
+                                   VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}"
+                                   FontSize="{TemplateBinding FontSize}"
+                                   FontFamily="{TemplateBinding FontFamily}"/>
+                    </Grid>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -1,0 +1,127 @@
+﻿<ContentControl x:Class="NeteaseCloudMusic.Wpf.View.IndirectView.TopArtistsBillBoardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View.IndirectView"
+                 xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
+             mc:Ignorable="d" 
+                 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+xmlns:prism="http://www.codeplex.com/prism"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin=" 10,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.Resources>
+            <Style TargetType="TextBlock" x:Key="txtIndexStyle" BasedOn="{StaticResource GrayTopTextBoxStyle}" >
+                
+                    <Setter Property="VerticalAlignment"  Value="Center"/>
+                    <Setter Property="Margin" Value="10,0"/>
+                    <Style.Triggers>
+                        <Trigger Property="Text" Value="01">
+                            <Setter Property="Foreground">
+                                <Setter.Value >
+                                    <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="Text" Value="02">
+                            <Setter Property="Foreground">
+                                <Setter.Value >
+                                    <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="Text" Value="03">
+                            <Setter Property="Foreground">
+                                <Setter.Value >
+                                    <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+               
+            </Style>
+            <Style TargetType="ListBox">
+                <Setter Property="AlternationCount" Value=" 2"/>
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value=" 0"/>
+                <Setter Property="Margin" Value="0,5"/>
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value >
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultTwoColorListBoxItemStyle}"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="ItemTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <DockPanel Margin="0,10">
+                                <TextBlock DockPanel.Dock="Right" Margin="0,0,120,0" Style="{StaticResource GrayTopTextBoxStyle}" VerticalAlignment="Center" Text="{Binding HotScore,StringFormat=热度： {0}}"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Style="{StaticResource txtIndexStyle}">
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{x:Static converter:MultiValueConverterFactory.IndexOfCollectionConverter}">
+                                                <Binding/>
+                                                <Binding RelativeSource="{RelativeSource AncestorLevel=1,AncestorType=ListBox}" Path="ItemsSource"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                    <TextBlock Style="{StaticResource GrayTopTextBoxStyle }" VerticalAlignment="Center" Text="-"/>
+                                    <Image Margin="10,0" Stretch="Uniform" Source="{Binding PicUrl}" Width="60"/>
+                                    <TextBlock Style="{StaticResource DarkBottomTextBoxStyle }" VerticalAlignment="Center" Text="{Binding Name}"/>
+                                </StackPanel>
+                            </DockPanel>
+                            
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Right" Text="{Binding LastUpdateDate, StringFormat=最近更新：{0:M}}" Style="{StaticResource ViewTitleTextBoxStyle}" Margin="10,0"/>
+            <TextBlock Text="云音乐歌手榜" Style="{StaticResource ViewTitleTextBoxStyle}"/>
+        </DockPanel>
+        <TabControl Grid.Row="1" Style="{StaticResource TabControlStyle}">
+            <TabItem Header="华语">
+                <ListBox ItemsSource="{Binding ChineseArtists}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding SelectedCommand}" TriggerParameterPath="Source.SelectedItem" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+            </TabItem>
+            <TabItem Header="欧美">
+                <ListBox ItemsSource="{Binding EruoArtists}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding SelectedCommand}" TriggerParameterPath="Source.SelectedItem" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+
+            </TabItem>
+            <TabItem Header="韩国">
+                <ListBox ItemsSource="{Binding KoreaArtists}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding SelectedCommand}" TriggerParameterPath="Source.SelectedItem" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+
+            </TabItem>
+            <TabItem Header="日本">
+                <ListBox ItemsSource="{Binding JapanArtists}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding SelectedCommand}" TriggerParameterPath="Source.SelectedItem" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</ContentControl>

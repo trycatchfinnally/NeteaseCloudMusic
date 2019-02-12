@@ -1,0 +1,88 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    >
+    <Style TargetType="TabControl" x:Key="TabControlStyle">
+        <Setter Property="Template" >
+            <Setter.Value >
+                <ControlTemplate TargetType="TabControl">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <!--标题部分-->
+                            <RowDefinition Height="30"/>
+                            <!--横线部分--><!--
+                            <RowDefinition  Height="3"/>-->
+                            <!--内容部分-->
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border  Grid.Row="1" 
+                                 KeyboardNavigation.TabNavigation="Local"
+                                 KeyboardNavigation.DirectionalNavigation="Contained"
+                                 KeyboardNavigation.TabIndex="2">
+                            <ContentPresenter x:Name="PART_SelectedContentHost"  ContentSource="SelectedContent"/>
+                        </Border>
+                        <Rectangle Grid.Row="0" Height=" 1"  Margin=" 0,15,0,0" StrokeThickness="0" Opacity=" 0.8">
+                            <Rectangle.Fill >
+                                <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                            </Rectangle.Fill>
+                        </Rectangle>
+                        <TabPanel  Grid.Row="0" x:Name="HeaderPanel" IsItemsHost="True"  Panel.ZIndex="1"  KeyboardNavigation.TabIndex="1"/>
+                        
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="TabItem"   >
+                    <Setter Property="FontFamily" Value="{StaticResource WindowMainFont }"/>
+                    <Setter Property="FontSize" Value="{StaticResource WindowMainFontSize}"/>
+
+                    <Setter Property="Foreground" >
+                        <Setter.Value >
+                            <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Template" >
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Grid x:Name="root">
+                                    <Border BorderThickness=" 1" ></Border>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="3"/>
+                                        </Grid.RowDefinitions>
+                                        <ContentPresenter x:Name="ContentSite"  
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Center"
+                                          ContentSource="Header"
+                                          Margin="10,2"
+                                          RecognizesAccessKey="True" />
+
+
+                                        <Rectangle x:Name="symbol"   Fill="Red"   Grid.Row=" 1" Visibility="Collapsed"
+                                       Width="{TemplateBinding Width}"  
+                                       />
+
+                                    </Grid>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected"
+                                 Value="True">
+                                        <Setter Property="Foreground">
+                                            <Setter.Value >
+                                                <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Visibility"  TargetName="symbol" Value="Visible"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+  
+</ResourceDictionary>

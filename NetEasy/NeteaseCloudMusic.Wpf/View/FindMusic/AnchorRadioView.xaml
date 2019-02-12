@@ -1,0 +1,167 @@
+﻿<ContentControl xmlns:controls="clr-namespace:NeteaseCloudMusic.Controls;assembly=NeteaseCloudMusic.Controls"  x:Class="NeteaseCloudMusic.Wpf.View.AnchorRadioView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View"
+             xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            </Style>
+            <Style TargetType="Path">
+                <Setter Property="Height" Value=" 20"/>
+                <Setter Property="Stretch" Value="Uniform"/>
+                <Setter Property="StrokeThickness" Value=" 1.2"/>
+                <Setter Property="Stroke" >
+                    <Setter.Value >
+                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="Rectangle" BasedOn="{StaticResource HorizontalDecorationRectangleStyle}">
+                <Setter Property="Margin" Value="1,0"/>
+            </Style>
+            <Style TargetType="ListBox" BasedOn="{StaticResource UniformGridContainerListBoxStyle}">
+                <Setter Property="Margin" Value=" 0,10"/>
+            </Style>
+        </Grid.Resources>
+        <ScrollViewer >
+            <StackPanel >
+                <ListBox   ItemsSource="{Binding AnchorRadioCatalogues}" AlternationCount=" 9">
+                    <ListBox.Template>
+                        <ControlTemplate TargetType="ListBox">
+                            <WrapPanel IsItemsHost="True" HorizontalAlignment="Center"/>
+                        </ControlTemplate>
+                    </ListBox.Template>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate  >
+                            <Grid    Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="20"/>
+                                </Grid.RowDefinitions>
+                                <Image  Stretch="Uniform"  MaxWidth="30"  Source="{Binding PicUrl}"/>
+                                <Grid  Grid.Row=" 1"  >
+                                    <TextBlock Text="{Binding Name}"  
+                                               HorizontalAlignment="Center"  
+                                               Style="{StaticResource GrayTopTextBoxStyle}"/>
+
+
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Orientation="Horizontal" Height=" 30">
+                    <Path  Data="M29.5,15 C29.5,23.008129 23.008129,29.5 15,29.5 C6.9918711,29.5 0.5,23.008129 0.5,15 C0.5,6.9918711 6.9918711,0.5 15,0.5 C23.008129,0.5 29.5,6.9918711 29.5,15 z M22,15 C22,18.865993 18.865993,22 15,22 C11.134007,22 8,18.865993 8,15 C8,11.134007 11.134007,8 15,8 C18.865993,8 22,11.134007 22,15 z M18.75,9 L18.75,1"  />
+                    <TextBlock Text="精彩节目推荐" Style="{StaticResource DarkBottomTextBoxStyle}" VerticalAlignment ="Center" Margin="5,0"/>
+                </StackPanel>
+                <Rectangle />
+                <ListBox
+                    ItemsSource="{Binding WonderfulRadioRecommends}"  AlternationCount="2">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate  >
+                            <DockPanel   Height=" 60">
+                                <Image  Stretch="Uniform"   Margin="5" Source="{Binding PicUrl}"/>
+                                <UniformGrid   Columns=" 1">
+                                    <TextBlock Text="{Binding Name}"  HorizontalAlignment="Left"  VerticalAlignment="Center"  Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                                    <TextBlock Text="{Binding Reason}"  HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource GrayTopTextBoxStyle}" />
+                                </UniformGrid>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Orientation="Horizontal" Height=" 30">
+                    <Path Width=" 20" Data="F1M24830,6009L24807,6051 24787,6095 24769,6139 24754,6185 24741,6231 24731,6278 24723,6326 24718,6373 24715,6421 24715,6469 24718,6517 24724,6565 24732,6613 24742,6660 24755,6706 24771,6751 24789,6796 24809,6839 24832,6882 M26353,6880L26376,6837 26396,6793 26414,6748 26430,6703 26443,6656 26453,6609 26461,6561 26466,6513 26469,6465 26469,6416 26466,6368 26460,6320 26452,6272 26442,6225 26428,6179 26413,6133 26394,6088 26373,6045 26350,6002 M25126,6178L25109,6211 25094,6245 25081,6280 25071,6316 25064,6352 25059,6389 25056,6426 25056,6463 25059,6500 25064,6537 25072,6573 25082,6609 25095,6644 25110,6678 25127,6711 M26057,6711L26074,6677 26089,6643 26102,6608 26112,6572 26120,6535 26125,6498 26128,6460 26128,6423 26125,6385 26120,6348 26112,6311 26101,6275 26088,6240 26073,6206 26055,6173 M25871,6425L25870,6400 25866,6375 25860,6351 25851,6328 25840,6305 25827,6284 25812,6264 25795,6245 25776,6229 25756,6214 25735,6202 25712,6191 25688,6183 25664,6178 25639,6175 25614,6174 25589,6176 25564,6180 25540,6187 25517,6196 25495,6208 25473,6221 25454,6237 25436,6254 25420,6273 25406,6294 25394,6316 25384,6339 25377,6363 25372,6388 25369,6412 25369,6438 25372,6462 25377,6487 25384,6511 25394,6534 25406,6556 25420,6577 25436,6596 25454,6613 25473,6629 25495,6642 25517,6654 25540,6663 25564,6670 25589,6674 25614,6676 25639,6675 25664,6672 25688,6667 25712,6659 25735,6648 25756,6636 25776,6621 25795,6605 25812,6586 25827,6566 25840,6545 25851,6522 25860,6499 25866,6475 25870,6450z " />
+                    <TextBlock Text="精选电台-订阅更精彩" Style="{StaticResource DarkBottomTextBoxStyle}" VerticalAlignment ="Center" Margin="5,0"/>
+                </StackPanel>
+                <Rectangle/>
+                <ListBox AlternationCount="6" ItemsSource="{Binding RadioList}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate  >
+                            <Grid  Height=" 120"   Margin="10,10,10,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="20"/>
+                                </Grid.RowDefinitions>
+                                <Image  Stretch="UniformToFill"    >
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding Picture, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/DefaultUserImage.png}" ></BitmapImage>
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource DarkBottomTextBoxStyle}"
+                                           Grid.Row=" 1" HorizontalAlignment="Center" />
+                                
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <StackPanel Orientation="Horizontal" Height=" 30">
+                    <Path Width=" 20" Data="F1M18479,2604L18419,2663 18360,2723 18303,2784 18248,2848 18195,2913 18144,2980 18095,3048 18047,3117 18002,3188 17960,3260 17919,3334 17880,3409 17844,3485 17810,3561 17779,3639 17750,3718 17723,3798 17698,3878 17676,3959 17656,4041 17639,4123 17624,4206 17612,4289 17602,4373 17595,4456 17590,4540 17588,4624 17588,4708 17591,4792 17597,4876 17604,4960 17615,5043 17627,5126 M17082,4669L17047,4721 17014,4775 16984,4829 16955,4885 16929,4942 16905,5001 16883,5059 16864,5119 16847,5180 16833,5241 16821,5302 16811,5365 16804,5427 16799,5490 16797,5552 16797,5615 16800,5678 16806,5740 16813,5803 16824,5865 16836,5926 16851,5987 16869,6048 16889,6107 16911,6166 16935,6224 16962,6280 16991,6336 17022,6391 17056,6444 17091,6496 17128,6546 17168,6595 17209,6642 17252,6688 17297,6732 17344,6774 17392,6814 17442,6852 17493,6889 17546,6923 17600,6955 17655,6985 17711,7012 17769,7038 17827,7061 17886,7082 17946,7100 18007,7116 18068,7130 18130,7141 18192,7150 18255,7156 18317,7160 18380,7161 18443,7160 18505,7156 18568,7150 18630,7141 18692,7130 18753,7117 18814,7101 18874,7082 18933,7062 18991,7039 19049,7013 19105,6986 19160,6956 19214,6924 19267,6890 19319,6854 19368,6815 19417,6775 19463,6733 19508,6689 19551,6644 19593,6597 19632,6548 19670,6497 19705,6446 19739,6392 19770,6338 19799,6282 19826,6226 19850,6168 19873,6109 19893,6050 19910,5989 19925,5928 19938,5867 19948,5805 19956,5743 19962,5680 19964,5617 19965,5554 19963,5492 19958,5429 19951,5367 19942,5305 19930,5243 19915,5182 19898,5121 19879,5061 19858,5002 19834,4944 19808,4887 19779,4831 19749,4776 19716,4723 19681,4671 19644,4620 M19639,3101L19585,3146 19532,3193 19482,3241 19432,3292 19385,3344 19340,3398 19296,3453 19255,3510 19215,3568 19178,3628 19143,3689 19109,3751 19079,3814 19050,3878 19023,3944 18999,4010 18978,4077 18958,4145 18941,4213 18927,4282 18915,4351 18905,4421 18898,4491 18893,4561 18891,4632 18891,4702 18894,4772 18899,4843 18907,4913 18917,4982 18930,5052 18945,5120 M17082,4669L17094,4707 17108,4744 17125,4780 17144,4815 17165,4849 17188,4881 17213,4912 17240,4941 17269,4968 17299,4994 17331,5017 17365,5039 17400,5058 17435,5075 17472,5090 17510,5103 17548,5113 17588,5121 17627,5126 M18479,2604L18453,2679 18429,2754 18408,2830 18389,2907 18373,2984 18358,3062 18347,3140 18338,3218 18331,3297 18327,3376 18325,3455 18326,3534 18329,3613 18335,3692 18343,3770 18354,3848 18367,3926 18382,4004 18401,4081 18421,4157 18444,4233 18469,4307 18497,4381 18526,4455 18559,4527 18593,4598 18630,4668 18668,4736 18709,4804 18753,4870 18798,4935 18845,4998 18894,5060 18945,5120 M19639,3101L19624,3218 19611,3334 19600,3451 19592,3568 19587,3685 19585,3802 19586,3919 19589,4037 19595,4154 19603,4271 19614,4388 19628,4504 19645,4620" />
+                    <TextBlock Text="热门电台" Style="{StaticResource DarkBottomTextBoxStyle}" VerticalAlignment ="Center" Margin="5,0"/>
+                </StackPanel>
+                <Rectangle/>
+                <ListBox ItemsSource="{Binding HotRadioList}" AlternationCount="6">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate  >
+                            <Grid  Height=" 120"   Margin="10,10,10,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition Height="20"/>
+                                </Grid.RowDefinitions>
+                                <Image  Stretch="UniformToFill"    >
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding Picture, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/DefaultUserImage.png}" ></BitmapImage>
+                                    </Image.Source>
+                                </Image>
+                                <Grid  HorizontalAlignment="Right"  VerticalAlignment="Top"  
+                                      Height="15" Grid.Row=" 0" >
+                                    <Border Opacity=" 0.6">
+                                        <Border.Background>
+                                            <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                                                <GradientStop Color="{StaticResource WindowBackColor }" Offset="0"/>
+                                                <GradientStop Color="{StaticResource WindowForeDarkColor}" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                    </Border>
+                                    <DockPanel>
+                                        <Image  Width=" 12" Stretch="Uniform">
+                                            <Image.Source>
+                                                <DrawingImage>
+                                                    <DrawingImage.Drawing>
+                                                        <DrawingGroup>
+                                                            <GeometryDrawing Geometry="F1M14528,5443L15045,5431 15193,4935 15364,5423 15881,5411 15470,5725 15642,6213 15216,5919 14805,6233 14953,5737z">
+                                                                <GeometryDrawing.Pen>
+                                                                    <Pen Thickness="80" StartLineCap="Round" EndLineCap="Round" DashCap="Flat" LineJoin="Round" MiterLimit="1">
+                                                                        <Pen.Brush>
+                                                                            <SolidColorBrush Color="White"/>
+                                                                        </Pen.Brush>
+                                                                    </Pen>
+                                                                </GeometryDrawing.Pen>
+                                                            </GeometryDrawing>
+
+                                                        </DrawingGroup>
+                                                    </DrawingImage.Drawing>
+                                                </DrawingImage>
+                                            </Image.Source>
+                                        </Image>
+                                        <TextBlock  Text  ="{Binding SubCount,Converter={x:Static converter:ValueConverterFactory.Int2FormatStringConverter} }"  
+                                                    VerticalAlignment="Center"  HorizontalAlignment="Right"  Margin="0,0,2,0"
+                                                   Style="{StaticResource DarkBottomTextBoxStyle}"
+                                                    Foreground="White"/>
+                                    </DockPanel>
+                                </Grid>
+                                <TextBlock Text="{Binding AnchorName}" Grid.Row="1" Style="{StaticResource DarkBottomTextBoxStyle}" VerticalAlignment="Top"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</ContentControl>

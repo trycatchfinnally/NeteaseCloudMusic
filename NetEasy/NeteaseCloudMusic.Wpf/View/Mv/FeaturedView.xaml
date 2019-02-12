@@ -1,0 +1,159 @@
+﻿<ContentControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
+             xmlns:controls="clr-namespace:NeteaseCloudMusic.Controls;assembly=NeteaseCloudMusic.Controls" x:Class="NeteaseCloudMusic.Wpf.View.FeaturedView" 
+    xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <ContentControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/NeteaseCloudMusic.Wpf;component/Styles/MoreButtonStyle.xaml"/>
+                <ResourceDictionary Source="/NeteaseCloudMusic.Wpf;component/Styles/EmptyTextOnlyRadioButtonStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentControl.Resources>
+    <ScrollViewer>
+        <StackPanel Margin=" 0,10">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type Path}" >
+                    <Setter Property="Width" Value=" 15"/>
+                    <Setter Property="Stretch" Value="Uniform"/>
+                    <Setter Property="Stroke">
+                        <Setter.Value >
+                            <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <Style TargetType="ListBox" BasedOn="{StaticResource UniformGridContainerListBoxStyle}">
+                    <Setter Property="ItemContainerStyle">
+                        <Setter.Value >
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="AlternationCount" Value=" 3"/>
+                    <Setter Property="ItemTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <Grid Margin=" 10,10,10,0" Height=" 140">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition Height=" 40"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid>
+                                        <Image Stretch="UniformToFill"  >
+                                            <Image.Source>
+                                                <BitmapImage UriSource="{Binding Picture, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/DefaultUserImage.png}"/>
+                                            </Image.Source>
+                                        </Image>
+                                        <Grid   HorizontalAlignment="Right"  VerticalAlignment="Top" Margin=" 0,2,2,0"
+                                        Height="15" Grid.Row=" 0" >
+                                            <Border Opacity=" 0.6">
+                                                <Border.Background>
+                                                    <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                                                        <GradientStop Color="{StaticResource WindowBackColor }" Offset="0"/>
+                                                        <GradientStop Color="{StaticResource WindowForeDarkColor}" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+
+                                            </Border>
+                                            <DockPanel>
+                                                <!--<Image  Width=" 12"  Source="/NeteaseCloudMusic.Wpf;component/Assets/music_24px.ico"/>-->
+                                                <Path Data="F1M21459,2116L21417,2119 21375,2128 21335,2143 21297,2164 21263,2189 21233,2220 21207,2254 21186,2292 21171,2332 21162,2374 21159,2416 M21459,2116L25165,2116 M25465,2416L25462,2374 25453,2332 25438,2292 25418,2254 25392,2220 25362,2189 25328,2164 25290,2143 25250,2128 25208,2119 25165,2116 M25465,2416L25465,4262 M25165,4563L25208,4560 25250,4550 25290,4535 25328,4515 25362,4489 25392,4459 25418,4425 25438,4387 25453,4347 25462,4305 25465,4262 M25165,4563L21459,4563 M21159,4262L21162,4305 21171,4347 21186,4387 21207,4425 21233,4459 21263,4489 21297,4515 21335,4535 21375,4550 21417,4560 21459,4563 M21159,4262L21159,2416 M26601,2416L25465,3339 M25465,3339L26661,4262 M26601,2416L26661,4262 "
+                                                    Stroke="White"  Stretch="Uniform" 
+                                                    Margin="3"  >
+
+                                                </Path>
+                                                <TextBlock  Text  ="{Binding WatchCount,Converter={x:Static converter:ValueConverterFactory.Int2FormatStringConverter} }"  
+                                                    VerticalAlignment="Center"  HorizontalAlignment="Right"  Margin="0,0,2,0"
+                                                    Foreground="White"/>
+                                            </DockPanel>
+                                        </Grid>
+                                        <TextBlock Text="{Binding Description}" 
+                                           HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                                           Style="{StaticResource GrayTopTextBoxStyle}" Foreground="White" Margin="5"/>
+                                    </Grid>
+                                    <UniformGrid Columns="1" Grid.Row="1">
+                                        <TextBlock Text="{Binding ArtistName}"   Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                                        <TextBlock Text="{Binding Title}"   Style="{StaticResource GrayTopTextBoxStyle}"/>
+                                    </UniformGrid>
+                                </Grid>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </StackPanel.Resources>
+            <DockPanel >
+                <Path  Margin="2,2"  Data="F1M11515,7329L11501,7330 11487,7333 11473,7338 11460,7345 11449,7354 11438,7364 11430,7376 11423,7389 11418,7402 11415,7416 11414,7431 M11515,7329L12774,7329 M12876,7431L12874,7416 12871,7402 12866,7389 12859,7376 12851,7364 12840,7354 12829,7345 12816,7338 12802,7333 12788,7330 12774,7329 M12876,7431L12876,8058 M12774,8160L12788,8159 12802,8155 12816,8150 12829,8143 12840,8135 12851,8124 12859,8113 12866,8100 12871,8086 12874,8072 12876,8058 M12774,8160L11515,8160 M11414,8058L11415,8072 11418,8086 11423,8100 11430,8113 11438,8124 11449,8135 11460,8143 11473,8150 11487,8155 11501,8159 11515,8160 M11414,8058L11414,7431 M13261,7431L12876,7744 M12876,7744L13281,8058 M13261,7431L13281,8058 M12917,6916L12917,6895 12915,6875 12912,6854 12909,6834 12904,6814 12898,6794 12892,6774 12884,6755 12875,6737 12866,6718 12855,6700 12844,6683 12832,6667 12819,6651 12805,6635 12790,6621 12775,6607 12759,6594 12743,6582 12725,6570 12708,6560 12689,6550 12671,6542 12651,6534 12632,6527 12612,6522 12592,6517 12572,6513 12551,6511 12531,6509 12510,6509 12489,6509 12469,6511 12448,6513 12428,6517 12408,6522 12388,6527 12369,6534 12350,6542 12331,6550 12312,6560 12295,6570 12277,6582 12261,6594 12245,6607 12230,6621 12215,6635 12201,6651 12188,6667 12176,6683 12165,6700 12154,6718 12145,6737 12136,6755 12128,6774 12122,6794 12116,6814 12111,6834 12108,6854 12105,6875 12103,6895 12103,6916 12103,6937 12105,6957 12108,6978 12111,6998 12116,7018 12122,7038 12128,7057 12136,7077 12145,7095 12154,7114 12165,7131 12176,7149 12188,7165 12201,7181 12215,7197 12230,7211 12245,7225 12261,7238 12277,7250 12295,7262 12312,7272 12331,7282 12350,7290 12369,7298 12388,7305 12408,7310 12428,7315 12448,7319 12469,7321 12489,7323 12510,7323 12531,7323 12551,7321 12572,7319 12592,7315 12612,7310 12632,7305 12651,7298 12671,7290 12689,7282 12708,7272 12725,7262 12743,7250 12759,7238 12775,7225 12790,7211 12805,7197 12819,7181 12832,7165 12844,7149 12855,7131 12866,7114 12875,7095 12884,7077 12892,7057 12898,7038 12904,7018 12909,6998 12912,6978 12915,6957 12917,6937z M12109,6981L12109,6962 12107,6943 12105,6925 12101,6906 12096,6888 12091,6870 12084,6852 12077,6835 12069,6818 12059,6802 12049,6786 12038,6771 12026,6756 12014,6742 12001,6729 11987,6716 11972,6704 11957,6693 11941,6683 11924,6674 11907,6665 11890,6658 11872,6651 11854,6646 11836,6641 11818,6638 11799,6635 11780,6634 11761,6633 11743,6634 11724,6635 11705,6638 11687,6641 11668,6646 11650,6651 11633,6658 11615,6665 11599,6674 11582,6683 11566,6693 11551,6704 11536,6716 11522,6729 11509,6742 11496,6756 11485,6771 11474,6786 11464,6802 11454,6818 11446,6835 11438,6852 11432,6870 11426,6888 11422,6906 11418,6925 11416,6943 11414,6962 11414,6981 11414,7000 11416,7019 11418,7037 11422,7056 11426,7074 11432,7092 11438,7110 11446,7127 11454,7144 11464,7160 11474,7176 11485,7192 11496,7206 11509,7220 11522,7234 11536,7246 11551,7258 11566,7269 11582,7279 11599,7288 11615,7297 11633,7304 11650,7311 11668,7316 11687,7321 11705,7324 11724,7327 11743,7328 11761,7329 11780,7328 11799,7327 11818,7324 11836,7321 11854,7316 11872,7311 11890,7304 11907,7297 11924,7288 11941,7279 11957,7269 11972,7258 11987,7246 12001,7234 12014,7220 12026,7206 12038,7192 12049,7176 12059,7160 12069,7144 12077,7127 12084,7110 12091,7092 12096,7074 12101,7056 12105,7037 12107,7019 12109,7000z "/>
+                <Canvas Width=" 5"/>
+                <TextBlock Text="网易出品" Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                <Button Style="{StaticResource MoreButtonStyle}" Command="{Binding MoreCommand}" CommandParameter="1"/>
+            </DockPanel>
+            <ListBox    ItemsSource="{Binding NeteaseProduceds}"/>
+            <DockPanel  >
+                <Border  Width="15" BorderThickness="1" Margin="2,2">
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                    </Border.BorderBrush>
+                    <Border.Background>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <TextBlock Text="NEW">
+                                    <TextBlock.Foreground>
+                                        <SolidColorBrush Color="{StaticResource  WindowTitleColor}"/>
+                                    </TextBlock.Foreground>
+                                </TextBlock>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </Border.Background>
+                </Border>
+                <Canvas Width=" 5"/>
+                <TextBlock Text="最新MV" Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                <Canvas Width=" 30"/>
+                <UniformGrid Columns="5">
+                    <UniformGrid.Resources>
+                        <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource EmptyTextOnlyRadioButtonStyle}" >
+                            <Setter Property="FontSize" Value="{StaticResource WindowGrayFontSize}"/>
+                            <Setter Property="Margin" Value=" 3,0"/>
+                            <Style.Triggers>
+
+                                <MultiTrigger>
+                                    <MultiTrigger.Conditions>
+                                        <Condition Property="IsMouseOver" Value="True"/>
+                                        <Condition Property="IsChecked" Value="False"/>
+                                    </MultiTrigger.Conditions>
+                                    <Setter Property="Foreground"  >
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </MultiTrigger>
+                                <Trigger Property="IsChecked" Value="true">
+                                    <Setter Property="Foreground"  >
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+
+                            </Style.Triggers>
+                        </Style>
+                    </UniformGrid.Resources>
+                    <RadioButton  Content="内地" IsChecked="{Binding LanguageType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter=Chinese}"/>
+                    <RadioButton Content="港台" IsChecked="{Binding LanguageType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter=WanWan}"/>
+                    <RadioButton Content="欧美" IsChecked="{Binding LanguageType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter=America}"/>
+                    <RadioButton Content="韩国" IsChecked="{Binding LanguageType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter=Korea}"/>
+                    <RadioButton Content="日本" IsChecked="{Binding LanguageType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter=Japan}"/>
+                </UniformGrid>
+                <Button Style="{StaticResource MoreButtonStyle}" Command="{Binding MoreCommand}" CommandParameter="2"/>
+            </DockPanel>
+            <ListBox ItemsSource="{Binding NewMvs}"/>
+
+        </StackPanel>
+    </ScrollViewer>
+</ContentControl>

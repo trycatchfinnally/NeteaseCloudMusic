@@ -1,0 +1,71 @@
+﻿<start:PrismApplication x:Class="NeteaseCloudMusic.Wpf.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            
+              xmlns:start="clr-namespace:Prism.Unity;assembly=Prism.Unity.Wpf"
+                         
+              >
+    <Application.Resources>
+        <ResourceDictionary>
+            <!--<Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}"/>-->
+            <Style TargetType="TextBlock" x:Key="DarkBottomTextBoxStyle">
+                <Setter Property="FontFamily" Value="{StaticResource WindowMainFont}"/>
+                <Setter Property="FontSize" Value="{StaticResource WindowMainFontSize}"/>
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                <Setter Property="Foreground">
+                    <Setter.Value >
+                        <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Margin" Value="0,0.5"/>
+            </Style>
+            <Style TargetType="TextBlock" x:Key="GrayTopTextBoxStyle">
+                <Setter Property="FontFamily" Value="{StaticResource WindowMainFont}"/>
+                <Setter Property="FontSize" Value="{StaticResource WindowGrayFontSize}"/>
+                <Setter Property="VerticalAlignment"  Value="Top"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                <Setter Property="Foreground">
+                    <Setter.Value >
+                        <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Margin" Value="0,0.5"/>
+            </Style>
+            <Style TargetType="TextBlock" x:Key="ViewTitleTextBoxStyle" BasedOn="{StaticResource GrayTopTextBoxStyle}">
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                <Setter Property="FontSize" Value=" 8"/>
+            </Style>
+            <Style TargetType="ListBox" x:Key="UniformGridContainerListBoxStyle">
+                <Setter Property="ItemContainerStyle">
+                    <Setter.Value>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="BorderThickness" Value=" 0"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Template">
+                    <Setter.Value >
+                        <ControlTemplate TargetType="ListBox">
+                            <UniformGrid IsItemsHost="True" Columns="{TemplateBinding AlternationCount}"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ResourceDictionary/GlobalResource.xaml"/>
+                <ResourceDictionary Source="Styles/ListBoxItemDefaultStyle.xaml"/>
+                <ResourceDictionary Source="Styles/ScrollViewerStyle.xaml"/>
+                <ResourceDictionary Source="Styles/ButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/RedFillStyleCheckBoxStyle.xaml"/>
+                <ResourceDictionary Source="Styles/TabControlStyle.xaml"/>
+                <ResourceDictionary Source="Styles/EmptyTextOnlyRadioButtonStyle.xaml"/>
+                <ResourceDictionary Source="Styles/DecorationRectangleStyle.xaml"/>
+                <ResourceDictionary Source="Styles/EmptyToggleButtonStyle.xaml"/>
+                
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
+
+    </Application.Resources>
+</start:PrismApplication>

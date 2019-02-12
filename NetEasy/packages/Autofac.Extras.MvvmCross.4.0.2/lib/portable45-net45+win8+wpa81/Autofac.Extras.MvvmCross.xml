@@ -1,0 +1,448 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Autofac.Extras.MvvmCross</name>
+    </assembly>
+    <members>
+        <member name="T:Autofac.Extras.MvvmCross.AutofacMvxIocProvider">
+            <summary>
+            Inversion of control provider for the MvvmCross framework backed by Autofac.
+            </summary>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.#ctor(Autofac.IContainer,MvvmCross.Platform.IoC.IMvxPropertyInjectorOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Autofac.Extras.MvvmCross.AutofacMvxIocProvider"/> class.
+            </summary>
+            <param name="container">
+            The container from which dependencies should be resolved.
+            </param>
+            <param name="propertyInjectionOptions">propertyInjectionOptions</param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="container"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.#ctor(Autofac.IContainer,Autofac.Extras.MvvmCross.IAutofacPropertyInjectorOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Autofac.Extras.MvvmCross.AutofacMvxIocProvider"/> class.
+            </summary>
+            <param name="container">
+            The container from which dependencies should be resolved.
+            </param>
+            <param name="propertyInjectorOptions">
+            An <see cref="T:Autofac.Extras.MvvmCross.IAutofacPropertyInjectorOptions"/> that defines how property
+            injection should be handled.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="container"/> or <paramref name="propertyInjectorOptions" /> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.#ctor(Autofac.IContainer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Autofac.Extras.MvvmCross.AutofacMvxIocProvider"/> class.
+            </summary>
+            <param name="container">
+            The container from which dependencies should be resolved.
+            </param>
+        </member>
+        <member name="P:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.PropertyInjectionEnabled">
+            <summary>
+            Gets a value indicating whether if property injection is enabled.
+            </summary>
+        </member>
+        <member name="P:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.PropertyInjectionOptions">
+            <summary>
+            Gets the property injection options.
+            </summary>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.CallbackWhenRegistered``1(System.Action)">
+            <summary>
+            Registers an action to occur when a specific type is registered.
+            </summary>
+            <typeparam name="T">
+            The <see cref="T:System.Type"/> that should raise the callback when registered.
+            </typeparam>
+            <param name="action">
+            The <see cref="T:System.Action"/> to call when the specified type is registered.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="action"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.CallbackWhenRegistered(System.Type,System.Action)">
+            <summary>
+            Registers an action to occur when a specific type is registered.
+            </summary>
+            <param name="type">
+            The <see cref="T:System.Type"/> that should raise the callback when registered.
+            </param>
+            <param name="action">
+            The <see cref="T:System.Action"/> to call when the specified type is registered.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="type"/> or <paramref name="action"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.CanResolve``1">
+            <summary>
+            Determines whether an instance of a specified type can be resolved.
+            </summary>
+            <typeparam name="T">
+            The <see cref="T:System.Type"/> to check for resolution.
+            </typeparam>
+            <returns>
+            <see langword="true"/> if the instance can be resolved; <see langword="false"/> if not.
+            </returns>
+            <remarks>
+            <para>
+            Technically this implementation determines if the type <typeparamref name="T"/>
+            is registered with the Autofac container. This method returning
+            <see langword="true"/> does not guarantee that no exception will
+            be thrown if the type is resolved but there
+            are missing dependencies for constructing the instance.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.CanResolve(System.Type)">
+            <summary>
+            Determines whether an instance of a specified type can be resolved.
+            </summary>
+            <param name="type">
+            The <see cref="T:System.Type"/> to check for resolution.
+            </param>
+            <returns>
+            <see langword="true"/> if the instance can be resolved; <see langword="false"/> if not.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="type"/> is <see langword="null"/>.
+            </exception>
+            <remarks>
+            <para>
+            Technically this implementation determines if the <paramref name="type"/>
+            is registered with the Autofac container. This method returning
+            <see langword="true"/> does not guarantee that no exception will
+            be thrown if the <paramref name="type"/> is resolved but there
+            are missing dependencies for constructing the instance.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.Create``1">
+            <summary>
+            Resolves a service instance of a specified type.
+            </summary>
+            <typeparam name="T">
+            The <see cref="T:System.Type"/> of the service to resolve.
+            </typeparam>
+            <returns>
+            The resolved instance of type <typeparamref name="T"/>.
+            </returns>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.Create(System.Type)">
+            <summary>
+            Resolves a service instance of a specified type.
+            </summary>
+            <param name="type">
+            The <see cref="T:System.Type"/> of the service to resolve.
+            </param>
+            <returns>
+            The resolved instance of type <paramref name="type"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="type"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.GetSingleton``1">
+            <summary>
+            Resolves a singleton service instance of a specified type.
+            </summary>
+            <typeparam name="T">
+            The <see cref="T:System.Type"/> of the service to resolve.
+            </typeparam>
+            <returns>
+            The resolved singleton instance of type <typeparamref name="T"/>.
+            </returns>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.GetSingleton(System.Type)">
+            <summary>
+            Resolves a singleton service instance of a specified type.
+            </summary>
+            <param name="type">
+            The <see cref="T:System.Type"/> of the service to resolve.
+            </param>
+            <returns>
+            The resolved singleton instance of type <paramref name="type"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="type"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:Autofac.Core.DependencyResolutionException">
+            Thrown if the <paramref name="type"/> is not registered as a singleton.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.IoCConstruct``1">
+            <summary>
+            Resolves a service instance of a specified type.
+            </summary>
+            <typeparam name="T">
+            The <see cref="T:System.Type"/> of the service to resolve.
+            </typeparam>
+            <returns>
+            The resolved instance of type <typeparamref name="T"/>.
+            </returns>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.IoCConstruct(System.Type)">
+            <summary>
+            Resolves a service instance of a specified type.
+            </summary>
+            <param name="type">
+            The <see cref="T:System.Type"/> of the service to resolve.
+            </param>
+            <returns>
+            The resolved instance of type <paramref name="type"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="type"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.RegisterSingleton``1(``0)">
+            <summary>
+            Register an instance as a component.
+            </summary>
+            <typeparam name="TInterface">
+            The type of the instance. This may be an interface/service that
+            the instance implements.
+            </typeparam>
+            <param name="theObject">The instance to register.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="theObject"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.RegisterSingleton``1(System.Func{``0})">
+            <summary>
+            Register a delegate as a singleton component.
+            </summary>
+            <typeparam name="TInterface">
+            The type of the instance generated by the function. This may be an interface/service that
+            the instance implements.
+            </typeparam>
+            <param name="theConstructor">
+            The construction function/delegate to call to create the singleton.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="theConstructor"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.RegisterSingleton(System.Type,System.Object)">
+            <summary>
+            Register an instance as a component.
+            </summary>
+            <param name="tInterface">
+            The type of the instance. This may be an interface/service that
+            the instance implements.
+            </param>
+            <param name="theObject">The instance to register.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="tInterface"/> or <paramref name="theObject"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.RegisterSingleton(System.Type,System.Func{System.Object})">
+            <summary>
+            Register a delegate as a singleton component.
+            </summary>
+            <param name="tInterface">
+            The type of the instance generated by the function. This may be an interface/service that
+            the instance implements.
+            </param>
+            <param name="theConstructor">
+            The construction function/delegate to call to create the singleton.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="tInterface"/> or <paramref name="theConstructor"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.RegisterType``2">
+            <summary>
+            Registers a reflection-based component to service mapping.
+            </summary>
+            <typeparam name="TFrom">
+            The component type that implements the service to register.
+            </typeparam>
+            <typeparam name="TTo">
+            The service type that will be resolved from the container.
+            </typeparam>
+            <remarks>
+            <para>
+            This method updates the container to include a new reflection-based
+            registration that maps <typeparamref name="TFrom"/> to its own implementing
+            type as well as to the service type <typeparamref name="TTo"/>.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.RegisterType``1(System.Func{``0})">
+            <summary>
+            Register a delegate for creating a component.
+            </summary>
+            <typeparam name="TInterface">
+            The type of the instance generated by the function. This may be an interface/service that
+            the instance implements.
+            </typeparam>
+            <param name="constructor">
+            The construction function/delegate to call to create the instance.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="constructor"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.RegisterType(System.Type,System.Func{System.Object})">
+            <summary>
+            Register a delegate for creating a component.
+            </summary>
+            <param name="t">
+            The type of the instance generated by the function. This may be an interface/service that
+            the instance implements.
+            </param>
+            <param name="constructor">
+            The construction function/delegate to call to create the instance.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="t"/> or <paramref name="constructor"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.RegisterType(System.Type,System.Type)">
+            <summary>
+            Registers a reflection-based component to service mapping.
+            </summary>
+            <param name="tFrom">
+            The component type that implements the service to register.
+            </param>
+            <param name="tTo">
+            The service type that will be resolved from the container.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="tFrom"/> or <paramref name="tTo"/> is <see langword="null"/>.
+            </exception>
+            <remarks>
+            <para>
+            This method updates the container to include a new reflection-based
+            registration that maps <paramref name="tFrom"/> to its own implementing
+            type as well as to the service type <paramref name="tTo"/>.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.Resolve``1">
+            <summary>
+            Resolves a service instance of a specified type.
+            </summary>
+            <typeparam name="T">
+            The <see cref="T:System.Type"/> of the service to resolve.
+            </typeparam>
+            <returns>
+            The resolved instance of type <typeparamref name="T"/>.
+            </returns>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.Resolve(System.Type)">
+            <summary>
+            Resolves a service instance of a specified type.
+            </summary>
+            <param name="type">
+            The <see cref="T:System.Type"/> of the service to resolve.
+            </param>
+            <returns>
+            The resolved instance of type <paramref name="type"/>.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="type"/> is <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.TryResolve``1(``0@)">
+            <summary>
+            Tries to retrieve a service of a specified type.
+            </summary>
+            <typeparam name="T">
+            The service <see cref="T:System.Type"/> to resolve.
+            </typeparam>
+            <param name="resolved">
+            The resulting component instance providing the service, or default(T) if resolution is not possible.
+            </param>
+            <returns>
+            <see langword="true"/> if a component providing the service is available; <see langword="false"/> if not.
+            </returns>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.TryResolve(System.Type,System.Object@)">
+            <summary>
+            Tries to retrieve a service of a specified type.
+            </summary>
+            <param name="type">
+            The service <see cref="T:System.Type"/> to resolve.
+            </param>
+            <param name="resolved">
+            The resulting component instance providing the service, or <see langword="null"/> if resolution is not possible.
+            </param>
+            <returns>
+            <see langword="true"/> if a component providing the service is available; <see langword="false"/> if not.
+            </returns>
+        </member>
+        <member name="M:Autofac.Extras.MvvmCross.AutofacMvxIocProvider.SetPropertyInjection``3(Autofac.Builder.IRegistrationBuilder{``0,``1,``2})">
+            <summary>
+            Sets the property injection on a registration based on options.
+            </summary>
+            <typeparam name="TLimit">The most specific type to which instances of the registration
+            can be cast.</typeparam>
+            <typeparam name="TActivatorData">Activator builder type.</typeparam>
+            <typeparam name="TRegistrationStyle">Registration style type.</typeparam>
+            <param name="registration">The registration to update.</param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if <paramref name="registration" /> is <see langword="null" />.
+            </exception>
+        </member>
+        <member name="T:Autofac.Extras.MvvmCross.AutofacMvxIocProviderResources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Autofac.Extras.MvvmCross.AutofacMvxIocProviderResources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Autofac.Extras.MvvmCross.AutofacMvxIocProviderResources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Autofac.Extras.MvvmCross.AutofacMvxIocProviderResources.TypeNotRegisteredAsSingleton">
+            <summary>
+              Looks up a localized string similar to Type &apos;{0}&apos; is not registered as a singleton..
+            </summary>
+        </member>
+        <member name="T:Autofac.Extras.MvvmCross.AutofacPropertyInjectorOptions">
+            <summary>
+            Autofac property injection options.
+            </summary>
+            <seealso cref="T:Autofac.Extras.MvvmCross.IAutofacPropertyInjectorOptions" />
+        </member>
+        <member name="P:Autofac.Extras.MvvmCross.AutofacPropertyInjectorOptions.PropertyInjectionSelector">
+            <summary>
+            Gets or sets the mechanism that determines properties to inject.
+            </summary>
+            <value>
+            An <see cref="T:Autofac.Core.IPropertySelector" /> that allows for custom determination of
+            which properties to inject when property injection is enabled.
+            </value>
+        </member>
+        <member name="T:Autofac.Extras.MvvmCross.IAutofacPropertyInjectorOptions">
+            <summary>
+            Defines additional customization for Autofac property injection.
+            </summary>
+        </member>
+        <member name="P:Autofac.Extras.MvvmCross.IAutofacPropertyInjectorOptions.PropertyInjectionSelector">
+            <summary>
+            Gets or sets the mechanism that determines properties to inject.
+            </summary>
+            <value>
+            An <see cref="T:Autofac.Core.IPropertySelector"/> that allows for custom determination of
+            which properties to inject when property injection is enabled.
+            </value>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,162 @@
+﻿<ContentControl x:Class="NeteaseCloudMusic.Wpf.View.IndirectView.UserZoneView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View.IndirectView"
+                xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                xmlns:prism="http://www.codeplex.com/prism"
+                
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <ContentControl.Resources>
+        <Style TargetType="ListBox" BasedOn="{StaticResource UniformGridContainerListBoxStyle}" >
+            <Setter Property="AlternationCount" Value=" 5"/>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Image Stretch="Uniform"   Source="{Binding PicUrl}"/>
+                            <TextBlock Text="{Binding Name}" Style="{StaticResource DarkBottomTextBoxStyle}" Margin=" 0,10"/>
+                            <TextBlock Text="{Binding TrackCount,StringFormat=共{0}首歌曲}" Style="{StaticResource GrayTopTextBoxStyle}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ContentControl.Resources>
+    <ScrollViewer>
+        <Grid Margin=" 10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Style="{StaticResource ViewTitleTextBoxStyle}"  Text="个人主页" />
+            <StackPanel Margin="0,10" Grid.Row="1">
+                <DockPanel>
+                    <Image Stretch="Uniform" Width="200" Source="{Binding UserImage}"/>
+                    <StackPanel Margin=" 10,0,0,0">
+                        <DockPanel>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                                <StackPanel.Resources>
+                                    <Style TargetType="Button"  >
+                                        <Setter Property="Margin" Value=" 0,0,5,0"/>
+                                        <Setter Property="Background" Value="#99ffffff" />
+                                        <Setter Property="BorderThickness" Value=" 1"/>
+                                        <Setter Property="BorderBrush">
+                                            <Setter.Value>
+                                                <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="StrokeThickness" Value=" 0.6"/>
+                                        <Setter Property="Stretch" Value="Uniform"/>
+                                        <Setter Property="Width" Value=" 15"/>
+                                        <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                        <Setter Property="Stroke">
+                                            <Setter.Value >
+                                                <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource GrayTopTextBoxStyle}">
+                                        <Setter Property="Margin" Value=" 3,0"/>
+                                    </Style>
+                                </StackPanel.Resources>
+                                <Button>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path   Data="F1M23558,7748L23571,7747 23583,7742 23594,7735 23603,7726 23610,7715 23615,7703 23616,7690 M23617,7690L23617,6781 M23616,6781L23615,6768 23610,6756 23603,6745 23594,6736 23583,6729 23571,6724 23558,6723 M23558,6723L22211,6723 M22211,6723L22198,6724 22186,6729 22175,6736 22166,6745 22159,6756 22154,6768 22153,6781 M22152,6781L22152,7690 M22153,7690L22154,7703 22159,7715 22166,7726 22175,7735 22186,7742 22198,7747 22211,7748 M22211,7749L23558,7749 M22152,6979L22885,7236 M23617,6979L22885,7236 "/>
+                                        <TextBlock Text="发私信"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button >
+                                    <DockPanel>
+                                        <Path   Data="F1M12681,7287L13095,7273 13095,7782 12283,7796 12283,7287 M12681,7287L12681,7147 M12283,7287L12283,7147 M12283,7147L12681,7147 M12512,7535L12866,7535 M12689,7712L12689,7357"   />
+                                        <TextBlock Text="关注"/>
+                                    </DockPanel>
+                                </Button>
+                                <Button>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="..."    />
+                                        <TextBlock Text="更多"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                            <TextBlock Text="{Binding UserName}" FontSize="{StaticResource WindowProtrudingFontSize}" FontFamily="{StaticResource WindowMainFont}" Foreground="Black"/>
+                        </DockPanel>
+                        <Rectangle Style="{StaticResource HorizontalDecorationRectangleStyle}" Margin="0,15,0,10"/>
+                        <WrapPanel Orientation="Horizontal">
+                            <WrapPanel.Resources>
+                                <Style TargetType="Button" BasedOn="{StaticResource EmptyButtonStyle}"/>
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource GrayTopTextBoxStyle}"/>
+                            </WrapPanel.Resources>
+                            <Button>
+                                <UniformGrid Columns="1">
+                                    <TextBlock Text="{Binding EventCount}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="动态"/>
+                                </UniformGrid>
+                            </Button>
+                            <Rectangle Style="{StaticResource VerticalDecorationRectangleStyle}" Margin="5,0"/>
+                            <Button>
+                                <UniformGrid Columns="1">
+                                    <TextBlock Text="{Binding Follows}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="关注"/>
+                                </UniformGrid>
+                            </Button>
+                            <Rectangle Style="{StaticResource VerticalDecorationRectangleStyle}" Margin="5,0"/>
+                            <Button>
+                                <UniformGrid Columns="1">
+                                    <TextBlock Text="{Binding Followeds}" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="粉丝"/>
+                                </UniformGrid>
+                            </Button>
+                        </WrapPanel>
+                        <StackPanel Orientation="Horizontal" MinHeight="30">
+                            <TextBlock Text="个人介绍" VerticalAlignment="Top" Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                            <TextBlock Text="{Binding DetailDescription,StringFormat=: {0},TargetNullValue=: 暂无介绍}"   Style="{StaticResource GrayTopTextBoxStyle}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"  >
+                            <TextBlock Text="社交网络" VerticalAlignment="Top" Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                            <TextBlock Text="： 社交网络未绑定"   Style="{StaticResource GrayTopTextBoxStyle}" TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"  >
+                            <TextBlock Text="所在地区" VerticalAlignment="Top" Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                            <TextBlock    Style="{StaticResource GrayTopTextBoxStyle}" TextWrapping="Wrap" Text="{Binding Place}"/>
+
+
+                        </StackPanel>
+                    </StackPanel>
+                </DockPanel> 
+                <StackPanel Margin="0,10" >
+                    <TextBlock Text="{Binding UserCreatedPlayLists.Count,StringFormat=歌单({0})}" Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                    <Rectangle Style="{StaticResource HorizontalDecorationRectangleStyle}" Margin="0,5,0,15"/>
+                    <ListBox ItemsSource="{Binding UserCreatedPlayLists}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <prism:InvokeCommandAction  Command="{Binding UserPlayListCommand}" TriggerParameterPath="Source.SelectedItem" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                             
+                </StackPanel>
+                <StackPanel Margin="0,10"  >
+                    <TextBlock Text="{Binding UserCollectionPlayLists.Count,StringFormat=收藏的歌单({0})}" Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                    <Rectangle Style="{StaticResource HorizontalDecorationRectangleStyle}" Margin="0,5,0,15"/>
+                    <ListBox ItemsSource="{Binding  UserCollectionPlayLists}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <prism:InvokeCommandAction  Command="{Binding UserPlayListCommand}" TriggerParameterPath="Source.SelectedItem" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </ListBox>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</ContentControl>

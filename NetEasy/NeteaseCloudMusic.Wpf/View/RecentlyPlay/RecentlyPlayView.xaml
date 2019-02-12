@@ -1,0 +1,84 @@
+﻿<ContentControl x:Class="NeteaseCloudMusic.Wpf.View.RecentlyPlayView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Margin="10,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock Style="{StaticResource ViewTitleTextBoxStyle}"   Text="最近播放"  />
+        <TabControl Grid.Row=" 1" 
+                    Margin=" 0,10" Style="{StaticResource TabControlStyle}"  SelectedIndex="{Binding SelectedIndex}">
+            <TabControl.ItemContainerStyle>
+                <Style TargetType="TabItem"   >
+                    <Setter Property="FontFamily" Value="{StaticResource WindowMainFont }"/>
+                    <Setter Property="FontSize" Value="{StaticResource WindowMainFontSize}"/>
+                    <Setter Property="Foreground" >
+                        <Setter.Value >
+                            <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="Template" >
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Grid  >
+                                    <Border BorderThickness=" 1" ></Border>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition Height="3"/>
+                                        </Grid.RowDefinitions>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ContentPresenter x:Name="ContentSite"  
+                                                              VerticalAlignment="Center"
+                                                              HorizontalAlignment="Center"
+                                                              ContentSource="Header"
+                                                              Margin="10,2,2,2"
+                                                              RecognizesAccessKey="True" />
+                                            <TextBlock 
+                                                x:Name="txtCount"
+                                                Text="{Binding Tag,RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource GrayTopTextBoxStyle}" VerticalAlignment ="Center" />
+                                        </StackPanel>
+                                        <Rectangle x:Name="symbol"   Fill="Red"   Grid.Row=" 1" Visibility="Collapsed"
+                                       Width="{TemplateBinding Width}"  
+                                       />
+
+                                    </Grid>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected"
+                                 Value="True">
+                                        <Setter Property="Foreground">
+                                            <Setter.Value >
+                                                <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Setter Property="Visibility"  TargetName="symbol" Value="Visible"/>
+                                        <Setter Property="Foreground" TargetName="txtCount" Value="{Binding RelativeSource={RelativeSource TemplatedParent },Path=Foreground}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.ItemContainerStyle>
+            <TabItem Header="歌曲" 
+                     Tag="{Binding RelativeSource={RelativeSource Self},Path=Content.Tag,FallbackValue=0}" 
+                     IsSelected="{Binding IsRecentlyPlayMusicViewModelActived}"
+                     >
+                <local:RecentlyPlayMusicView Tag="{Binding RecentlyPlayMusicCollection.Count}" DataContext="{Binding RecentlyPlayMusicViewModel}" />
+            </TabItem>
+            <TabItem Header="节目"
+                     Tag="2" 
+                     IsSelected="{Binding IsRecentlyPlayProgramViewModelActived}"
+                     >
+                <local:RecentlyPlayProgramView  DataContext="{Binding RecentlyPlayProgramViewModel}"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</ContentControl>

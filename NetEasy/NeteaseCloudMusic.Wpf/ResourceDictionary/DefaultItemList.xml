@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Root  xmlns="">
+  <Datas>
+    <MenuListItem Type="1">
+      <ItemIcon>pack://application:,,,/Assets/search_24px.ico</ItemIcon>
+      <Text>搜索</Text>
+    </MenuListItem>
+    <MenuListItem Type="1">
+      <ItemIcon>pack://application:,,,/Assets/music_24px.ico</ItemIcon>
+      <Text>发现音乐</Text>
+    </MenuListItem>
+    <MenuListItem Type="1">
+      <ItemIcon>pack://application:,,,/Assets/video_63.328822733424px.png</ItemIcon>
+      <Text>MV</Text>
+    </MenuListItem>
+    <MenuListItem Type="1">
+      <ItemIcon>pack://application:,,,/Assets/friends_57.657370517928px.png</ItemIcon>
+      <Text>朋友</Text>
+    </MenuListItem>
+    <MenuListItem Type="2">
+      <ItemIcon>pack://application:,,,/Assets/Local_Music_48px.png</ItemIcon>
+      <Text>本地音乐</Text>
+    </MenuListItem>
+    <MenuListItem Type="2">
+      <ItemIcon>pack://application:,,,/Assets/download_24px.ico</ItemIcon>
+      <Text>下载管理</Text>
+    </MenuListItem>
+    <MenuListItem Type="2">
+      <ItemIcon>pack://application:,,,/Assets/Folder_24px.ico</ItemIcon>
+      <Text>我的收藏</Text>
+    </MenuListItem>
+    <MenuListItem Type="2">
+      <ItemIcon>pack://application:,,,/Assets/yunpan_nwe_24px.ico</ItemIcon>
+      <Text>我的音乐云盘</Text>
+    </MenuListItem>
+    <MenuListItem Type="2">
+      <ItemIcon>pack://application:,,,/Assets/music_radio_ghettoblaster_24px.ico</ItemIcon>
+      <Text>我的电台</Text>
+    </MenuListItem>
+  </Datas>
+</Root>
