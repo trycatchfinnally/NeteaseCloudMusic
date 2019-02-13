@@ -25,7 +25,7 @@ namespace NeteaseCloudMusic.Services.NetWork
         /// <summary>
         /// 服务器的基础地址
         /// </summary>
-        private const string ServicesBaseUrl = "http://localhost:10086/api/";
+        private const string ServicesBaseUrl = "http://47.101.43.134/api/";
         public async Task<string> GetAsync(string controllerName, string actionName, object queryStringData = null)
         {
             return await GetAsync(controllerName, actionName, queryStringData, CancellationToken.None);

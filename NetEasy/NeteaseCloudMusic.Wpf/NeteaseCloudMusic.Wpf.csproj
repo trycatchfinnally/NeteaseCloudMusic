@@ -509,10 +509,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NeteaseCloudMusic.Controls\NeteaseCloudMusic.Controls.csproj">
-      <Project>{5f991c63-5f0d-4432-8cee-1130a696f4c5}</Project>
-      <Name>NeteaseCloudMusic.Controls</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NeteaseCloudMusic.Global\NeteaseCloudMusic.Global.csproj">
       <Project>{743f86e0-4a7e-4a74-9c0a-2b1620c703da}</Project>
       <Name>NeteaseCloudMusic.Global</Name>
