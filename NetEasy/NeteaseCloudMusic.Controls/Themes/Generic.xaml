@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    >
+    <ResourceDictionary.MergedDictionaries>
+        <!--<ResourceDictionary Source="/NeteaseCloudMusic.Controls;component/Themes/VolumnButtonTemplate.xaml"/>-->
+        <ResourceDictionary Source="/NeteaseCloudMusic.Controls;component/Themes/CarouselImageControlTemplate.xaml"/>
+        <ResourceDictionary Source="/NeteaseCloudMusic.Controls;component/Themes/CycleTypeButtonTemplate.xaml"/>
+        <!--<ResourceDictionary Source="/NeteaseCloudMusic.Controls;component/Themes/PictureListBoxTemplate.xaml"/>-->
+
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

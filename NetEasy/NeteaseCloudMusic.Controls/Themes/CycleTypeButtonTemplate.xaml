@@ -1,0 +1,13 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:ct="clr-namespace:NeteaseCloudMusic.Controls">
+    <Style TargetType="ct:CycleTypeButton">
+        <Setter Property="Template" >
+            <Setter.Value >
+                <ControlTemplate TargetType="ct:CycleTypeButton">
+                    <Grid IsItemsHost="True" x:Name="PART_Root" Background="{TemplateBinding Background}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

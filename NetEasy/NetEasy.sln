@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeteaseCloudMusic.Wpf", "Ne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeteaseCloudMusic.Global", "NeteaseCloudMusic.Global\NeteaseCloudMusic.Global.csproj", "{743F86E0-4A7E-4A74-9C0A-2B1620C703DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeteaseCloudMusic.Controls", "NeteaseCloudMusic.Controls\NeteaseCloudMusic.Controls.csproj", "{5F991C63-5F0D-4432-8CEE-1130A696F4C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{743F86E0-4A7E-4A74-9C0A-2B1620C703DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{743F86E0-4A7E-4A74-9C0A-2B1620C703DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{743F86E0-4A7E-4A74-9C0A-2B1620C703DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F991C63-5F0D-4432-8CEE-1130A696F4C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F991C63-5F0D-4432-8CEE-1130A696F4C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F991C63-5F0D-4432-8CEE-1130A696F4C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F991C63-5F0D-4432-8CEE-1130A696F4C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
