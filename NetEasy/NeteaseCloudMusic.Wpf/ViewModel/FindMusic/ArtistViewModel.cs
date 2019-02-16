@@ -1,14 +1,15 @@
-﻿using Prism.Mvvm;
+﻿using NeteaseCloudMusic.Global.Model;
+using NeteaseCloudMusic.Services.NetWork;
+using Newtonsoft.Json;
+using Prism.Commands;
+using Prism.Mvvm;
+using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using NeteaseCloudMusic.Global.Enums;
-using NeteaseCloudMusic.Wpf.Model;
-using Prism.Commands;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -17,88 +18,116 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
     /// </summary>
     public class ArtistViewModel : BindableBase
     {
-        private LanguageType _selectedLanguageType = LanguageType.All;
-        private ArtistType _selectedArtistType = ArtistType.All;
-        private ChinesePinYinHeadType _pinYinHeadType = ChinesePinYinHeadType.Wildcard;
-        private ObservableCollection<ArtistModel> _artists = new ObservableCollection<ArtistModel>();
-        public ArtistViewModel()
+        private readonly INetWorkServices _netWorkServices;
+        private readonly IRegionManager _navigationService;
+        private bool _morePage = true;
+        private int _offset = 0;
+        private CancellationTokenSource _offsetCancellationToken;
+        private string _selectedLanguage = "99";
+        private string _selectedGender = "99";
+        private string _selectedPinYin = "99";
+        public ArtistViewModel(INetWorkServices netWorkServices, IRegionManager navigationService)
         {
-            OnSelectedFilterChanged();
+            this._netWorkServices = netWorkServices;
+            this._navigationService = navigationService;
+            NextPageCommand = new DelegateCommand(NextPageCommandExecute);
+            ArtistUserCommand = new DelegateCommand<long?>(ArtistUserCommandExecute);
+            SelectedArtistCommand = new DelegateCommand<Global.Model.Artist>(SelectedArtistCommandExecute);
+            SearchFilterChangeCommand = new DelegateCommand(SearchFilterChangeCommandExecute);
         }
-        /// <summary>
-        /// 档选中的语种、歌手类型、字母发生变化的时候触发
-        /// </summary>
-        private void OnSelectedFilterChanged()
+
+        private async void SearchFilterChangeCommandExecute()
         {
             Artists.Clear();
-            for (int i = 0; i < 30; i++)
+            this._morePage = true;
+            await RefreshAsync();
+        }
+
+        private void SelectedArtistCommandExecute(Artist obj)
+        {
+            if (obj?.Id > 0)
             {
-                Artists.Add(new ArtistModel { Name=SelectedLanguageType+","+ SelectedArtistType +","+ PinYinHeadType });
+                var parmater = new NavigationParameters();
+                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
             }
         }
-        /// <summary>
-        /// 选中的语种
-        /// </summary>
-        public LanguageType SelectedLanguageType
-        {
-            get
-            {
-                return _selectedLanguageType;
-            }
 
-            set
+        private void ArtistUserCommandExecute(long? id)
+        {
+            if (id.HasValue)
             {
-                if (_selectedLanguageType == value) return;
-                SetProperty(ref _selectedLanguageType, value);
-                OnSelectedFilterChanged();
+                var parmater = new NavigationParameters();
+                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, id.Value);
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.UserZoneView), parmater);
             }
         }
-        /// <summary>
-        /// 代表选中的歌手类型
-        /// </summary>
-        public ArtistType SelectedArtistType
+
+        private async void NextPageCommandExecute()
         {
-            get
-            {
-                return _selectedArtistType;
-            }
-
-            set
-            {
-
-                if (value == _selectedArtistType) return;
-                SetProperty(ref _selectedArtistType, value);
-                OnSelectedFilterChanged();
-            }
+            await RefreshAsync();
         }
-        /// <summary>
-        /// 代表按字母进行筛选
-        /// </summary>
-        public ChinesePinYinHeadType PinYinHeadType
+        private async Task RefreshAsync()
         {
-            get
+            this._offsetCancellationToken?.Cancel();
+            var newCancel = new CancellationTokenSource();
+            this._offsetCancellationToken = newCancel;
+            try
             {
-                return _pinYinHeadType;
+                if (this._morePage)
+                {
+                    var catString = SelectedLanguage + SelectedGender;
+                    if (catString.StartsWith("99"))
+                        catString = "10" + SelectedGender;
+                    if (catString.EndsWith("99"))
+                        catString = catString.Substring(0, 2) + "01";
+                    var json = await this._netWorkServices.GetAsync("FindMusic", "ArtistsList",
+                        new
+                        {
+                            limit = Context.LimitPerPage,
+                            offset = this._offset,
+                            cat = int.Parse(catString),
+                            initial = SelectedPinYin == "99" ? 0 : Convert.ToChar(SelectedPinYin)
+                        });
+                    var temp = JsonConvert.DeserializeObject<KeyValuePair<bool, Global.Model.Artist[]>>(json);
+                    this._offset++; this._morePage = temp.Key;
+                    Artists.AddRange(temp.Value);
+                }
             }
+            catch (OperationCanceledException)
+            {
 
-            set
-            {
-                if (value == _pinYinHeadType) return;
-                SetProperty(ref _pinYinHeadType, value);
-                OnSelectedFilterChanged();
+
             }
+            if (this._offsetCancellationToken == newCancel)
+                this._offsetCancellationToken = null;
         }
         /// <summary>
         /// 根据筛选结果查询得到的集合
         /// </summary>
-        public ObservableCollection<ArtistModel> Artists
-        {
-            get
-            {
-                return _artists;
-            }
+        public ObservableCollection<Global.Model.Artist> Artists { get; } = new ObservableCollection<Global.Model.Artist>();
 
-            set { SetProperty(ref _artists, value); }
+        public ICommand NextPageCommand { get; }
+        public ICommand ArtistUserCommand { get; }
+        public ICommand SelectedArtistCommand { get; }
+        /// <summary>
+        /// 当条件变化的时候执行的命令
+        /// </summary>
+        public ICommand SearchFilterChangeCommand { get; }
+        public string SelectedLanguage
+        {
+            get { return this._selectedLanguage; }
+            set { SetProperty(ref this._selectedLanguage, value); }
+        }
+        public string SelectedGender
+        {
+            get { return this._selectedGender; }
+            set { SetProperty(ref this._selectedGender, value); }
+        }
+        public string SelectedPinYin
+        {
+            get { return this._selectedPinYin; }
+            set { SetProperty(ref this._selectedPinYin, value); }
         }
     }
 }

@@ -8,7 +8,7 @@
         /// <summary>
         /// 对应的图片
         /// </summary>
-        public string Pic
+        public string PicUrl
         {
             set;get;
         }

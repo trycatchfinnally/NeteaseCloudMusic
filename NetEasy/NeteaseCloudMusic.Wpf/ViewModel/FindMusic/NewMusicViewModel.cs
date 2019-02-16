@@ -1,18 +1,20 @@
-﻿using System;
+﻿using NeteaseCloudMusic.Global.Model;
+using NeteaseCloudMusic.Services.NetWork;
+using NeteaseCloudMusic.Wpf.Extensions;
+using NeteaseCloudMusic.Wpf.View.IndirectView;
+using Newtonsoft.Json;
+using Prism.Commands;
+using Prism.Mvvm;
+using Prism.Regions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using Prism.Mvvm;
-using NeteaseCloudMusic.Wpf.Model;
-using System.Windows.Input;
-using CommonServiceLocator;
-using Prism.Commands;
-using Prism.Regions;
 using System.Windows.Controls;
-using NeteaseCloudMusic.Global.Enums;
+using System.Windows.Input;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -21,89 +23,160 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
     /// </summary>
     public class NewMusicViewModel : BindableBase
     {
-       
 
-       // private readonly MainWindowViewModel _mainWindowViewModel;
-
-        private ObservableCollection<MusicModel> _newMusicList = new ObservableCollection<MusicModel>();
+        private readonly INetWorkServices _netWorkServices;
+        private readonly IRegionManager _navigationService;
         private bool _isSelectModel;
-        private MusicModel[] selectedMusics;
-        private void NewMusicOrDiskCommandImpl( string msg)
+        private Global.Model.Music[] selectedMusics;
+        private int _pageOffset = 0;
+        private int _totalSize;
+        private CancellationTokenSource _offsetCancellationToken;
+
+        public NewMusicViewModel(INetWorkServices netWorkServices, IRegionManager navigationService)
         {
-            Console.WriteLine(msg);
+            this._netWorkServices = netWorkServices;
+            this._navigationService = navigationService;
+            PlayAllOrSelectedCommand = new DelegateCommand(PlayAllOrSelectedCommandImpl);
+            NewMusicOrDiskCommand = new DelegateCommand<string>(NewMusicOrDiskCommandImpl);
+            LanguageCommand = new DelegateCommand<string>(GetTopMusic);
+            SelectedCommand = new DelegateCommand<IEnumerable>(SelectedCommandImpl);
+            ArtistCommand = new DelegateCommand<Global.Model.Artist>(ArtistCommandExecute);
+            AlbumCommand = new DelegateCommand<long?>(AlbumCommandExecute);
+            NextPageCommand = new DelegateCommand(async () => { await TopAlbumAsync(); });
+            SelectedAlbumCommand = new DelegateCommand<Album>(SelectedAlbumCommandExecute);
+            GetTopMusic("1");
         }
-        private void PlayAllOrSelectedCommandImpl()
+
+        private void SelectedAlbumCommandExecute(Album obj)
         {
-            if (!IsSelectModel)
+            if (obj != null && obj.Id > 0)
+            {
+                var parmater = new NavigationParameters();
+                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.AlbumView), parmater);
+            }
+        }
+
+        private void AlbumCommandExecute(long? obj)
+        {
+            if (obj.HasValue && obj.Value > 0)
+            {
+                var parmater = new NavigationParameters();
+                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Value);
+                //  this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.AlbumView), parmater);
+            }
+        }
+
+        private void ArtistCommandExecute(Artist obj)
+        {
+            if (obj != null && obj.Id != 0)
+            {
+                var parmater = new NavigationParameters();
+                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(ArtistDetailView), parmater);
+            }
+        }
+
+        private async void GetTopMusic(string type)
+        {
+            NewMusicList.Clear();
+            var temp = string.IsNullOrEmpty(type) ? 1 : int.Parse(type);
+            var json = await this._netWorkServices.GetAsync("FindMusic", "TopMusics", new { Type = temp });
+
+            await NewMusicList.AddRangeAsync(JsonConvert.DeserializeObject<Global.Model.Music[]>(json));
+        }
+        private async void NewMusicOrDiskCommandImpl(string msg)
+        {
+            if (msg == "0" && NewMusicList.Count == 0)//新歌速递
             {
 
-               
+            }
+            else if (msg == "1" && NewAlbumList.Count == 0)//新碟
+            {
+                this._pageOffset = 0;
+                this._totalSize = 1;
+                await TopAlbumAsync();
+            }
+        }
+        private async Task TopAlbumAsync()
+        {
+            this._offsetCancellationToken?.Cancel();
+            var newCancel = new CancellationTokenSource();
+            this._offsetCancellationToken = newCancel;
+            try
+            {
+                if (this._totalSize <= this._pageOffset * Context.LimitPerPage) return;
+                var json = await this._netWorkServices.GetAsync("FindMusic", "TopAlbum",
+                    new
+                    {
+                        limit = Context.LimitPerPage,
+                        offset = this._pageOffset
+                    });
+
+                var temp = JsonConvert.DeserializeObject<KeyValuePair<int, Album[]>>(json);
+                this._totalSize = temp.Key;
+                NewAlbumList.AddRange(temp.Value);
+                this._pageOffset++;
+            }
+            catch (OperationCanceledException)
+            {
+
+
+            }
+            if (this._offsetCancellationToken == newCancel)
+                this._offsetCancellationToken = null;
+        }
+        private async void PlayAllOrSelectedCommandImpl()
+        {
+            if (!IsSelectModel && NewMusicList.Count > 0)
+            {
+
+                await Context.CurrentPlayMusics.AddRangeAsync(NewMusicList, x => Context.PlayCommand.Execute(x.First()));
+
             }
 
 
         }
 
-        private void  LanguageCommandImpl( string lagu)
-        {
-            Console.WriteLine(lagu);
-        }
-        public NewMusicViewModel(MainWindowViewModel mainViewModel)
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                _newMusicList.Add(new MusicModel
-                {
-                    Title = ((char)(i + 34585)) + i.ToString("000000"),
-                    IsLike = i % 2 == 0,
-                   // Index = i,
-                    ArtistName = "bug" + i,
-                    AlbumName = "sdahgfjfjkepwtjmrlgujbiphmrkltjwealgmndsalyjre;jhbmfdshr",
-                    //MusicQuality = (MusicQualityLevel)(i % 3),
-                    Duration = TimeSpan.FromMinutes(i * 8.1+2)
-                });
-            }
-            PlayAllOrSelectedCommand =new DelegateCommand( PlayAllOrSelectedCommandImpl);
-            NewMusicOrDiskCommand = new DelegateCommand<string >(NewMusicOrDiskCommandImpl);
-            LanguageCommand = new DelegateCommand<string>( LanguageCommandImpl);
-            SelectedCommand = new DelegateCommand<IEnumerable>(SelectedCommandImpl );
-        }
+
+
         /// <summary>
         /// 选择完成后需要执行的方法
         /// </summary>
         /// <param name="items"></param>
-        private void SelectedCommandImpl( IEnumerable items)
+        private async void SelectedCommandImpl(IEnumerable items)
         {
+            if (items == null) return;
+            var temp = items.Cast<Global.Model.Music>().ToArray();
             if (IsSelectModel)
             {
-                selectedMusics =items.Cast<MusicModel>().ToArray();
+                this.selectedMusics = temp;
                 return;
             }
-            if (selectedMusics == null)
+            else if (temp.Length > 0)
+            {
+                Context.PlayCommand.Execute(temp[0]);
+                return;
+            }
+            if (this.selectedMusics == null)
                 return;
             //_mainWindowViewModel.CurrentPlayList.Clear();
             //_mainWindowViewModel.CurrentPlayList.AddRange(selectedMusics);
             //_mainWindowViewModel.PlayFirstOrDefault();
-            selectedMusics = null;
+            await Context.CurrentPlayMusics.AddRangeAsync(this.selectedMusics, x => Context.PlayCommand.Execute(x.First()));
+            this.selectedMusics = null;
 
         }
         /// <summary>
         /// 最新音乐列表
         /// </summary>
-        public ObservableCollection<MusicModel> NewMusicList
+        public ObservableCollection<Global.Model.Music> NewMusicList
         {
             get
-            {
-                return _newMusicList;
-            }
+            ;
 
-            set
-            {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(value));
-                SetProperty(ref _newMusicList, value);
-            }
-
-        }
+        } = new ObservableCollection<Global.Model.Music>();
+        public ObservableCollection<Album> NewAlbumList { get; } = new ObservableCollection<Album>();
         /// <summary>
         /// 获取或设置当前页面是用户选择还是播放全部
         /// </summary>
@@ -111,13 +184,13 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         {
             get
             {
-                return _isSelectModel;
+                return this._isSelectModel;
             }
 
             set
             {
-                if (value == _isSelectModel) return;
-                SetProperty(ref _isSelectModel, value);
+                if (value == this._isSelectModel) return;
+                SetProperty(ref this._isSelectModel, value);
 
                 RaisePropertyChanged(nameof(SelectionMode));
 
@@ -127,7 +200,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// <summary>
         /// 用来绑定到页面是否是选择状态以避免额外的值转换器
         /// </summary>
-        public SelectionMode SelectionMode => _isSelectModel ? SelectionMode.Extended : SelectionMode.Single;
+        public SelectionMode SelectionMode => this._isSelectModel ? SelectionMode.Extended : SelectionMode.Single;
         /// <summary>
         /// 播放全部或者选中的音乐
         /// </summary>
@@ -145,5 +218,21 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// 语言对应的命令
         /// </summary>
         public ICommand LanguageCommand { get; }
+        /// <summary>
+        /// 点击项目对应的歌手的时候触发的事件
+        /// </summary>
+        public ICommand ArtistCommand { get; }
+        /// <summary>
+        /// 点击项目对应的专辑执行的命令
+        /// </summary>
+        public ICommand AlbumCommand { get; }
+        /// <summary>
+        /// 专辑向下滑动的时候
+        /// </summary>
+        public ICommand NextPageCommand { get; }
+        /// <summary>
+        /// 新碟上架部分选中执行的命令
+        /// </summary>
+        public ICommand SelectedAlbumCommand { get; }
     }
 }

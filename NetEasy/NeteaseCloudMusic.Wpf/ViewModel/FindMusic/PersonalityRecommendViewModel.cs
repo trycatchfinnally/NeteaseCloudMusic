@@ -113,13 +113,15 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             var temp = JsonConvert.DeserializeObject<Global.Model.PersonalityRecommend>(json);
             if (temp?.RecommendList != null)
             {
-                RecommendList.Clear();
-                RecommendList.AddRange(temp.RecommendList.Select(x => new PlayListModel(x)));
+                // RecommendList.Clear();
+                //RecommendList.AddRange(temp.RecommendList.Select(x => new PlayListModel(x)));
+                await RecommendList.AddRangeAsync(temp.RecommendList);
             }
             if (temp?.AnchorRadioList != null)
             {
-                AnchorRadioList.Clear();
-                AnchorRadioList.AddRange(temp.AnchorRadioList.Select(x => new RadioModel(x)));
+                //AnchorRadioList.Clear();
+                //AnchorRadioList.AddRange(temp.AnchorRadioList.Select(x => new RadioModel(x)));
+              await   AnchorRadioList.AddRangeAsync(temp.AnchorRadioList);
             }
             if (temp?.RecommendMvList != null)
             {
@@ -128,8 +130,9 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
             if (temp?.NewMusicList != null)
             {
-                NewMusicList.Clear();
-                NewMusicList.AddRange(temp.NewMusicList);
+                //NewMusicList.Clear();
+                //NewMusicList.AddRange(temp.NewMusicList);
+                await NewMusicList.AddRangeAsync(temp.NewMusicList);
             }
             if (temp?.PrivateContentList != null)
             {
@@ -139,17 +142,19 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
             if (temp?.BannerList != null)
             {
-                BannerList.Clear();
-                BannerList.AddRange(temp.BannerList.Select(x => new BannerModel { Image = x.Pic }));
+                //BannerList.Clear();
+                //BannerList.AddRange(temp.BannerList.Select(x => new BannerModel { Image = x.Pic }));
+                await BannerList.AddRangeAsync(temp.BannerList);
+
             }
         }
 
         
 
-        public ObservableCollection<PlayListModel> RecommendList
+        public ObservableCollection<PlayList> RecommendList
         {
             get;
-        } = new ObservableCollection<PlayListModel>();
+        } = new ObservableCollection<PlayList>();
 
         public int Date { get; } = DateTime.Now.Day;
 
@@ -170,17 +175,17 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// <summary>
         /// 主播电台的列表
         /// </summary>
-        public ObservableCollection<RadioModel> AnchorRadioList
+        public ObservableCollection<Radio> AnchorRadioList
         {
             get;
-        } = new ObservableCollection<RadioModel>();
+        } = new ObservableCollection<Radio>();
         /// <summary>
         /// 轮播图列表
         /// </summary>
-        public ObservableCollection<BannerModel> BannerList
+        public ObservableCollection<Banner> BannerList
         {
             get;
-        } = new ObservableCollection<BannerModel>();
+        } = new ObservableCollection<Banner>();
         /// <summary>
         /// 更多对应的命令
         /// </summary>

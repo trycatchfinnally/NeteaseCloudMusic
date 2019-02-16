@@ -19,6 +19,10 @@ namespace NeteaseCloudMusic.Wpf
         public const string RegionName = "MainRegion";
         public const string SupportFileExtension = "*.mp3|*.flac|*.cs";
         /// <summary>
+        /// 每页请求的数据限制
+        /// </summary>
+        public const int LimitPerPage = 30;
+        /// <summary>
         /// 当前正在播放的歌曲列表
         /// </summary>
         public static ObservableCollection<Music> CurrentPlayMusics { get; } = new ObservableCollection<Music>();

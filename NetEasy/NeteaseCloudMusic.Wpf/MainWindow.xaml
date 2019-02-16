@@ -63,7 +63,13 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <ed:BlockArrow Width="15" Height=" 7" Fill="White" ArrowBodySize="0.125" StrokeEndLineCap="Flat"></ed:BlockArrow>
+                    <ed:BlockArrow Width="15" Height=" 7" Fill="White" ArrowBodySize="0.125" StrokeEndLineCap="Flat" RenderTransformOrigin="0.5,0.5">
+                        <ed:BlockArrow.RenderTransform>
+                            <TransformGroup>
+                                <RotateTransform Angle="180"/>
+                            </TransformGroup>
+                        </ed:BlockArrow.RenderTransform>
+                    </ed:BlockArrow>
                 </Button>
                 <TextBlock Text="网易云音乐" Foreground="White" Margin="5,8,3,2"  />
             </DockPanel>

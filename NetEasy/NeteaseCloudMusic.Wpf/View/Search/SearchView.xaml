@@ -6,14 +6,20 @@
                 xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
                 xmlns:controls="clr-namespace:NeteaseCloudMusic.Controls;assembly=NeteaseCloudMusic.Controls"
                 xmlns:prism="http://www.codeplex.com/prism"
-                xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
-             mc:Ignorable="d" 
+                xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                xmlns:be="clr-namespace:NeteaseCloudMusic.Wpf.Behaviors"
+                mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
     <Grid Margin="10,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition />
         </Grid.RowDefinitions>
+        <Button Visibility="Collapsed" x:Name="btnSearchBinding" Command="{Binding SearchCommand}"/>
+        <!--<Image Width=" 100" Source="http://p1.music.126.net/8vylVhgXPdw4O-G-GwoDIw==/19188676928488302.jpg">
+            
+        </Image>-->
+        <Image Width=" 100" x:Name="test"/>
         <TextBox Margin=" 0,10"  x:Name="TxtInput"  
                  Text="{Binding KeyWord,UpdateSourceTrigger=PropertyChanged}"   >
 
@@ -46,9 +52,10 @@
                                         <SolidColorBrush Color="{StaticResource  WindowForeGrayColor}"/>
                                     </Border.BorderBrush>
                                     <DockPanel >
-                                        <Button DockPanel.Dock="Right"   
+                                        <Button DockPanel.Dock="Right"   IsDefault="True"
+                                                Background="Transparent" 
                                                 Style="{StaticResource EmptyButtonWithFocusStyle}" 
-                                                Command="{Binding RelativeSource={RelativeSource TemplatedParent},Path=DataContext.KeyWordComplete}">
+                                                Command="{Binding  ElementName=btnSearchBinding,Path=Command}">
                                             <Path  Width=" 12" Stretch="Uniform" Data="F1M16998,7516L17049,7465 16624,7081 16599,7106 16571,7129z M16722,6827L16718,6778 16709,6730 16693,6683 16671,6639 16644,6598 16611,6560 16574,6528 16533,6500 16489,6478 16442,6463 16393,6453 16344,6450 16295,6453 16246,6463 16200,6478 16155,6500 16114,6528 16077,6560 16045,6598 16017,6639 15995,6683 15979,6730 15970,6778 15967,6827 15970,6877 15979,6925 15995,6972 16017,7016 16045,7057 16077,7095 16114,7127 16155,7155 16200,7176 16246,7192 16295,7202 16344,7205 16393,7202 16442,7192 16489,7176 16533,7155 16574,7127 16611,7095 16644,7057 16671,7016 16693,6972 16709,6925 16718,6877z M16624,7081L17049,7465 M16571,7129L16998,7516 M16998,7516L17049,7465" >
                                                 <Path.Stroke>
                                                     <Binding RelativeSource="{RelativeSource AncestorLevel=1 ,AncestorType=Button}" Path="Foreground"/>
@@ -75,155 +82,550 @@
                 </Style>
             </TextBox.Style>
         </TextBox>
-        <controls:TopmostPopup IsOpen="{Binding  KeyWord,Converter={x:Static converter:ValueConverterFactory.Text2PopupIsOpenConverter},Mode=OneWay}"  Grid.Row=" 1" 
+        <DockPanel x:Name="dpSearchSuggest"   Grid.Row="1" >
+            <controls:TopmostPopup IsOpen="{Binding  KeyWord,Converter={x:Static converter:ValueConverterFactory.Text2PopupIsOpenConverter},Mode=OneWay}" 
+                               Grid.Row=" 1" 
+                               MaxWidth="200"
+                                   AllowsTransparency="True"
                                PlacementTarget="{Binding ElementName=TxtInput }"  
+                                  
                Placement="Bottom" VerticalOffset="5"   
                >
-            <Border Background="White" BorderThickness=" 0.5" >
-                <ScrollViewer Margin="2,1">
-                    <Grid   >
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height=" 20"/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Button Style="{StaticResource EmptyButtonStyle}" Command="{Binding KeyWordComplete}">
-                            <StackPanel  Orientation="Horizontal">
-                                <StackPanel.Resources>
-                                    <Style TargetType="TextBlock" BasedOn="{StaticResource DarkBottomTextBoxStyle}">
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                    </Style>
-                                </StackPanel.Resources>
-                                <Path Width=" 10" Stretch="Uniform" Stroke="{Binding ElementName=TxtInput,Path=Foreground,Mode=OneTime}" Data="M0,0 L10,0 L10,10 L0,10 Z"/>
-                                <TextBlock Text="搜索“" />
+                <Border Background="White" BorderThickness=" 0.5"  x:Name="suggestPopup">
+                    <ScrollViewer Margin="2,1">
+                        <Grid   >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height=" 20"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Button Style="{StaticResource EmptyButtonStyle}" Command="{Binding SearchCommand}">
+                                <StackPanel  Orientation="Horizontal">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource DarkBottomTextBoxStyle}">
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </StackPanel.Resources>
+                                    <Path Width=" 10" Stretch="Uniform" Stroke="{Binding ElementName=TxtInput,Path=Foreground,Mode=OneTime}" Data="M0,0 L10,0 L10,10 L0,10 Z"/>
+                                    <TextBlock Text="搜索”" />
                         <TextBlock Text="{Binding KeyWord}" Foreground="Blue" />
-                                <TextBlock Text="”"/>
+                                <TextBlock Text="“"/>
                 </StackPanel>
                         </Button>
-                        <ListBox Grid.Row=" 1" ItemsSource="{Binding SearchResult}" BorderThickness="0"></ListBox>
+                        <ListBox Grid.Row=" 1" ItemsSource="{Binding SearchResult}" 
+                                 BorderThickness="0" Foreground="{Binding ElementName=TxtInput,Path=Foreground,Mode=OneTime}"
+                                 >
+                             <i:Interaction.Triggers>
+                                 
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding SelectedSuggestCommand}" TriggerParameterPath="AddedItems" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                        </ListBox>
                     </Grid>
                 </ScrollViewer>
             </Border>
-        </controls:TopmostPopup>
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="10" />
-                <RowDefinition  />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition  />
-                <ColumnDefinition  />
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="热门搜索" Style="{StaticResource GrayTopTextBoxStyle}" VerticalAlignment="Bottom" Margin="0"/>
-            <TextBlock Text="搜索历史" 
+            </controls:TopmostPopup>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="10" />
+                    <RowDefinition  />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  />
+                    <ColumnDefinition  />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="热门搜索" Style="{StaticResource GrayTopTextBoxStyle}" VerticalAlignment="Bottom" Margin="0"/>
+                <TextBlock Text="搜索历史" 
                        Style="{StaticResource GrayTopTextBoxStyle}"
                        VerticalAlignment="Bottom"
                        Grid.Column="1" Grid.Row="0"  />
-            <ListBox Grid.Row=" 2" Grid.Column="0" Background="Transparent"   BorderThickness=" 0" ItemsSource="{Binding SearchRecomend}">
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectionChanged">
-                        <prism:InvokeCommandAction  Command="{Binding SelectedSuggestCommand}" TriggerParameterPath="AddedItems" />
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <DataTemplate.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value=" 5"/>
-                                <Setter Property="BorderThickness" Value=" 0.5"/>
-                                <Setter Property="SnapsToDevicePixels" Value="True" />
-                                <Setter Property="Margin" Value=" 2"/>
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" >
-                                            <Setter.Value>
-                                                <SolidColorBrush Color="{StaticResource WindowFocusColor}"/>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataTemplate.Resources>
-                        <Border >
-                            <Border.BorderBrush>
-                                <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
-                            </Border.BorderBrush>
+                <ListBox Grid.Row=" 2" Grid.Column="0" Background="Transparent"   BorderThickness=" 0" ItemsSource="{Binding SearchRecomend}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding SelectedSuggestCommand}" TriggerParameterPath="AddedItems" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DataTemplate.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value=" 5"/>
+                                    <Setter Property="BorderThickness" Value=" 0.5"/>
+                                    <Setter Property="SnapsToDevicePixels" Value="True" />
+                                    <Setter Property="Margin" Value=" 2"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" >
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{StaticResource WindowFocusColor}"/>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataTemplate.Resources>
+                            <Border >
+                                <Border.BorderBrush>
+                                    <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                </Border.BorderBrush>
 
-                            <TextBlock Text="{Binding }" 
+                                <TextBlock Text="{Binding }" 
                                        VerticalAlignment="Center"
                                        Style="{StaticResource DarkBottomTextBoxStyle}"/>
-                        </Border>
+                            </Border>
 
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="ListBoxItem">
-                                    <ContentPresenter/>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background">
-                                    <Setter.Value >
-                                        <SolidColorBrush Color="{StaticResource WindowFocusColor}"/>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-                <ListBox.Template>
-                    <ControlTemplate TargetType="ListBox">
-                        <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
-                    </ControlTemplate>
-                </ListBox.Template>
-            </ListBox>
-            <ListBox Grid.Column="1" Grid.Row="2" Background="Transparent"  BorderThickness=" 0" ItemsSource="{Binding SearchHistory}">
-
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <DockPanel>
-                            <Button Style="{StaticResource EmptyButtonWithFocusStyle}"  
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <ContentPresenter/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background">
+                                        <Setter.Value >
+                                            <SolidColorBrush Color="{StaticResource WindowFocusColor}"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.Template>
+                        <ControlTemplate TargetType="ListBox">
+                            <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
+                        </ControlTemplate>
+                    </ListBox.Template>
+                </ListBox>
+                <ListBox Grid.Column="1" Grid.Row="2" Background="Transparent"  BorderThickness=" 0" ItemsSource="{Binding SearchHistory}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <Button Style="{StaticResource EmptyButtonWithFocusStyle}"  
                                     CommandParameter="{Binding}"
                                     Command="{Binding RelativeSource={RelativeSource AncestorLevel=1,AncestorType=ListBox},Path=DataContext.DeleteHistoryCommand}"
                                     DockPanel.Dock="Right"  >
-                                <Canvas Width="10" Height="10" >
-                                    <Canvas.Resources>
-                                        <Style TargetType="Path" >
-                                            <Setter Property="StrokeThickness" Value=" 1.2"/>
-                                            <Setter Property="Stroke">
-                                                <Setter.Value >
-                                                    <Binding RelativeSource="{RelativeSource AncestorLevel=1,AncestorType=Button}" Path="Foreground"/>
-                                                </Setter.Value>
-                                            </Setter>
+                                    <Canvas Width="10" Height="10" >
+                                        <Canvas.Resources>
+                                            <Style TargetType="Path" >
+                                                <Setter Property="StrokeThickness" Value=" 1.2"/>
+                                                <Setter Property="Stroke">
+                                                    <Setter.Value >
+                                                        <Binding RelativeSource="{RelativeSource AncestorLevel=1,AncestorType=Button}" Path="Foreground"/>
+                                                    </Setter.Value>
+                                                </Setter>
 
-                                        </Style>
-                                    </Canvas.Resources>
-                                    <Path   Data="M0,0 L10,10 M0,10 L10,0"/>
-                                </Canvas>
-                            </Button>
-                            <TextBlock Text="{Binding }"  
+                                            </Style>
+                                        </Canvas.Resources>
+                                        <Path   Data="M0,0 L10,10 M0,10 L10,0"/>
+                                    </Canvas>
+                                </Button>
+                                <TextBlock Text="{Binding }"  
                                        VerticalAlignment="Center"
                                        Style="{StaticResource DarkBottomTextBoxStyle}"/>
 
-                        </DockPanel>
+                            </DockPanel>
 
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
-                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                        <Setter Property="Height" Value=" 20"/>
-                        <Setter Property="Padding" Value=" 0,0,5,0"/>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
-        </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
+                            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Height" Value=" 20"/>
+                            <Setter Property="Padding" Value=" 0,0,5,0"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+            </Grid>
+        </DockPanel>
+        <TabControl Grid.Row="1" 
+                      x:Name="tabSearchResult" Visibility="{Binding SearchResultPanelVisiable}"
+                    IsVisibleChanged="TabSearchResult_IsVisibleChanged"
+                    Style="{StaticResource TabControlStyle}">
+            <TabControl.Resources>
+                <Style TargetType="ListBox" >
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value=" 0"/>
+                    <Setter Property="VerticalAlignment" Value="Top"/>
+                    <Setter Property="Template" >
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBox">
+                                <ScrollViewer Tag="{TemplateBinding Tag}" ScrollChanged="ScrollViewer_ScrollChanged">
+                                    <ItemsPresenter/>
+                                </ScrollViewer>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+            <TabItem Header="单曲">
+                <Grid>
+                    <Button x:Name="btnJustForMvBinding" Visibility="Collapsed" Command="{Binding MusicMvCommand}"/>
+                    <ListBox   Tag="1"
+                             ItemsSource="{Binding MusicResults}"
+                             AlternationCount="2">
+                       
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultTwoColorListBoxItemStyle}"/>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="10,0,30,0" Height="40">
+                                    <DockPanel>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Width=" 400"  >
+                                            <StackPanel.Resources>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource GrayTopTextBoxStyle}">
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                </Style>
+                                            </StackPanel.Resources>
+                                            <TextBlock    Width=" 150">
+                                      <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding ArtistName,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeDarkColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                            </TextBlock>
+                                            <TextBlock   Width=" 150">
+                                     <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding AlbumName,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeDarkColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                               
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                            </TextBlock>
+                                            <TextBlock Width="70">
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{x:Static converter:MultiValueConverterFactory.TimeSpan2TextConverter}">
+                                                        <Binding Path="Duration"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                            <Border BorderThickness="1"  x:Name="qualityBorder" VerticalAlignment="Center"
+                                        Width="15" Height=" 10"     HorizontalAlignment="Left">
+                                                <Border.BorderBrush>
+                                                    <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                                </Border.BorderBrush>
+                                                <TextBlock Text="{Binding MusicQuality}"  FontSize=" 8" VerticalAlignment="Center">
+                                                    <TextBlock.Foreground>
+                                                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                                    </TextBlock.Foreground>
+                                                </TextBlock>
+                                            </Border>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal"  >
+                                            <TextBlock Grid.Column="1"  Style ="{StaticResource DarkBottomTextBoxStyle}" 
+                                                       Margin="20,5,5,5"   HorizontalAlignment="Left"  
+                                                       VerticalAlignment="Center" >
+                                        <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding Name}" 
+                                               DefaultColor="{StaticResource WindowForeDarkColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                               
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                            </TextBlock>
+                                            <Button Style="{StaticResource EmptyButtonStyle}"
+                                                Command="{Binding ElementName=btnJustForMvBinding,Path=Command}"
+                                                CommandParameter="{Binding MvId}"
+                                                Margin=" 8,8,8,0.5"
+                                                DockPanel.Dock="Right" 
+                                                Visibility="{Binding HasMv,Converter={x:Static converter:ValueConverterFactory.Boolean2VisibilityConverter}}">
+                                                <Border BorderThickness="1" Background="Transparent"  VerticalAlignment="Center" Width=" 15" Height="10" >
+                                                    <Border.BorderBrush>
+                                                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                                    </Border.BorderBrush>
+                                                    <TextBlock Text="MV" VerticalAlignment="Center" FontSize="8">
+                                                        <TextBlock.Foreground >
+                                                            <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                                        </TextBlock.Foreground>
+                                                    </TextBlock>
+                                                </Border>
+                                            </Button>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Grid>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding MusicQuality}" Value="Low">
+                                        <Setter Property="Visibility" Value="Collapsed" TargetName="qualityBorder"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <prism:InvokeCommandAction  Command="{Binding MusicSelectCommand}" TriggerParameterPath="Source.SelectedItem" />
+                        </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        
+                    </ListBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="歌手">
+                <ListBox ItemsSource="{Binding ArtistResults}" 
+                          Tag="2"
+                         AlternationCount="2"  >
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultTwoColorListBoxItemStyle}"/>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel >
+                                <Image Stretch="Uniform" Margin="10" Height="48" >
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding PicUrl,TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/default_artist_small.scale-200.png}" DecodePixelHeight="48"  />
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock VerticalAlignment="Center">
+                                        <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding Name,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeGrayColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                </TextBlock>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding ArtistSelectCommand}" TriggerParameterPath="Source.SelectedItem" />
+                    </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                </ListBox>
+            </TabItem>
+            <TabItem Header="专辑">
+                <ListBox AlternationCount="2"
+                          Tag="3"
+                             ItemsSource="{Binding AlbumResults}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultTwoColorListBoxItemStyle}"/>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <TextBlock  DockPanel.Dock="Right" Width="200">
+                                     <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding ArtistName,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeGrayColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                </TextBlock>
+                                <Image Stretch="Uniform" Height="48"
+                                       Margin="10">
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding PicUrl,TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/default_cover_small.scale-200.png}" DecodePixelHeight="48"/>
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock VerticalAlignment="Center">
+                                      <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding ArtistsName,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeDarkColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                </TextBlock>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding AlbumSelectCommand}" TriggerParameterPath="Source.SelectedItem" />
+                    </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                </ListBox>
+            </TabItem>
+            <TabItem Header="MV">
+                <ListBox ItemsSource="{Binding MvResults}"  Tag="4" >
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="4"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}"/>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,10,20">
+                                <Grid>
+                                    <Image Stretch="Uniform" >
+                                        <Image.Source>
+                                            <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="200"/>
+                                        </Image.Source>
+                                    </Image>
+                                    <TextBlock HorizontalAlignment="Left" Text="{Binding Duration}"
+                                               Foreground="White" Style="{StaticResource GrayTopTextBoxStyle}"
+                                               VerticalAlignment="Bottom" Margin="5,3"/>
+                                    
+                                </Grid>
+                                <TextBlock Margin="0,5" 
+                                           FontFamily="{StaticResource WindowMainFont}"
+                                           FontSize="{StaticResource WindowMainFontSize}">
+                                     <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding Name,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeDarkColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                </TextBlock>
+                                <TextBlock FontSize="{StaticResource WindowGrayFontSize}" FontFamily="{StaticResource WindowMainFont}">
+                                        <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding ArtistName,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeGrayColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding MvSelectCommand}" TriggerParameterPath="Source.SelectedItem" />
+                    </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                </ListBox>
+            </TabItem>
+            <TabItem Header="歌单">
+                <ListBox  Tag="5"
+                    ItemsSource="{Binding PlayListResults}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultTwoColorListBoxItemStyle}"/>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <Grid DockPanel.Dock="Right" Width="400">
+                                    <Grid.Resources>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource GrayTopTextBoxStyle}">
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </Grid.Resources>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="1.5*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding TrackCount,StringFormat={}{0} 首}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding CreateUser.UserName,FallbackValue=未知用户,StringFormat=by {0}}"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding PlayCount,Converter={x:Static converter:ValueConverterFactory.Int2FormatStringConverter},StringFormat=播放：{0}}"/>
+                                </Grid>
+                                <DockPanel>
+                                    <Image Margin="5" Stretch="Uniform" Width="48">
+                                        <Image.Source>
+                                            <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="48"/>
+                                        </Image.Source>
+                                    </Image>
+                                    <TextBlock FontSize="{StaticResource WindowMainFontSize}" 
+                                               VerticalAlignment="Center"
+                                               FontFamily="{StaticResource WindowMainFont}">
+                                          <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding Name,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeDarkColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                </DockPanel>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding PlayListSelectCommand}" TriggerParameterPath="Source.SelectedItem" />
+                    </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                </ListBox>
+            </TabItem>
+            <TabItem Header="主播电台">
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="暂无搜索结果" Style="{StaticResource GrayTopTextBoxStyle}"/>
+            </TabItem>
+            <TabItem Header="用户">
+                <ListBox  Tag="7"
+                         ItemsSource="{Binding UserResults}"
+                         AlternationCount="2">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultTwoColorListBoxItemStyle}"/>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Right" MaxWidth="400"
+                                           Margin="10,0" VerticalAlignment="Center" 
+                                           FontSize="{StaticResource WindowGrayFontSize}" 
+                                           FontFamily="{StaticResource WindowMainFont}">
+                                      <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding Signature,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeGrayColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                </TextBlock>
+
+                                <Image Margin="5" Stretch="Uniform" Width="48" DockPanel.Dock="Left"  
+                                       
+                                        >
+                                    <Image.Source>
+                                        <BitmapImage  
+                                            DecodePixelWidth="48"  CreateOptions ="IgnoreColorProfile"
+                                            UriSource="{Binding UserImage }"/>
+                                    </Image.Source>
+                                    <Image.Clip>
+                                        <EllipseGeometry Center="24,24" RadiusX="24" RadiusY="24"/>
+                                    </Image.Clip>
+                                </Image>
+                                <TextBlock  VerticalAlignment="Center"
+                                    FontSize="{StaticResource WindowMainFontSize}" FontFamily="{StaticResource WindowMainFont}">
+                                       <i:Interaction.Behaviors>
+                                           <be:ColorfulTextBlockBehavor
+                                               InlineText="{Binding UserName,Mode=OneTime}" 
+                                               DefaultColor="{StaticResource WindowForeDarkColor}"
+                                               HighlineColor="Blue"
+                                               SearchKeyWord="{Binding ElementName=TxtInput,Path=Text,Mode=OneTime}">
+                                           </be:ColorfulTextBlockBehavor>
+                                        </i:Interaction.Behaviors>
+                                </TextBlock>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <prism:InvokeCommandAction  Command="{Binding UserSelectCommand}" TriggerParameterPath="Source.SelectedItem" />
+                    </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                </ListBox>
+            </TabItem>
+        </TabControl>
     </Grid>
 </ContentControl>

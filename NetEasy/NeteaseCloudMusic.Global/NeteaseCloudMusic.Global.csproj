@@ -51,6 +51,7 @@
     <Compile Include="Enums\MvOrderbyType.cs" />
     <Compile Include="Enums\MvType.cs" />
     <Compile Include="Enums\PlayCycleType.cs" />
+    <Compile Include="Enums\SearchResultType.cs" />
     <Compile Include="Model\Album.cs" />
     <Compile Include="Model\AnchorRadioCatalogue.cs" />
     <Compile Include="Model\Artist.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Model\PlayListDetail.cs" />
     <Compile Include="Model\Program.cs" />
     <Compile Include="Model\Radio.cs" />
+    <Compile Include="Model\SearchResultModel.cs" />
     <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

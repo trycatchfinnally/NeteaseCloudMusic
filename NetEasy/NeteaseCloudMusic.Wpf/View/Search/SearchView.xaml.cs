@@ -24,9 +24,51 @@ namespace NeteaseCloudMusic.Wpf.View
         public SearchView(SearchViewModel viewModel)
         {
             this.DataContext = viewModel;
-            InitializeComponent();
+            this.SetBinding(NextPageCommandProperty, new Binding(nameof(SearchViewModel.SearchResultNextPageCommand)));
+            InitializeComponent();  
         }
 
         
+        private ICommand NextPageCommand
+        {
+            get { return (ICommand)GetValue(NextPageCommandProperty); }
+            set { SetValue(NextPageCommandProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for NextPageCommand.  This enables animation, styling, binding, etc...
+        private static readonly DependencyProperty NextPageCommandProperty =
+            DependencyProperty.Register("NextPageCommand", typeof(ICommand), typeof(SearchView), new PropertyMetadata(null));
+        private void TabSearchResult_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            var temp = (bool)e.NewValue;
+            if (temp )
+            {
+                dpSearchSuggest.Visibility = Visibility.Collapsed;
+                suggestPopup.Opacity = 0;
+            }
+            else
+            {
+                dpSearchSuggest.Visibility = Visibility.Visible;
+                suggestPopup.Opacity = 1;
+            }
+        }
+
+        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            var v1 = e.ExtentHeight - e.VerticalOffset;
+            var v2 = e.ViewportHeight;
+            var source = e.Source as FrameworkElement;
+            if (v1 != 0 && v1 <= v2  )
+            {
+                //currentPageoffset++;
+                NextPageCommand?.Execute(source.Tag);
+            }
+        }
+
+       
     }
 }
+ 
+ 
+ 
+  

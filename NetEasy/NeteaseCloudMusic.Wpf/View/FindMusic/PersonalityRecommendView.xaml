@@ -64,10 +64,10 @@
             <controls:CarouselImageControl ItemsSource="{Binding BannerList}">
                 <controls:CarouselImageControl.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding Image}" >
-                            <!--<Image.Source>
-                                <BitmapImage UriSource="{Binding Image}"/>
-                            </Image.Source>-->
+                        <Image  >
+                            <Image.Source>
+                                <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="200"/>
+                            </Image.Source>
                         </Image>
                     </DataTemplate>
                 </controls:CarouselImageControl.ItemTemplate>
@@ -194,7 +194,7 @@
                         </ControlTemplate>
                     </ListBox.Template>-->
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="model:PlayListModel">
+                        <DataTemplate  >
                             <Grid  MaxHeight="240"  Margin=" 10,10,10,0"  >
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -202,7 +202,7 @@
                                 </Grid.RowDefinitions>
                                 <Image  Stretch="Uniform"    >
                                     <Image.Source>
-                                        <BitmapImage UriSource="{Binding PlayListImage, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/TestImages/热门推荐测试.png}" ></BitmapImage>
+                                        <BitmapImage UriSource="{Binding PicUrl }" DecodePixelWidth="200" ></BitmapImage>
                                     </Image.Source>
                                 </Image>
                                 <Grid   HorizontalAlignment="Right"  VerticalAlignment="Top" Margin=" 0,2,12,0"
@@ -218,12 +218,12 @@
                                     </Border>
                                     <DockPanel>
                                         <Image  Width=" 12"  Source="/NeteaseCloudMusic.Wpf;component/Assets/music_24px.ico"/>
-                                        <TextBlock  Text  ="{Binding ListenerCount,Converter={x:Static converter:ValueConverterFactory.Int2FormatStringConverter} }"  
+                                        <TextBlock  Text  ="{Binding PlayCount,Converter={x:Static converter:ValueConverterFactory.Int2FormatStringConverter} }"  
                                                     VerticalAlignment="Center"  HorizontalAlignment="Right"  Margin="0,0,2,0"
                                                     Foreground="White"/>
                                     </DockPanel>
                                 </Grid>
-                                <TextBlock Text="{Binding Title}" Grid.Row=" 1" HorizontalAlignment="Center" >
+                                <TextBlock Text="{Binding Name}" Grid.Row=" 1" HorizontalAlignment="Center" >
                                     <TextBlock.Foreground >
                                         <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
                                     </TextBlock.Foreground>
@@ -384,10 +384,10 @@
                                     <RowDefinition />
                                     <RowDefinition Height=" 50"/>
                                 </Grid.RowDefinitions>
-                                <Image Stretch="Uniform"   Source="{Binding PicUrl}">
-                                    <!--<Image.Source>
-                                        <BitmapImage UriSource="{Binding Picture, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/DefaultUserImage.png}"/>
-                                    </Image.Source>-->
+                                <Image Stretch="Uniform"   >
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="200"/>
+                                    </Image.Source>
                                 </Image>
                                 <UniformGrid Grid.Row =" 1"  Columns=" 1"  >
                                     <TextBlock Text="{Binding Name}" Style="{StaticResource DarkBottomTextBoxStyle}"/>
@@ -416,7 +416,7 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="model:RadioModel">
+                        <DataTemplate  >
                             <StackPanel Orientation="Vertical">
                                 <StackPanel.Resources>
                                     <Style TargetType="Rectangle"  BasedOn="{StaticResource HorizontalDecorationRectangleStyle}">
@@ -433,12 +433,12 @@
 
                                     <Image Margin="7.5">
                                         <Image.Source>
-                                            <BitmapImage UriSource="{Binding Picture, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/TestImages/电台测试.png}"/>
+                                            <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="200"/>
                                         </Image.Source>
                                     </Image>
                                     <UniformGrid Grid.Column  =" 1"  Columns=" 1"  >
                                         <TextBlock Text="{Binding Title}" Style="{StaticResource DarkBottomTextBoxStyle}" Margin="2,5"/>
-                                        <TextBlock Text="{Binding AnchorName}" Style="{StaticResource GrayTopTextBoxStyle}" Margin=" 2,5"/>
+                                        <TextBlock Text="{Binding CopyWriter}" Style="{StaticResource GrayTopTextBoxStyle}" Margin=" 2,5"/>
                                     </UniformGrid>
                                 </Grid>
                                 <Rectangle  />

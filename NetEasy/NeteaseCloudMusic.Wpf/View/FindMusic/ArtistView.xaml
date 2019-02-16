@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View"
     xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
+     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
+xmlns:prism="http://www.codeplex.com/prism"
              xmlns:controls="clr-namespace:NeteaseCloudMusic.Controls;assembly=NeteaseCloudMusic.Controls" x:Class="NeteaseCloudMusic.Wpf.View.ArtistView"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600">
@@ -15,13 +17,18 @@
         </Grid.RowDefinitions>
         <UniformGrid Columns=" 1">
             <UniformGrid.Resources >
+
                 <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource DarkBottomTextBoxStyle}">
                     <Setter Property="VerticalAlignment" Value="Center"/>
                 </Style>
                 <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource EmptyTextOnlyRadioButtonStyle}" >
-                   
+                    <Setter Property="Command" Value="{Binding SearchFilterChangeCommand}"/>
                     <Setter Property="Margin" Value=" 3,0"/>
-                   
+                    <Setter Property="IsChecked">
+                        <Setter.Value>
+                            <Binding RelativeSource="{RelativeSource AncestorLevel=1,AncestorType=ListBoxItem}" Path="IsSelected"/>
+                        </Setter.Value>
+                    </Setter>
                     <Style.Triggers>
 
                         <MultiTrigger>
@@ -50,125 +57,320 @@
                     <Setter Property="Opacity" Value=" 0.8"/>
                     <Setter Property="Margin" Value="2,0"/>
                 </Style>
-                
+                <Style TargetType="ListBox">
+                    <Setter Property="ItemsPanel">
+                        <Setter.Value>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="ItemContainerStyle">
+                        <Setter.Value>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <ContentPresenter/>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="BorderThickness" Value=" 0"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="SelectedValuePath" Value="Tag"/>
+                </Style>
             </UniformGrid.Resources>
             <TextBlock/>
-            <StackPanel Orientation="Horizontal">
-              
+            <DockPanel  >
                 <TextBlock Text="语种:"/>
-                <RadioButton   Content="全部" IsChecked="{Binding SelectedLanguageType,ConverterParameter= All,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}"/>
-                <Rectangle/>
-                <RadioButton Content="华语"  IsChecked="{Binding SelectedLanguageType,ConverterParameter= Chinese,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}"/>
-
-                <Rectangle/>
-                <RadioButton Content="欧美" IsChecked="{Binding SelectedLanguageType,ConverterParameter= America,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}"/>
-                <Rectangle/>
-                <RadioButton Content="日本" IsChecked="{Binding SelectedLanguageType,ConverterParameter= Japan,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}"/>
-                <Rectangle/>
-                <RadioButton Content="韩国" IsChecked="{Binding SelectedLanguageType,ConverterParameter= Korea,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}"/>
-                <Rectangle/>
-                <RadioButton Content="其他" IsChecked="{Binding SelectedLanguageType,ConverterParameter= Other,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
+                <ListBox  SelectedValue="{Binding SelectedLanguage}">
+                    <ListBoxItem   Tag="99">
+                        <DockPanel>
+                            <RadioButton   Content="全部"     />
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="10">
+                        <DockPanel>
+                            <RadioButton Content="华语"    />
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="20">
+                        <DockPanel>
+                            <RadioButton Content="欧美"   />
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="60">
+                        <DockPanel>
+                            <RadioButton Content="日本"  />
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="70">
+                        <DockPanel>
+                            <RadioButton Content="韩国"  />
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="40">
+                        <RadioButton Content="其他" />
+                    </ListBoxItem>
+                </ListBox>
+            </DockPanel>
+            <DockPanel  >
                 <TextBlock Text="分类："/>
-                <RadioButton IsChecked="{Binding SelectedArtistType,ConverterParameter=All,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}" Content="全部"/>
-                <Rectangle/>
-                <RadioButton Content="男歌手" IsChecked="{Binding SelectedArtistType,ConverterParameter=Man,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}"/>
-                <Rectangle/>
-                <RadioButton Content="女歌手" IsChecked="{Binding SelectedArtistType,ConverterParameter=Woman,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}"/>
-                <Rectangle />
-                <RadioButton Content="乐队组合" IsChecked="{Binding SelectedArtistType,ConverterParameter=Band,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter}}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
+                <ListBox SelectedValue="{Binding SelectedGender}">
+                    <ListBoxItem Tag="99">
+                        <DockPanel>
+                            <RadioButton  Content="全部" />
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="01">
+                        <DockPanel>
+                            <RadioButton Content="男歌手"  />
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="02">
+                        <DockPanel>
+                            <RadioButton Content="女歌手"  />
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="03">
+                        <RadioButton Content="乐队组合"  />
+                    </ListBoxItem>
+                </ListBox>
+            </DockPanel>
+            <DockPanel   >
                 <TextBlock Text="筛选："/>
-                <RadioButton IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter=Wildcard}" Content="热门"/>
-                <Rectangle/>
-                <RadioButton Content="A" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= A}" />
-                <Rectangle />
-                <RadioButton Content="B" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= B}" />
-                <Rectangle />
-                <RadioButton Content="C" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= C}" />
-                <Rectangle />
-                <RadioButton Content="D" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= D}" />
-                <Rectangle />
-                <RadioButton Content="E" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= E}" />
-                <Rectangle />
-                <RadioButton Content="F" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= F}" />
-                <Rectangle />
-                <RadioButton Content="G" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= G}" />
-                <Rectangle />
-                <RadioButton Content="H" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= H}" />
-                <Rectangle />
-                <RadioButton Content="I" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= I}" />
-                <Rectangle />
-                <RadioButton Content="J" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= J}" />
-                <Rectangle />
-                <RadioButton Content="K" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= K}" />
-                <Rectangle />
-                <RadioButton Content="L" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= L}" />
-                <Rectangle />
-                <RadioButton Content="M" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= M}" />
-                <Rectangle />
-                <RadioButton Content="N" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= N}" />
-                <Rectangle />
-                <RadioButton Content="O" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= O}" />
-                <Rectangle />
-                <RadioButton Content="P" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= P}" />
-                <Rectangle />
-                <RadioButton Content="Q" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= Q}" />
-                <Rectangle />
-                <RadioButton Content="R" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= R}" />
-                <Rectangle />
-                <RadioButton Content="S" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= S}" />
-                <Rectangle />
-                <RadioButton Content="T" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= T}" />
-                <Rectangle />
-                <RadioButton Content="U" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= U}" />
-                <Rectangle />
-                <RadioButton Content="V" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= V}" />
-                <Rectangle />
-                <RadioButton Content="W" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= W}" />
-                <Rectangle />
-                <RadioButton Content="X" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= X}" />
-                <Rectangle />
-                <RadioButton Content="Y" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= Y}" />
-                <Rectangle />
-                <RadioButton Content="Z" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= Z}" />
-                <Rectangle />
-                <RadioButton Content="#" IsChecked="{Binding PinYinHeadType,Converter={x:Static converter:ValueConverterFactory.Enum2ConverterParameterConverter},ConverterParameter= Sharp}" />
-                <Rectangle />
-            </StackPanel>
+                <ListBox SelectedValue="{Binding SelectedPinYin}">
+                    <ListBoxItem   Tag="99">
+                        <DockPanel>
+                            <RadioButton Content="全部"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="A">
+                        <DockPanel>
+                            <RadioButton Content="A"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="B">
+                        <DockPanel>
+                            <RadioButton Content="B"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="C">
+                        <DockPanel>
+                            <RadioButton Content="C"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="D">
+                        <DockPanel>
+                            <RadioButton Content="D"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="E">
+                        <DockPanel>
+                            <RadioButton Content="E"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="F">
+                        <DockPanel>
+                            <RadioButton Content="F"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="G">
+                        <DockPanel>
+                            <RadioButton Content="G"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="H">
+                        <DockPanel>
+                            <RadioButton Content="H"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="I">
+                        <DockPanel>
+                            <RadioButton Content="I"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="J">
+                        <DockPanel>
+                            <RadioButton Content="J"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="K">
+                        <DockPanel>
+                            <RadioButton Content="K"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="L">
+                        <DockPanel>
+                            <RadioButton Content="L"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="M">
+                        <DockPanel>
+                            <RadioButton Content="M"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="N">
+                        <DockPanel>
+                            <RadioButton Content="N"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="O">
+                        <DockPanel>
+                            <RadioButton Content="O"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="O">
+                        <DockPanel>
+                            <RadioButton Content="P"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="Q">
+                        <DockPanel>
+                            <RadioButton Content="Q"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="R">
+                        <DockPanel>
+                            <RadioButton Content="R"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="S">
+                        <DockPanel>
+                            <RadioButton Content="S"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="T">
+                        <DockPanel>
+                            <RadioButton Content="T"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="U">
+                        <DockPanel>
+                            <RadioButton Content="U"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="V">
+                        <DockPanel>
+                            <RadioButton Content="V"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="W">
+                        <DockPanel>
+                            <RadioButton Content="W"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="X">
+                        <DockPanel>
+                            <RadioButton Content="X"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="Y">
+                        <DockPanel>
+                            <RadioButton Content="Y"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="Z">
+                        <DockPanel>
+                            <RadioButton Content="Z"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                    <ListBoxItem Tag="#">
+                        <DockPanel>
+                            <RadioButton Content="#"/>
+                            <Rectangle/>
+                        </DockPanel>
+                    </ListBoxItem>
+                </ListBox>
+            </DockPanel>
         </UniformGrid>
 
-        <ScrollViewer  Grid.Row=" 1">
-            <ListBox Style="{StaticResource UniformGridContainerListBoxStyle}" ItemsSource="{Binding Artists}" AlternationCount="6">
+        <Grid  Grid.Row=" 1">
+            <Button x:Name="btnUserBinding" Visibility="Collapsed" Command="{Binding ArtistUserCommand}"/>
+            <ListBox  Background="Transparent" BorderThickness=" 0" ItemsSource="{Binding Artists}"  >
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <prism:InvokeCommandAction  Command="{Binding SelectedArtistCommand}" TriggerParameterPath="Source.SelectedItem" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <ListBox.ItemTemplate>
                     <DataTemplate >
-                        <Grid   Height=" 120"  Margin="10,10,10,0" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition Height="20"/>
-                            </Grid.RowDefinitions>
+                        <DockPanel     Margin="10,10,10,0" >
+                            
+                            <DockPanel  DockPanel.Dock="Bottom">
+                                <Button Style="{StaticResource EmptyButtonStyle}" DockPanel.Dock="Right"
+                                        Command="{Binding ElementName=btnUserBinding,Path=Command}"
+                                       CommandParameter="{Binding AccountId}"
+                                        x:Name="btnArtistAccount">
+                                    <Path  Stretch="Uniform" Height=" 8" Stroke="Red" Data="F1M18726,6960L18724,6932 18718,6904 18708,6877 18695,6852 18678,6830 18658,6810 18635,6792 18610,6779 18583,6769 18555,6763 18527,6761 18499,6763 18471,6769 18444,6779 18419,6792 18396,6810 18376,6830 18359,6852 18345,6877 18335,6904 18329,6932 18327,6960 18329,6989 18335,7017 18345,7043 18359,7068 18376,7091 18396,7111 18419,7128 18444,7142 18471,7152 18499,7158 18527,7160 18555,7158 18583,7152 18610,7142 18635,7128 18658,7111 18678,7091 18695,7068 18708,7043 18718,7017 18724,6989z M19029,7581L19019,7538 19006,7495 18989,7454 18968,7415 18944,7377 18917,7342 18887,7309 18854,7279 18819,7252 18782,7228 18742,7208 18701,7191 18659,7177 18615,7168 18571,7162 18527,7160 18483,7162 18438,7168 18395,7177 18353,7191 18312,7208 18272,7228 18235,7252 18199,7279 18167,7309 18137,7342 18110,7377 18086,7415 18065,7454 18048,7495 18035,7538 18025,7581 M18961,7128L18971,7114 18980,7100 18989,7085 18996,7070 19002,7055 19008,7039 19012,7023 19016,7007 19018,6990 19020,6974 19020,6957 19020,6940 19018,6923 19016,6907 19012,6891 19008,6874 19002,6859 18996,6843 18989,6828 18981,6814 18972,6799 18962,6786 18951,6773 18940,6761 18928,6749 18915,6738 18902,6728 18888,6719 M19298,7502L19290,7479 19281,7456 19271,7433 19261,7411 19249,7389 19237,7368 19223,7347 19209,7327 19194,7307 19178,7288 19162,7270 19145,7252 19127,7235 19108,7219 19089,7203 19069,7188 19048,7175 19027,7161 19006,7149 18984,7138 18961,7128"/>
+                                </Button>
+                                <TextBlock Text="{Binding Name}"     Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                            </DockPanel>
                             <Image  Stretch="Uniform"    >
                                 <Image.Source>
-                                    <BitmapImage UriSource="{Binding ArtistImage, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/TestImages/热门推荐测试.png}" ></BitmapImage>
+                                    <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="200"/>
                                 </Image.Source>
                             </Image>
-
-                            <TextBlock Text="{Binding Name}" Grid.Row=" 1" HorizontalAlignment="Left"  Style="{StaticResource DarkBottomTextBoxStyle}"
-                            />
-
-
-                        </Grid>
+                        </DockPanel>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding AccountId}" Value=" 0">
+                                <Setter Property="Visibility" Value="Collapsed" TargetName="btnArtistAccount"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <!--<Setter Property="HorizontalContentAlignment" Value="Center"/>-->
+                        <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                     </Style>
                 </ListBox.ItemContainerStyle>
+                <ListBox.Template>
+                    <ControlTemplate TargetType="ListBox">
+                        <ScrollViewer ScrollChanged="ScrollViewer_ScrollChanged">
+                            <UniformGrid IsItemsHost="True" Columns="6"/>
+                        </ScrollViewer>
+                    </ControlTemplate>
+                </ListBox.Template>
             </ListBox>
-
-        </ScrollViewer>
+        </Grid>
     </Grid>
 </ContentControl>

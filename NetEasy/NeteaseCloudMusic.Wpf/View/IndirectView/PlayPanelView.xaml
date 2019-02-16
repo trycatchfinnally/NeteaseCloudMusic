@@ -12,7 +12,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800">
     <ContentControl.Resources>
-        <Storyboard x:Key="OnLoaded1" RepeatBehavior="Forever">
+        <Storyboard x:Key="OnLoaded1" RepeatBehavior="Forever"  >
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="grdImage">
                 <EasingDoubleKeyFrame KeyTime="0:0:5" Value="360"/>
             </DoubleAnimationUsingKeyFrames>
@@ -22,6 +22,9 @@
         <EventTrigger RoutedEvent="FrameworkElement.Loaded">
             <BeginStoryboard Storyboard="{StaticResource OnLoaded1}" />
         </EventTrigger>
+        <!--<EventTrigger RoutedEvent="FrameworkElement.Unloaded">
+            <RemoveStoryboard  BeginStoryboardName="main"   />
+        </EventTrigger>-->
     </ContentControl.Triggers>
     <ScrollViewer>
         <Grid Margin="10,0">

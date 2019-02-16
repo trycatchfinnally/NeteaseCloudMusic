@@ -20,8 +20,8 @@ namespace NeteaseCloudMusic.Wpf.Model
         /// </summary>
         public string  Image
         {
-            get { return _innerModel.Pic; }
-            set { _innerModel.Pic = value;
+            get { return _innerModel.PicUrl; }
+            set { _innerModel.PicUrl = value;
                 RaisePropertyChanged(nameof(Image));
             }
         }

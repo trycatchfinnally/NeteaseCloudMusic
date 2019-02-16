@@ -36,6 +36,7 @@
         {
             set;get;
         }
+        public long  Id { get; set; }
 
     }
 }

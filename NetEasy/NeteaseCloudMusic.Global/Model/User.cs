@@ -42,5 +42,9 @@
         /// vip点击
         /// </summary>
         public string  VipLevel { get; set; }
+        /// <summary>
+        /// 签名
+        /// </summary>
+        public string Signature { get; set; }
     }
 }

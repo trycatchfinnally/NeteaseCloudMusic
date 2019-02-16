@@ -50,5 +50,10 @@ namespace NeteaseCloudMusic.Global.Model
         /// 热度
         /// </summary>
         public int  HotScore { get; set; }
+        /// <summary>
+        /// 如果歌手有账户，对应账户id
+        /// </summary>
+        public long  AccountId { get; set; }
     }
+
 }

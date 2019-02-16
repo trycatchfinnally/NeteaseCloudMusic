@@ -1,4 +1,6 @@
-﻿namespace NeteaseCloudMusic.Global.Model
+﻿using System.Linq;
+
+namespace NeteaseCloudMusic.Global.Model
 {
     /// <summary>
     /// 代表MV的绑定Model
@@ -32,12 +34,18 @@
         /// </summary>
         public string ArtistName
         {
-            get; set;
+            get
+            {
+                if (Artists == null || Artists.Length == 0)
+                    return string.Empty;
+                return string.Join("/", Artists.Select(x => x.Name));
+            }
         }
+        public Artist[] Artists { get; set; }
         /// <summary>
         /// 作者的id
         /// </summary>
-        public long ArtistId { get; set; }
+        public long ArtistId => Artists?.FirstOrDefault()?.Id??0;
         /// <summary>
         /// mv被播放次数
         /// </summary>

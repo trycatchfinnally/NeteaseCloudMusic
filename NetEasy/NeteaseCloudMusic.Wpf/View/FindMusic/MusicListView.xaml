@@ -215,7 +215,11 @@
                                             <RowDefinition/>
                                             <RowDefinition Height="40"/>
                                         </Grid.RowDefinitions>
-                                        <Image  Stretch="Uniform"   Source="{Binding PicUrl}"/>
+                                        <Image  Stretch="Uniform"   >
+                                            <Image.Source>
+                                                <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="200"/>
+                                            </Image.Source>
+                                        </Image>
                                         <UniformGrid Grid.Row=" 1" Columns=" 1">
                                             <TextBlock Text="{Binding Name}"  HorizontalAlignment="Center" Style="{StaticResource DarkBottomTextBoxStyle}"/>
                                             <TextBlock Text="{Binding CreateUser.UserName,FallbackValue='' ,StringFormat=by {0} }"  HorizontalAlignment="Left" Style="{StaticResource GrayTopTextBoxStyle}" />

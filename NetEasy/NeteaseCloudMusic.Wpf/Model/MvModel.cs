@@ -56,7 +56,7 @@ namespace NeteaseCloudMusic.Wpf.Model
                 return innerModel.ArtistName;
             }
 
-            set { innerModel.ArtistName = value;
+            set {  
                 RaisePropertyChanged();
             }
         }

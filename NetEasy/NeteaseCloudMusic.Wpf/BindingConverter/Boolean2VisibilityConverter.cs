@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace NeteaseCloudMusic.Wpf.BindingConverter
 {
@@ -28,4 +30,5 @@ namespace NeteaseCloudMusic.Wpf.BindingConverter
             throw new NotImplementedException();
         }
     }
+   
 }

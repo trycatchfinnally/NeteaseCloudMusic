@@ -28,7 +28,11 @@
                         <DataTemplate>
                             <DockPanel>
                                 <Grid>
-                                    <Image Source="{Binding PicUrl}" Stretch="Uniform" Height=" 90"/>
+                                    <Image   Stretch="Uniform" Height=" 90">
+                                        <Image.Source>
+                                            <BitmapImage UriSource="{Binding PicUrl}" DecodePixelHeight="90"/>
+                                        </Image.Source>
+                                    </Image>
                                     <TextBlock Text="{Binding UpdateFrequency}" Style="{StaticResource GrayTopTextBoxStyle}"
                                                VerticalAlignment="Bottom" Margin="3,5"
                                                Foreground="White"/>
@@ -61,7 +65,11 @@
                         <DataTemplate>
                             <StackPanel>
                                 <Grid>
-                                    <Image Source="{Binding PicUrl}" Stretch="Uniform"/>
+                                    <Image   Stretch="Uniform">
+                                        <Image.Source>
+                                            <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="200"/>
+                                        </Image.Source>
+                                    </Image>
                                     <TextBlock Style="{StaticResource GrayTopTextBoxStyle}" VerticalAlignment="Bottom"
                                                Foreground="White"
                                                Margin="3,5" Text="{Binding UpdateFrequency}"/>

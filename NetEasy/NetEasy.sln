@@ -11,6 +11,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeteaseCloudMusic.Global", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeteaseCloudMusic.Controls", "NeteaseCloudMusic.Controls\NeteaseCloudMusic.Controls.csproj", "{5F991C63-5F0D-4432-8CEE-1130A696F4C5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ScreenShot", "ScreenShot", "{3B896EEE-0DEC-4E0E-A605-12E79C4BC394}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\ScreenShot\MV播放.png = ..\..\ScreenShot\MV播放.png
+		..\..\ScreenShot\个人主页.png = ..\..\ScreenShot\个人主页.png
+		..\..\ScreenShot\个性推荐.png = ..\..\ScreenShot\个性推荐.png
+		..\..\ScreenShot\初始屏幕.png = ..\..\ScreenShot\初始屏幕.png
+		..\..\ScreenShot\搜索.png = ..\..\ScreenShot\搜索.png
+		..\..\ScreenShot\搜索结果.png = ..\..\ScreenShot\搜索结果.png
+		..\..\ScreenShot\播放详情页面.png = ..\..\ScreenShot\播放详情页面.png
+		..\..\ScreenShot\新歌速递.png = ..\..\ScreenShot\新歌速递.png
+		..\..\ScreenShot\歌单.png = ..\..\ScreenShot\歌单.png
+		..\..\ScreenShot\歌单中搜索.png = ..\..\ScreenShot\歌单中搜索.png
+		..\..\ScreenShot\歌手.png = ..\..\ScreenShot\歌手.png
+		..\..\ScreenShot\歌手详情.png = ..\..\ScreenShot\歌手详情.png
+		..\..\ScreenShot\项目.png = ..\..\ScreenShot\项目.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -132,7 +132,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 SetProperty(ref _isArtistViewModelActived, value);
                 if (value && _artistViewModel == null)
-                    ArtistViewModel = new ArtistViewModel();
+                    ArtistViewModel = CommonServiceLocator.ServiceLocator.Current.GetInstance<ArtistViewModel>();
             }
 
         }
@@ -148,6 +148,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
             set { SetProperty(ref _artistViewModel, value); }
         }
+
         public override void OnNavigatedTo(NavigationContext navigationContext)
         {
             if (navigationContext.Parameters.ContainsKey("Id"))
