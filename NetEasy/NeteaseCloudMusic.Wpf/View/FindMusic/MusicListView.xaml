@@ -215,7 +215,7 @@
                                             <RowDefinition/>
                                             <RowDefinition Height="40"/>
                                         </Grid.RowDefinitions>
-                                        <Image  Stretch="Uniform"   >
+                                        <Image  Stretch="Uniform"  MaxWidth="200" >
                                             <Image.Source>
                                                 <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="200"/>
                                             </Image.Source>

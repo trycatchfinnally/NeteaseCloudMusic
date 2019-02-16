@@ -43,7 +43,6 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         /// 推荐歌曲如果有MV，对应mv的命令
         /// </summary>
         public ICommand RecomendMvCommand { get; }
-        public ICommand PlayAllCommand { get;   }
         public ObservableCollection<Global.Model.Music> RecommendMusics { get; } = new ObservableCollection<Global.Model.Music>();
     }
 }

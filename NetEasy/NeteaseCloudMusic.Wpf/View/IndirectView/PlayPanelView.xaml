@@ -11,7 +11,7 @@
              xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View.IndirectView"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800">
-    <ContentControl.Resources>
+    <!--<ContentControl.Resources>
         <Storyboard x:Key="OnLoaded1" RepeatBehavior="Forever"  >
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="grdImage">
                 <EasingDoubleKeyFrame KeyTime="0:0:5" Value="360"/>
@@ -22,10 +22,10 @@
         <EventTrigger RoutedEvent="FrameworkElement.Loaded">
             <BeginStoryboard Storyboard="{StaticResource OnLoaded1}" />
         </EventTrigger>
-        <!--<EventTrigger RoutedEvent="FrameworkElement.Unloaded">
+        --><!--<EventTrigger RoutedEvent="FrameworkElement.Unloaded">
             <RemoveStoryboard  BeginStoryboardName="main"   />
-        </EventTrigger>-->
-    </ContentControl.Triggers>
+        </EventTrigger>--><!--
+    </ContentControl.Triggers>-->
     <ScrollViewer>
         <Grid Margin="10,0">
             <Grid.RowDefinitions>
@@ -44,20 +44,24 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Margin="0,30">
                     <Grid x:Name="grdImage" Height=" 250"  RenderTransformOrigin="0.5,0.5" Margin="0,0,0,30">
-                        <Grid.RenderTransform>
+                        <!--<Grid.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform/>
                                 <SkewTransform/>
                                 <RotateTransform/>
                                 <TranslateTransform/>
                             </TransformGroup>
-                        </Grid.RenderTransform>
+                        </Grid.RenderTransform>-->
                         <Image Stretch="Uniform"     Source="/NeteaseCloudMusic.Wpf;component/Assets/player_disk_cover.scale-200.png"/>
                         <Border   >
                             <Border.Clip>
                                 <EllipseGeometry Center="172,122" RadiusX="80" RadiusY=" 80"/>
                             </Border.Clip>
-                            <Image Stretch="Uniform" Source="{Binding TrackImage}" />
+                            <Image Stretch="Uniform" Source="{Binding TrackImage}">
+                                <!--<Image.Source>
+                                    <BitmapImage UriSource="{Binding TrackImage,TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/player_disk_cover.scale-200.png}" />
+                                </Image.Source>-->
+                            </Image>
                         </Border>
                     </Grid>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
@@ -314,7 +318,10 @@
                                     <DataTemplate>
                                         <DockPanel >
                                             <Image HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,5"
-                                Height="30" Stretch="UniformToFill"  Width=" 30" Source="{Binding User.UserImage, FallbackValue=/NeteaseCloudMusic.Wpf;component/Assets/Vinyl_music_128px.png}"   >
+                                Height="30" Stretch="UniformToFill"  Width=" 30"     >
+                                                <Image.Source>
+                                                    <BitmapImage UriSource="{Binding User.UserImage}" DecodePixelWidth="30" CreateOptions="IgnoreColorProfile"/>
+                                                </Image.Source>
                                                 <Image.Clip>
                                                     <EllipseGeometry RadiusX="15" RadiusY="15" Center="15,15"  />
                                                 </Image.Clip>
@@ -497,7 +504,8 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <DockPanel Height="40">
-                                    <TextBlock Style="{StaticResource GrayTopTextBoxStyle}" VerticalAlignment="Center" DockPanel.Dock="Right" Text="{Binding Artists[0].Name,FallbackValue=未知}"/>
+                                    <TextBlock Style="{StaticResource GrayTopTextBoxStyle}" MaxWidth="100"
+                                               VerticalAlignment="Center" DockPanel.Dock="Right" Text="{Binding Artists[0].Name,FallbackValue=未知}"/>
                                     <TextBlock Style="{StaticResource DarkBottomTextBoxStyle}" VerticalAlignment="Center" Text="{Binding Name}"/>
                                 </DockPanel>
                             </DataTemplate>

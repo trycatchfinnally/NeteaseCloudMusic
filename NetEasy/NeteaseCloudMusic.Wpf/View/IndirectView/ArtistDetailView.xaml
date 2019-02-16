@@ -357,8 +357,16 @@
                                                 <ColumnDefinition Width="7*"/>
                                                 <ColumnDefinition Width="3*"/>
                                             </Grid.ColumnDefinitions>
-                                            <Image Stretch="Uniform" Grid.Column="1" Grid.ColumnSpan="2" Source="/NeteaseCloudMusic.Wpf;component/Assets/Vinyl_music_128px.png"/>
-                                            <Image Stretch="Uniform" Grid.ColumnSpan="2" Source="{Binding PicUrl}"/>
+                                            <Image Stretch="Uniform" Grid.Column="1" Grid.ColumnSpan="2" >
+                                                <Image.Source>
+                                                    <BitmapImage UriSource="/NeteaseCloudMusic.Wpf;component/Assets/Vinyl_music_128px.png" DecodePixelWidth="200"/>
+                                                </Image.Source>
+                                            </Image>
+                                            <Image Stretch="Uniform" Grid.ColumnSpan="2" >
+                                                <Image.Source>
+                                                    <BitmapImage DecodePixelWidth="200" UriSource="{Binding PicUrl}"/>
+                                                </Image.Source>
+                                            </Image>
                                         </Grid>
                                         <TextBlock Text="{Binding Name}" Style="{StaticResource DarkBottomTextBoxStyle}" Margin="0,2,0,4"/>
                                         <TextBlock Text="{Binding CreateDate,StringFormat={}{0:yyyy-MM-dd}}" Style="{StaticResource GrayTopTextBoxStyle}"/>
@@ -379,7 +387,11 @@
                                 <DataTemplate>
                                     <StackPanel MinWidth="100" MaxWidth="300">
                                         <Grid>
-                                            <Image Stretch="Uniform" Source="{Binding PicUrl}"/>
+                                            <Image Stretch="Uniform" >
+                                                <Image.Source>
+                                                    <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="200"/>
+                                                </Image.Source>
+                                            </Image>
                                             <Grid   HorizontalAlignment="Right"  VerticalAlignment="Top" Margin=" 0,2,2,0"
                                         Height="15" Grid.Row=" 0" >
                                                 <Border Opacity=" 0.6">

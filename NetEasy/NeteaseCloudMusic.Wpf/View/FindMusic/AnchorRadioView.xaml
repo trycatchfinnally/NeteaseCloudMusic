@@ -45,7 +45,11 @@
                                     <RowDefinition/>
                                     <RowDefinition Height="20"/>
                                 </Grid.RowDefinitions>
-                                <Image  Stretch="Uniform"  MaxWidth="30"  Source="{Binding PicUrl}"/>
+                                <Image  Stretch="Uniform"  MaxWidth="30" >
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding PicUrl}" DecodePixelWidth="30"/>
+                                    </Image.Source>
+                                </Image>
                                 <Grid  Grid.Row=" 1"  >
                                     <TextBlock Text="{Binding Name}"  
                                                HorizontalAlignment="Center"  
@@ -67,7 +71,11 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate  >
                             <DockPanel   Height=" 60">
-                                <Image  Stretch="Uniform"   Margin="5" Source="{Binding PicUrl}"/>
+                                <Image  Stretch="Uniform"   Margin="5" >
+                                    <Image.Source>
+                                        <BitmapImage UriSource="{Binding PicUrl}" DecodePixelHeight="60"/>
+                                    </Image.Source>
+                                </Image>
                                 <UniformGrid   Columns=" 1">
                                     <TextBlock Text="{Binding Name}"  HorizontalAlignment="Left"  VerticalAlignment="Center"  Style="{StaticResource DarkBottomTextBoxStyle}"/>
                                     <TextBlock Text="{Binding Reason}"  HorizontalAlignment="Left" VerticalAlignment="Center"  Style="{StaticResource GrayTopTextBoxStyle}" />
