@@ -2,10 +2,10 @@
 using NeteaseCloudMusic.Services.NetWork;
 using NeteaseCloudMusic.Wpf.Extensions;
 using NeteaseCloudMusic.Wpf.Model;
+using NeteaseCloudMusic.Wpf.View;
 using NeteaseCloudMusic.Wpf.View.IndirectView;
 using Newtonsoft.Json;
 using Prism.Commands;
-using Prism.Mvvm;
 using Prism.Regions;
 using System;
 using System.Collections.ObjectModel;
@@ -14,7 +14,7 @@ using System.Windows.Input;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
-    public class PersonalityRecommendViewModel :BindableBase
+    public class PersonalityRecommendViewModel : NavigationViewModelBase
     {
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
@@ -22,17 +22,31 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         public PersonalityRecommendViewModel(INetWorkServices netWorkServices, IRegionManager navigationService)
         {
 
-            _netWorkServices = netWorkServices;
+            this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
             InitData();
             MoreCommand = new DelegateCommand<string>(MoreCommandExecute);
-            RecommendPlayListCommend = new DelegateCommand<PlayListModel>(RecommendPlayListCommendExecute);
-            PrivateContentCommand = new DelegateCommand<PictureListBoxItemModel>(PrivateContentCommandExecute);
+            RecommendPlayListCommend = new DelegateCommand<PlayList>(RecommendPlayListCommendExecute);
+            PrivateContentCommand = new DelegateCommand<PictureListBoxItem>(PrivateContentCommandExecute);
             NewMusicCommand = new DelegateCommand<Global.Model.Music>(NewMusicCommandExecute);
             NewMusicMvCommand = new DelegateCommand<long?>(NewMusicMvCommandExecute);
             NewMvCommand = new DelegateCommand<Global.Model.Mv>(NewMvCommandExecute);
             EveryDayMusicRecommendCommand = new DelegateCommand(EveryDayMusicRecommendCommandExecute);
             BillBoardCommand = new DelegateCommand(BillBoardCommandExecute);
+            PersonalFmCommand = new DelegateCommand(PersonalFmCommandExecute);
+        }
+
+        private async void PersonalFmCommandExecute()
+        {
+            if (Session.CurrentUser != null)
+            {
+                var json = await this._netWorkServices.GetAsync("FindMusic", "GetPersonalFm" );
+                var temp = JsonConvert.DeserializeObject<Music[]>(json);
+                await Context.CurrentPlayMusics.AddRangeAsync(temp, x => Context.PlayCommand.Execute(x[0]));
+                var parmater = new NavigationParameters();
+                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, temp[0].Id);
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayPanelView), parmater);
+            }
         }
 
         private void BillBoardCommandExecute()
@@ -49,7 +63,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         }
         private void EveryDayMusicRecommendCommandExecute()
         {
-            this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.EveryDayMusicRecommendView));
+            if (Session.CurrentUser != null)
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.EveryDayMusicRecommendView));
 
         }
         private void NewMusicMvCommandExecute(long? mvId)
@@ -75,13 +90,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             switch (arg)
             {
                 case "1":
-                    //推荐歌单实现
+                    this._navigationService.RequestNavigate(Context.RegionName, nameof(FindMusicView) + "?TabIndex=1");
                     break;
                 case "2":
                     //独家放送实现
                     break;
                 case "3":
-                    //最新音乐实现
+                    this._navigationService.RequestNavigate(Context.RegionName, nameof(FindMusicView) + "?TabIndex=3");
+
                     break;
                 case "4":
                     //推荐MV实现
@@ -92,14 +108,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
 
         }
-        private void RecommendPlayListCommendExecute(PlayListModel playListModel)
+        private void RecommendPlayListCommendExecute(PlayList playListModel)
         {
             var parmater = new NavigationParameters();
             parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, playListModel.Id);
             this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayListDetailView), parmater);
             // this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayListDetailView)+ $"?PlayListId={playListModel.Id}");
         }
-        private void PrivateContentCommandExecute(PictureListBoxItemModel pictureListBoxItem)
+        private void PrivateContentCommandExecute(PictureListBoxItem pictureListBoxItem)
         {
             if (!string.IsNullOrEmpty(pictureListBoxItem?.RealUrl))
                 System.Diagnostics.Process.Start(pictureListBoxItem.RealUrl);
@@ -109,7 +125,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// </summary>
         private async void InitData()
         {
-            var json = await _netWorkServices.GetAsync("FindMusic", "PersonalityRecommend", new { limit = 10 });
+            var json = await this._netWorkServices.GetAsync("FindMusic", "PersonalityRecommend", new { limit = 10 });
             var temp = JsonConvert.DeserializeObject<Global.Model.PersonalityRecommend>(json);
             if (temp?.RecommendList != null)
             {
@@ -121,12 +137,12 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 //AnchorRadioList.Clear();
                 //AnchorRadioList.AddRange(temp.AnchorRadioList.Select(x => new RadioModel(x)));
-              await   AnchorRadioList.AddRangeAsync(temp.AnchorRadioList);
+                await AnchorRadioList.AddRangeAsync(temp.AnchorRadioList);
             }
             if (temp?.RecommendMvList != null)
             {
 
-                await RecommendMvList.AddRangeAsync(temp.RecommendMvList );
+                await RecommendMvList.AddRangeAsync(temp.RecommendMvList);
             }
             if (temp?.NewMusicList != null)
             {
@@ -149,7 +165,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
         }
 
-        
+
 
         public ObservableCollection<PlayList> RecommendList
         {
@@ -211,6 +227,10 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// </summary>
         public ICommand NewMvCommand { get; }
         public ICommand EveryDayMusicRecommendCommand { get; }
+        /// <summary>
+        /// 私人fm对应的命令
+        /// </summary>
+        public ICommand PersonalFmCommand { get; }
         public ICommand BillBoardCommand { get; }
     }
 }

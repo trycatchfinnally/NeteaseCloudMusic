@@ -1,6 +1,5 @@
 ﻿
 
-using NeteaseCloudMusic.Services.UniqueSymbol;
 using Newtonsoft.Json;
 using Prism.Logging;
 using System;
@@ -20,12 +19,37 @@ using System.Xml.Linq;
 namespace NeteaseCloudMusic.Services.NetWork
 {
 
-    public class NeteaseCloundMusicNetWorkServices : INetWorkServices
+    public class NeteaseCloundMusicNetWorkServices : INetWorkServices 
     {
         /// <summary>
         /// 服务器的基础地址
         /// </summary>
         private const string ServicesBaseUrl = "http://47.101.43.134/api/";
+        private   readonly HttpClient httpClient;
+        private   HttpClientHandler httpClientHandler;
+        public NeteaseCloundMusicNetWorkServices()
+        {
+            var cookieFile = Environment.CurrentDirectory + "/cookies.dat";
+            CookieContainer cookie = null;
+            if (File.Exists(cookieFile))
+            {
+                using (var stream = File.OpenRead(cookieFile))
+                {
+
+
+                    var formatter = new BinaryFormatter();
+                    cookie= formatter.Deserialize(stream ) as CookieContainer;
+                }
+            }
+            httpClientHandler = new HttpClientHandler { UseCookies = true  };
+            if (cookie != null) httpClientHandler.CookieContainer = cookie;
+             httpClient = new HttpClient(httpClientHandler);
+        }
+        public CookieContainer Cookie
+        {
+            get { return httpClientHandler.CookieContainer; }
+            set { httpClientHandler.CookieContainer = value ; }
+        }
         public async Task<string> GetAsync(string controllerName, string actionName, object queryStringData = null)
         {
             return await GetAsync(controllerName, actionName, queryStringData, CancellationToken.None);
@@ -51,12 +75,15 @@ namespace NeteaseCloudMusic.Services.NetWork
                     urlSb.Append($"&{props[i].Name}={props[i].GetValue(queryStringData)}");
                 }
             }
-            HttpClientHandler hcHandler = new HttpClientHandler() { UseCookies = true };
-            HttpClient hClient = new HttpClient(hcHandler) { Timeout = TimeSpan.FromSeconds(90) };
+             
+         //  HttpClient hClient = new HttpClient(_httpClientHandler) { Timeout = TimeSpan.FromSeconds(90) };
            // try
             {
 
-                var tmp = await  hClient.GetAsync(urlSb.ToString(), cancelToken);
+                var tmp = await httpClient.GetAsync(urlSb.ToString(), cancelToken);
+                if (tmp.RequestMessage.Headers.Contains("Cookies")|| tmp.RequestMessage.Headers.Contains("Set-Cookie")) {
+                    Console.WriteLine(tmp.RequestMessage.Headers);
+                }
                // tmp.Wait();
                 tmp.EnsureSuccessStatusCode();
                 cancelToken.ThrowIfCancellationRequested();
@@ -73,5 +100,17 @@ namespace NeteaseCloudMusic.Services.NetWork
                 throw new ArgumentNullException(nameof(json));
             return JsonConvert.DeserializeXNode(json,"Root");
         }
+
+        public async Task<string> PostAsync(string controllerName, string actionName, object postData)
+        {
+            if (string.IsNullOrEmpty(controllerName) || string.IsNullOrEmpty(actionName))
+                throw new ArgumentException("控制器名或者行为名不合法！");
+            HttpContent requestContent = new FormUrlEncodedContent(postData.GetType().GetProperties().Select(x=>new KeyValuePair<string, string>(x.Name,x.GetValue(postData).ToString())) );
+            var temp = await httpClient.PostAsync(ServicesBaseUrl + controllerName + "/" + actionName, requestContent);
+            temp.EnsureSuccessStatusCode();
+            return await temp.Content.ReadAsStringAsync();
+        }
+
+     
     }
 }

@@ -29,10 +29,22 @@ namespace NeteaseCloudMusic.Services.NetWork
         /// <returns>json形式的数据</returns>
         Task<string> GetAsync(string controllerName, string actionName, object queryStringData ,System.Threading.CancellationToken cancelToken);
         /// <summary>
+        /// 用于登陆用，发送post请求
+        /// </summary>
+        /// <param name="controllerName"></param>
+        /// <param name="actionName"></param>
+        /// <param name="queryStringData"></param>
+        /// <returns></returns>
+        Task<string> PostAsync(string controllerName, string actionName, object postData);
+        /// <summary>
         /// 将json形式的数据转换成xml格式数据
         /// </summary>
         /// <param name="json"></param>
         /// <returns></returns>
         XDocument Json2Xml(string json);
+        /// <summary>
+        /// 获取或设置用于通过处理程序存储服务器 Cookie 的 Cookie 容器。
+        /// </summary>
+        System.Net.CookieContainer Cookie { get; set; }
     }
 }

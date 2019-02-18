@@ -1,6 +1,7 @@
 ﻿using NeteaseCloudMusic.Services.NetWork;
 using Prism.Mvvm;
 using Prism.Regions;
+using System;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -151,9 +152,18 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
         public override void OnNavigatedTo(NavigationContext navigationContext)
         {
-            if (navigationContext.Parameters.ContainsKey("Id"))
+            if (navigationContext.Parameters.ContainsKey("TabIndex"))
             {
-
+                var tabIndex = Convert.ToInt32(navigationContext.Parameters["TabIndex"]);
+                switch (tabIndex)
+                {
+                    case 1:
+                        this.IsMusicListViewModelActived = true;break;
+                    case 2:break;
+                    case 3:this.IsNewMusicViewModelActived = true;break;
+                    default:
+                        break;
+                }
             }
         }
     }

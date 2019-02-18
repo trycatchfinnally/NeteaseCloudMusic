@@ -493,7 +493,7 @@
                                     <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
                                 </Path.Stroke>
                             </Path>
-                            <Grid>
+                            <!--<Grid>
                                 <Canvas   Width=" 15"  VerticalAlignment="Center" Margin="0,0,0,16">
                                     <Canvas.Resources>
                                         <Style TargetType="ed:Arc">
@@ -522,7 +522,7 @@
                                     <ed:Arc   Height="7.5"  Width="7.5"     Margin="0,3.5"  />
                                     <ed:Arc   Height="15"   Width="15"    />
                                 </Canvas>
-                            </Grid>
+                            </Grid>-->
                         </StackPanel>
                     </Grid>
                 </ToggleButton>

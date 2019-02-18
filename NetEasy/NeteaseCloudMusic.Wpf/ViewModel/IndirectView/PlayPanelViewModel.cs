@@ -28,12 +28,16 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         {
             _netWorkServices = netWorkServices;
             this._navigationService = navigationService;
-            eventAggregator.GetEvent<CurrentPlayMusicChangeEvent>().Subscribe(RefreshMusic);
+            eventAggregator.GetEvent<CurrentPlayMusicChangeEventArgs>().Subscribe(RefreshMusic);
             UserCommand = new DelegateCommand<long?>(UserCommandExecute);
             AlbumCommand = new DelegateCommand<long?>(AlbumCommandExecute);
             ArtistCommand = new DelegateCommand<long?>(ArtistCommandExecute);
             SimiMusicCommand = new DelegateCommand<Music>(SimiMusicCommandExecute);
+            SimiPlayListCommand = new DelegateCommand<PlayList>(SimiPlayListCommandExecute);
         }
+
+      
+
         /// <summary>
         /// 刷新音乐
         /// </summary>
@@ -44,6 +48,15 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 Id = music.Id;
                 this.SetById(music.Id);
+            }
+        }
+        private void SimiPlayListCommandExecute(PlayList obj)
+        {
+            if (obj?.Id>0 )
+            {
+                var parmater = new NavigationParameters();
+                parmater.Add( NavigationIdParmmeterName, obj.Id);
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.PlayListDetailView), parmater);
             }
         }
         private void SimiMusicCommandExecute(Music music)
@@ -86,7 +99,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             var task2 = _netWorkServices.GetAsync("Music", "GetSimiMusic", new { id });
             var task3 = _netWorkServices.GetAsync("Common", "GetCommentById", new { commentThreadId = $"R_SO_4_{id}" });
             var task4 = _netWorkServices.GetAsync("Music", "GetLyricByMusicId", new { id });
-            await Task.WhenAll(task1, task2, task3,task4);
+            var task5 = _netWorkServices.GetAsync("Music", "GetSimiPlayList", new { id });
+            await Task.WhenAll(task1, task2, task3,task4,task5);
             _innerMusic = JsonConvert.DeserializeObject<Music>(task1.Result);
             _innerComment = JsonConvert.DeserializeObject<CommentCollection>(task3.Result);
             await Task.WhenAll(
@@ -94,7 +108,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             SimiMusics.AddRangeAsync(JsonConvert.DeserializeObject<List<Music>>(task2.Result)),
             NewComments.AddRangeAsync(_innerComment.Comments),
             HotComments.AddRangeAsync(_innerComment.HotComments),
-             Lryics.AddRangeAsync(JsonConvert.DeserializeObject<List<Lyric>>(task4.Result)));
+             Lryics.AddRangeAsync(JsonConvert.DeserializeObject<List<Lyric>>(task4.Result)),
+             ContainsThisTrackList.AddRangeAsync(JsonConvert.DeserializeObject<PlayList[]>(task5.Result)));
             RaiseAllPropertyChanged();
            
         }
@@ -124,6 +139,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         public ICommand AlbumCommand { get; }
         public ICommand ArtistCommand { get; }
         public ICommand SimiMusicCommand { get; }
+        public ICommand SimiPlayListCommand { get; }
         /// <summary>
         /// 包含这首歌的集合
         /// </summary>

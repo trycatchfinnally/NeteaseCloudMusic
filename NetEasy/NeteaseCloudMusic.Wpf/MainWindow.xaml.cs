@@ -1,14 +1,14 @@
 ﻿using NeteaseCloudMusic.Wpf.ViewModel;
-using System.Windows;
-using System.Windows.Input;
-using Unity.Attributes;
-using System.ComponentModel;
-using System.Xml.Linq;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows.Media.Animation;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media.Animation;
+using System.Xml.Linq;
+using Unity.Attributes;
 
 
 namespace NeteaseCloudMusic.Wpf
@@ -26,39 +26,39 @@ namespace NeteaseCloudMusic.Wpf
         [DependencyAttribute]
         public MainWindowViewModel ViewModel
         {
-            get { return this.DataContext as MainWindowViewModel; }
-            set { this.DataContext = value; }
+            get { return DataContext as MainWindowViewModel; }
+            set { DataContext = value; }
         }
 
         private async void btnClose_Click(object sender, RoutedEventArgs e)
         {
             const int durationMilliseconds = 800;
-            this.BeginAnimation(OpacityProperty, new DoubleAnimation(0, TimeSpan.FromMilliseconds(durationMilliseconds))
+            BeginAnimation(OpacityProperty, new DoubleAnimation(0, TimeSpan.FromMilliseconds(durationMilliseconds))
             {
                 EasingFunction = new PowerEase { EasingMode = EasingMode.EaseInOut, Power = 0.8 }
             });
             await Task.Delay(durationMilliseconds);
-            this.Close();
+            Close();
 
         }
 
         private void btnMin_Click(object sender, RoutedEventArgs e)
         {
-            this.WindowState = WindowState.Minimized;
+            WindowState = WindowState.Minimized;
         }
 
         private void btnSize_Click(object sender, RoutedEventArgs e)
         {
-            if (this.WindowState == WindowState.Maximized)
-                this.WindowState = WindowState.Normal;
+            if (WindowState == WindowState.Maximized)
+                WindowState = WindowState.Normal;
             else
-                this.WindowState = WindowState.Maximized;
+                WindowState = WindowState.Maximized;
         }
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
-                this.DragMove();
+                DragMove();
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -72,11 +72,11 @@ namespace NeteaseCloudMusic.Wpf
         {
             var configXml = new XDocument();
             var root = new XElement("Root");
-            root.Add(new XElement("WindowLeft", this.Left));
-            root.Add(new XElement("WindowTop", this.Top));
-            root.Add(new XElement("WindowSize", this.RenderSize));
-            root.Add(new XElement("WindowStartupLocation", (int)this.WindowStartupLocation));
-            root.Add(new XElement("WindowState", (int)this.WindowState));
+            root.Add(new XElement("WindowLeft", Left));
+            root.Add(new XElement("WindowTop", Top));
+            root.Add(new XElement("WindowSize", RenderSize));
+            root.Add(new XElement("WindowStartupLocation", (int)WindowStartupLocation));
+            root.Add(new XElement("WindowState", (int)WindowState));
             configXml.Add(root);
             var path = Path.Combine(Environment.CurrentDirectory, "WindowStartupInfo.xml");
             if (File.Exists(path))

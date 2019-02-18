@@ -46,8 +46,9 @@ namespace NeteaseCloudMusic.Wpf
     /// <summary>
     /// 当当前播放音乐发生变化的聚合事件参数
     /// </summary>
-    public class CurrentPlayMusicChangeEvent: PubSubEvent<Music>
+    public class CurrentPlayMusicChangeEventArgs: PubSubEvent<Music>
     {
 
     }
+   
 }

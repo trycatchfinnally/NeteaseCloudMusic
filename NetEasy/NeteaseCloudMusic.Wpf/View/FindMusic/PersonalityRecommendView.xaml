@@ -84,7 +84,9 @@
                     <ColumnDefinition Width="4*"/>
                     <ColumnDefinition Width="3*"/>
                 </Grid.ColumnDefinitions>
-                <Button Style="{StaticResource TwoLineButtonStyle}" Tag="私人FM" ToolTip="享受你的音乐时光">
+                <Button Style="{StaticResource TwoLineButtonStyle}"
+                        Command="{Binding PersonalFmCommand}"
+                        Tag="私人FM" ToolTip="享受你的音乐时光">
                     <Image  >
                         <Image.Source>
                             <DrawingImage>
@@ -115,7 +117,9 @@
                     </DockPanel.Resources>
                     <Rectangle DockPanel.Dock="Left" />
                     <Rectangle  DockPanel.Dock="Right" />
-                    <Button Command="{Binding EveryDayMusicRecommendCommand}" Style="{StaticResource TwoLineButtonStyle}" Tag="每日歌曲推荐" ToolTip="根据你的口味生成">
+                    <Button Command="{Binding EveryDayMusicRecommendCommand}" 
+                            Style="{StaticResource TwoLineButtonStyle}" Tag="每日歌曲推荐"
+                            ToolTip="根据你的口味生成" Background="Transparent">
                         <TextBlock FontSize="22" Text="{Binding Date}" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock.Foreground>
                                 <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
@@ -324,10 +328,14 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
-                                <Image Grid.Column="1"   Margin="5" Source="{Binding PicUrl, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/TestImages/最新音乐测试.png}"/>
+                                <Image Grid.Column="1"   Margin="5"   >
+                                    <Image.Source>
+                                        <BitmapImage DecodePixelWidth="50" UriSource="{Binding PicUrl,TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/TestImages/最新音乐测试.png}"/>
+                                    </Image.Source>
+                                </Image>
 
                                 <Rectangle Grid.Column=" 2"  Style="{StaticResource VerticalDecorationRectangleStyle}"  
-                                           Visibility="{Binding RelativeSource={RelativeSource AncestorLevel=1,AncestorType=ListBoxItem},Path=Tag }"
+                                           Visibility="{Binding RelativeSource={RelativeSource AncestorLevel=1,AncestorType=ListBoxItem},Path=Tag,TargetNullValue=Visible}"
                                            Opacity="0.4" HorizontalAlignment="Right"/>
                                 <UniformGrid Grid.Column=" 2"  Columns=" 1"  >
                                     <DockPanel HorizontalAlignment="Left">
@@ -349,9 +357,9 @@
                                         </Button>
                                       <TextBlock Text="{Binding Name}" Style="{StaticResource DarkBottomTextBoxStyle}"/>
                                     </DockPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border BorderThickness="1" Visibility="{Binding IsHigh,Converter={x:Static converter:ValueConverterFactory.Boolean2VisibilityConverter}}"
-                                                Width="15" Height=" 10"   VerticalAlignment="Top" HorizontalAlignment="Left">
+                                    <StackPanel Orientation="Horizontal" x:Name="staQuality">
+                                        <Border BorderThickness="1"  
+                                                Width="16" Height=" 10"   VerticalAlignment="Top" HorizontalAlignment="Left">
                                             <Border.BorderBrush>
                                                 <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
                                             </Border.BorderBrush>
@@ -367,6 +375,11 @@
                                 </UniformGrid>
 
                             </Grid>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding MusicQuality}" Value="Low">
+                                    <Setter Property="Visibility" Value="Collapsed" TargetName="staQuality"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

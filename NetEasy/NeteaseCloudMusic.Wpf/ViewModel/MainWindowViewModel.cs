@@ -293,6 +293,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// </summary>
         private async void InitData()
         {
+           // await _netWorkServices.PostAsync("Login", "LoginByCellPhone", new { phone = 15696469238, passWord = "15523738779", remember = true });
             await Task.Delay(100);
 
         }
@@ -518,7 +519,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                     // 
                 }
                 else throw new ArgumentException("只能播放位于播放列表中的项目，请先添加进当前播放列表！");
-                this._eventAggregator.GetEvent<CurrentPlayMusicChangeEvent>().Publish(value);
+                this._eventAggregator.GetEvent<CurrentPlayMusicChangeEventArgs>().Publish(value);
                 RaisePropertyChanged(nameof(MusicImage));
 
 

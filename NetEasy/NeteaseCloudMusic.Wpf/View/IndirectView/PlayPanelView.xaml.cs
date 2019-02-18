@@ -24,6 +24,7 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
     {
         private readonly Services.AudioDecode.IAudioPlayableServices _audioPlayableServices;
         private DoubleAnimation _diskRotate;
+        private DoubleAnimation _diskControlRotate;
         public PlayPanelView(ViewModel.IndirectView.PlayPanelViewModel viewModel,Services.AudioDecode.IAudioPlayableServices audioPlayableServices)
         {
             this.DataContext = viewModel;
@@ -51,6 +52,10 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
         {
             RefreshLyric();
         }
+
+        /// <summary>
+        /// 刷新歌词的同时可以获取到播放状态
+        /// </summary>
         private async void RefreshLyric(  )
         {
             while (true )
@@ -66,12 +71,33 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
                         this.lstLryics.SelectedItem = item;
                         lstLryics.ScrollIntoView(item);
                     }
-
                 }
+                SetDiskControl(_audioPlayableServices.PlayState == Services.AudioDecode.PlayState.Playing);
                 await Task.Delay(100);
             }
         }
-
+        private void SetDiskControl(bool isPlaying)
+        {
+            if (_diskControlRotate==null)
+            {
+                _diskControlRotate = new DoubleAnimation(0, -40, TimeSpan.FromSeconds(0.5));
+                _diskControlRotate.FillBehavior = FillBehavior.HoldEnd;
+                _diskControlRotate.EasingFunction = new BackEase { Amplitude = 0.3, EasingMode = EasingMode.EaseOut };
+            }
+           
+            if (isPlaying)
+            {
+                var rt = new RotateTransform(0);
+                imgDiskControl.RenderTransform = rt;
+                // _diskControlRotate.
+            }
+            else
+            {
+                var rt = new RotateTransform(-40);
+                imgDiskControl.RenderTransform = rt;
+               // rt.BeginAnimation(RotateTransform.AngleProperty, _diskControlRotate);
+            }
+        }
         private void LrcButton_Click(object sender, RoutedEventArgs e)
         {
             dynamic item = (e.Source as Button).Content;

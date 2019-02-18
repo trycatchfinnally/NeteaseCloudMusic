@@ -58,7 +58,6 @@ namespace NeteaseCloudMusic.Wpf
                     sw.WindowState = (WindowState)int.Parse(root.Element("WindowState").Value);
                 }
                 sw.Show();
-
                 base.OnStartup(e);
                 if (this.MainWindow != null)
                 {
@@ -104,19 +103,9 @@ namespace NeteaseCloudMusic.Wpf
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<ViewModel.MainWindowViewModel>();
-            /*
-            AppDomainTypeFinder typefinder = new AppDomainTypeFinder();
-            containerRegistry.RegisterInstance<ITypeFinder>(typefinder);
-       
-
-            typefinder.FindClassesOfType<IDependencyRegistrar>()
-              .Select(x => Activator.CreateInstance(x) as IDependencyRegistrar)
-              .Each(x => x.Register(containerRegistry));*/
             containerRegistry.RegisterSingleton<INetWorkServices, NeteaseCloundMusicNetWorkServices>();
             containerRegistry.RegisterSingleton<IAudioPlayableServices, NAudioPlayableServices>();
-            containerRegistry.Register<INetWorkServices, NeteaseCloundMusicNetWorkServices>();
-            containerRegistry.RegisterInstance<INetWorkServices>(new NeteaseCloundMusicNetWorkServices());
+
         }
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {

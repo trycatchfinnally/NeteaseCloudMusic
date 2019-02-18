@@ -183,6 +183,7 @@
     <Compile Include="Model\PlayListModel.cs" />
     <Compile Include="Model\RadioModel.cs" />
     <Compile Include="Modules\MainRegionModule.cs" />
+    <Compile Include="Session.cs" />
     <Compile Include="SplashscreenWindow.xaml.cs">
       <DependentUpon>SplashscreenWindow.xaml</DependentUpon>
     </Compile>
@@ -637,6 +638,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\default_user_small.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\player_needle.scale-200.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

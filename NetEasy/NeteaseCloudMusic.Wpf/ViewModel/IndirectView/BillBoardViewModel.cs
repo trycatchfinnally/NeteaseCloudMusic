@@ -5,17 +5,15 @@ using NeteaseCloudMusic.Wpf.View.IndirectView;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Regions;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 {
-    public class BillBoardViewModel : Prism.Mvvm.BindableBase, Prism.Regions.INavigationAware
+    public class BillBoardViewModel : NavigationViewModelBase
     {
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
@@ -31,10 +29,10 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             BillBoardCommand = new DelegateCommand<Global.Model.BillBoard>(BillBoardCommandExecute);
         }
 
-        private   void BillBoardCommandExecute(BillBoard obj)
+        private void BillBoardCommandExecute(BillBoard obj)
         {
             if (obj == null) return;
-            if (obj.Id!=0)
+            if (obj.Id != 0)
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
@@ -47,28 +45,20 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             }
         }
 
-        async void INavigationAware.OnNavigatedTo(NavigationContext navigationContext)
+        public override async void OnNavigatedTo(NavigationContext navigationContext)
         {
-            if (_dataHasInited)
+            if (this._dataHasInited)
             {
                 return;
             }
-            var json = await _netWorkServices.GetAsync("BillBoard", "GetTopList");
+            var json = await this._netWorkServices.GetAsync("BillBoard", "GetTopList");
             var temp = JsonConvert.DeserializeObject<List<Global.Model.BillBoard>>(json);
             await Task.WhenAll(NeteaseCloudMusicBillBoard.AddRangeAsync(temp.Where(x => (x.SomeTracksName?.Count).GetValueOrDefault() > 0)),
                 GlobalBillBoard.AddRangeAsync(temp.Where(x => x.SomeTracksName == null || x.SomeTracksName.Count == 0)));
-            _dataHasInited = true;
+            this._dataHasInited = true;
         }
 
-        bool INavigationAware.IsNavigationTarget(NavigationContext navigationContext)
-        {
-            return true;
-        }
 
-        void INavigationAware.OnNavigatedFrom(NavigationContext navigationContext)
-        {
-
-        }
 
         /// <summary>
         /// 云音乐榜单

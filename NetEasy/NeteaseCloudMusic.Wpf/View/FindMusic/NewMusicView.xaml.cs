@@ -12,7 +12,13 @@ namespace NeteaseCloudMusic.Wpf.View
     {
         public NewMusicView()
         {
-            InitializeComponent(); DataContextChanged += (sender, e) =>
+            InitializeComponent();
+            this.SelectToggleButton.Checked += SelectToggleButton_CheckedChange;
+            this.SelectToggleButton.Unchecked += SelectToggleButton_CheckedChange;
+            this.rdTopMusic.Checked += SelectToggleButton_CheckedChange;
+            this.rdTopMusic.Unchecked += SelectToggleButton_CheckedChange;
+
+            DataContextChanged += (sender, e) =>
             {
                 if (e.NewValue != null)
                     SetBinding(NextPageCommandProperty, new Binding(nameof(ViewModel.NewMusicViewModel.NextPageCommand)));
@@ -38,6 +44,19 @@ namespace NeteaseCloudMusic.Wpf.View
                 //currentPageoffset++;
                 NextPageCommand?.Execute(null);
             }
+        }
+
+        private void SelectToggleButton_CheckedChange(object sender, RoutedEventArgs e)
+        {
+            if (rdTopMusic.IsChecked!=true || SelectToggleButton.IsChecked == true)
+            {
+                this.languageTypes.Visibility = Visibility.Hidden;
+            }
+            else  
+            {
+                languageTypes.Visibility = Visibility.Visible ;
+            }
+            this.playControlPart.Visibility = rdTopMusic.IsChecked == true ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }

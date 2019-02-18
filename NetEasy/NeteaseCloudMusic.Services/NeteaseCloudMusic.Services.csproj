@@ -63,13 +63,9 @@
     <Compile Include="AudioDecode\IAudioPlayableServices.cs" />
     <Compile Include="AudioDecode\NAudioPlayableServices.cs" />
     <Compile Include="AudioDecode\PlayState.cs" />
-    <Compile Include="IDialogServices.cs" />
     <Compile Include="NetWork\INetWorkServices.cs" />
     <Compile Include="NetWork\NeteaseCloundMusicNetWorkServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServicesDependencyRegistrar.cs" />
-    <Compile Include="UniqueSymbol\IUniqueServices.cs" />
-    <Compile Include="UniqueSymbol\UniqueServices.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

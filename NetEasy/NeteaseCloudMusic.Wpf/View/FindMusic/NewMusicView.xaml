@@ -78,11 +78,13 @@ xmlns:prism="http://www.codeplex.com/prism"
                             </Setter>
                         </Style>
                     </StackPanel.Resources>
-                    <RadioButton Content="新歌速递"  IsChecked="True"   x:Name="rdTopMusic"
+                    <RadioButton Content="新歌速递"  IsChecked="True"  
+                                 x:Name="rdTopMusic" 
+                               
                                  CommandParameter="0"/>
                     <RadioButton Content="新碟上架"   CommandParameter="1" />
                 </StackPanel>
-                <StackPanel  HorizontalAlignment="Right" Orientation="Horizontal"  >
+                <StackPanel  HorizontalAlignment="Right" Orientation="Horizontal" x:Name="languageTypes" >
                     <StackPanel.Resources>
                         <Style TargetType="RadioButton" BasedOn="{StaticResource EmptyTextOnlyRadioButtonStyle}">
                             <Setter Property="Command" Value="{Binding LanguageCommand}"/>
@@ -124,7 +126,7 @@ xmlns:prism="http://www.codeplex.com/prism"
                     <RadioButton Content="韩国" CommandParameter="4"/>
                 </StackPanel>
             </DockPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin=" 2">
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin=" 2" x:Name="playControlPart">
                 <Button Style="{StaticResource EmptyButtonStyle}" Command="{Binding PlayAllOrSelectedCommand}">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -162,7 +164,8 @@ xmlns:prism="http://www.codeplex.com/prism"
                     </Grid>
                 </Button>
                 <Rectangle Margin="2,4"/>
-                <ToggleButton  Name="SelectToggleButton" IsThreeState="False" IsChecked="{Binding IsSelectModel}">
+                <ToggleButton  Name="SelectToggleButton" IsThreeState="False" 
+                               IsChecked="{Binding IsSelectModel}"  >
                     <ToggleButton.Template  >
                         <ControlTemplate TargetType="ToggleButton">
                             <Grid Background="Transparent" >

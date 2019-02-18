@@ -12,7 +12,7 @@
                 xmlns:prism="http://www.codeplex.com/prism"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <ScrollViewer>
+    <Grid>
         <Grid Margin="10,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height=" 200"/>
@@ -98,6 +98,9 @@
                     </ToggleButton>
                 </DockPanel>
                 <Button x:Name="btnMvBindinger" Visibility="Collapsed" Command="{Binding RecomendMvCommand}"/>
+                <Button x:Name="btnAlbumBinding" Visibility="Collapsed" Command="{Binding MusicAlbumCommand}"/>
+                <Button x:Name="btnArtistBinding" Visibility="Collapsed" Command="{Binding MusicArtistCommand}"/>
+
                 <ListBox Grid.Row="1" ItemsSource="{Binding RecommendMusics}" SelectionMode="{Binding SelectionMode}"  >
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="SelectionChanged">
@@ -113,8 +116,9 @@
                             <Setter Property="ItemContainerStyle">
                                 <Setter.Value>
                                     <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultTwoColorListBoxItemStyle}">
-                                        <Setter Property="Height" Value=" 30"/>
+                                        <Setter Property="Height" Value="30"/>
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalAlignment" Value="Stretch"/>
                                     </Style>
                                 </Setter.Value>
                             </Setter>
@@ -126,7 +130,7 @@
                     </ListBox.Style>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid Margin="10,0,30,0">
+                            <Grid Margin="10,0,30,0"  >
                                 <DockPanel>
                                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Width=" 400"  >
                                         <StackPanel.Resources>
@@ -134,9 +138,27 @@
                                                 <Setter Property="VerticalAlignment" Value="Center"/>
                                             </Style>
                                         </StackPanel.Resources>
-                                        <TextBlock    Width=" 150" Text="{Binding ArtistName}"/>
-
-                                        <TextBlock   Width=" 150" Text="{Binding AlbumName}"/>
+                                        <!--<TextBlock    Width=" 150" Text="{Binding ArtistName}"/>-->
+                                        <ItemsControl ItemsSource="{Binding Artists}" Width="150">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate >
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Style="{StaticResource EmptyButtonWithFocusStyle}"
+                                                            Command="{Binding ElementName=btnArtistBinding,Path=Command}"
+                                                            CommandParameter="{Binding Id}"
+                                                            Content="{Binding Name}" Margin="0,0,2,0"/>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        <Button Style="{StaticResource EmptyButtonWithFocusStyle}" 
+                                                Width="150"  Command="{Binding ElementName=btnAlbumBinding,Path=Command}"
+                                                CommandParameter="{Binding Album}"
+                                                Content="{Binding AlbumName}"></Button>
+                                        <!--<TextBlock   Width=" 150" Text="{Binding AlbumName}"/>-->
                                         <TextBlock Width="70">
                                             <TextBlock.Text>
                                                 <MultiBinding Converter="{x:Static converter:MultiValueConverterFactory.TimeSpan2TextConverter}">
@@ -155,7 +177,6 @@
                                                 </TextBlock.Foreground>
                                             </TextBlock>
                                         </Border>
-
                                     </StackPanel>
                                     <DockPanel  >
                                         <DockPanel.Resources>
@@ -260,10 +281,10 @@
                                             </controls:CycleTypeButton>
                                             <StackPanel  Grid.Column="2" Orientation="Horizontal">
                                                 <TextBlock     Margin="5"   HorizontalAlignment="Left"  Text="{Binding Name}"/>
-                                                <Button Style="{StaticResource EmptyButtonStyle}"  
+                                                <Button Style="{StaticResource EmptyButtonStyle}"  x:Name="mvButton"
                                                                 Command="{Binding ElementName=btnMvBindinger,Path=Command}"
                                                                 CommandParameter="{Binding MvId}"
-                                                                Visibility="{Binding HasMv,Converter={x:Static converter:ValueConverterFactory.Boolean2VisibilityConverter}}">
+                                                                 >
                                                     <Border BorderThickness="1" Background="Transparent"  
                                                                 VerticalAlignment="Center" Width=" 16" Height="10" >
                                                         <Border.BorderBrush>
@@ -276,7 +297,6 @@
                                                         </TextBlock>
                                                     </Border>
                                                 </Button>
-
                                             </StackPanel>
                                         </Grid>
                                         <!--<TextBlock Text="1"/>
@@ -288,11 +308,14 @@
                                 <DataTrigger Binding="{Binding MusicQuality}" Value="Low">
                                     <Setter Property="Visibility" Value="Collapsed" TargetName="qualityBorder"/>
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding MvId}" Value="0">
+                                    <Setter Property="Visibility" Value="Collapsed" TargetName="mvButton"/>
+                                </DataTrigger>
                             </DataTemplate.Triggers>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
             </Grid>
         </Grid>
-    </ScrollViewer>
+    </Grid>
 </ContentControl>

@@ -258,3 +258,9 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+NetEasy/NeteaseCloudMusic.Services/bin/Debug/NeteaseCloudMusic.Services.dll
+NetEasy/NeteaseCloudMusic.Services/bin/Debug/NeteaseCloudMusic.Services.pdb
+NetEasy/NeteaseCloudMusic.Services/obj/Debug/NeteaseCloudMusic.Services.dll
+NetEasy/NeteaseCloudMusic.Services/obj/Debug/NeteaseCloudMusic.Services.pdb
+NetEasy/NeteaseCloudMusic.Services/obj/Debug/NeteaseCloudMusic.Services.dll
+NetEasy/NeteaseCloudMusic.Services/obj/Debug/NeteaseCloudMusic.Services.pdb

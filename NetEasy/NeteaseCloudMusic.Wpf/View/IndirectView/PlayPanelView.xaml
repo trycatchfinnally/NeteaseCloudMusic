@@ -43,7 +43,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <StackPanel Margin="0,30">
-                    <Grid x:Name="grdImage" Height=" 250"  RenderTransformOrigin="0.5,0.5" Margin="0,0,0,30">
+                    <Grid x:Name="grdImage" Height=" 250"  RenderTransformOrigin="0.5,0.5" Margin="0,30,0,30">
                         <!--<Grid.RenderTransform>
                             <TransformGroup>
                                 <ScaleTransform/>
@@ -53,11 +53,11 @@
                             </TransformGroup>
                         </Grid.RenderTransform>-->
                         <Image Stretch="Uniform"     Source="/NeteaseCloudMusic.Wpf;component/Assets/player_disk_cover.scale-200.png"/>
-                        <Border   >
+                        <Border    >
                             <Border.Clip>
                                 <EllipseGeometry Center="172,122" RadiusX="80" RadiusY=" 80"/>
                             </Border.Clip>
-                            <Image Stretch="Uniform" Source="{Binding TrackImage}">
+                            <Image Stretch="Uniform" Source="{Binding TrackImage}"  >
                                 <!--<Image.Source>
                                     <BitmapImage UriSource="{Binding TrackImage,TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/player_disk_cover.scale-200.png}" />
                                 </Image.Source>-->
@@ -126,6 +126,20 @@
                         </Button>
                     </StackPanel>
                 </StackPanel>
+                <Image Grid.Column="0" Stretch="Uniform" Height="120"   
+                       VerticalAlignment="Top"  x:Name="imgDiskControl"
+                       Source="/NeteaseCloudMusic.Wpf;component/Assets/player_needle.scale-200.png" RenderTransformOrigin="0.2,0 ">
+                    <Image.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="-40"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Image.RenderTransform>
+                </Image>
+
+
                 <DockPanel Grid.Column=" 1" Margin="0,30">
                     <DockPanel DockPanel.Dock="Top">
                         <Button Style="{StaticResource DefaultButtonStyle}" DockPanel.Dock="Right"  Height="25" Width="30">
@@ -438,7 +452,11 @@
                              ScrollViewer.IsDeferredScrollingEnabled="False"
                              BorderThickness="0"
                              ItemsSource="{Binding ContainsThisTrackList}">
-                        
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="SelectionChanged">
+                                <prism:InvokeCommandAction  Command="{Binding SimiPlayListCommand}" TriggerParameterPath="Source.SelectedItem" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
                         <ListBox.Template>
                             <ControlTemplate TargetType="ListBox">
                                 <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderBrush}">
@@ -449,7 +467,6 @@
                         </ListBox.Template>
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem" >
-                                <!--<Setter Property="Height" Value=" 60"/>-->
                                 <Setter Property="Padding" Value=" 0"/>
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                 <Setter Property="Template">
@@ -465,9 +482,13 @@
                         </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <DockPanel>
-                                    <Image Stretch="Uniform" Source="{Binding PicUrl}" Width=" 60"/>
-                                    <StackPanel>
+                                <DockPanel Margin="0,5">
+                                    <Image Stretch="Uniform"   Width="48">
+                                        <Image.Source>
+                                            <BitmapImage DecodePixelWidth=" 48" UriSource="{Binding PicUrl}"/>
+                                        </Image.Source>
+                                    </Image>
+                                    <StackPanel Margin="5,000,0,0">
                                         <TextBlock Text="{Binding  Name}" Style="{StaticResource DarkBottomTextBoxStyle}"/>
                                         <TextBlock Text="{Binding PlayCount,StringFormat=播放： {0},Converter={x:Static converter:ValueConverterFactory.Int2FormatStringConverter}}" Style="{StaticResource GrayTopTextBoxStyle}"/>
                                     </StackPanel>
