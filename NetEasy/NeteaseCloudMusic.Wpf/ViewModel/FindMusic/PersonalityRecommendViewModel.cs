@@ -1,7 +1,6 @@
 ﻿using NeteaseCloudMusic.Global.Model;
 using NeteaseCloudMusic.Services.NetWork;
 using NeteaseCloudMusic.Wpf.Extensions;
-using NeteaseCloudMusic.Wpf.Model;
 using NeteaseCloudMusic.Wpf.View;
 using NeteaseCloudMusic.Wpf.View.IndirectView;
 using Newtonsoft.Json;
@@ -9,7 +8,6 @@ using Prism.Commands;
 using Prism.Regions;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
@@ -40,12 +38,22 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         {
             if (Session.CurrentUser != null)
             {
-                var json = await this._netWorkServices.GetAsync("FindMusic", "GetPersonalFm" );
+                var json = await this._netWorkServices.GetAsync("FindMusic", "GetPersonalFm");
                 var temp = JsonConvert.DeserializeObject<Music[]>(json);
                 await Context.CurrentPlayMusics.AddRangeAsync(temp, x => Context.PlayCommand.Execute(x[0]));
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, temp[0].Id);
                 this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayPanelView), parmater);
+            }
+            else
+            {
+                Context.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
+                {
+                    Title = "登陆"
+                }, x =>
+                {
+                    if (x.Confirmed) PersonalFmCommandExecute();
+                });
             }
         }
 
@@ -65,6 +73,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         {
             if (Session.CurrentUser != null)
                 this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.EveryDayMusicRecommendView));
+            else
+                Context.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
+                {
+                    Title = "登陆"
+                }, x =>
+                {
+                    if (x.Confirmed) EveryDayMusicRecommendCommandExecute();
+                });
 
         }
         private void NewMusicMvCommandExecute(long? mvId)
@@ -152,9 +168,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
             if (temp?.PrivateContentList != null)
             {
-                ExclusiveDeliveryList.Clear();
-                ExclusiveDeliveryList.AddRange(temp.PrivateContentList.Select(x => new PictureListBoxItemModel(x)
-                 ));
+                await ExclusiveDeliveryList.AddRangeAsync(temp.PrivateContentList);
             }
             if (temp?.BannerList != null)
             {
@@ -174,10 +188,10 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
         public int Date { get; } = DateTime.Now.Day;
 
-        public ObservableCollection<PictureListBoxItemModel> ExclusiveDeliveryList
+        public ObservableCollection<PictureListBoxItem> ExclusiveDeliveryList
         {
             get;
-        } = new ObservableCollection<PictureListBoxItemModel>();
+        } = new ObservableCollection<PictureListBoxItem>();
 
         public ObservableCollection<Global.Model.Music> NewMusicList
         {

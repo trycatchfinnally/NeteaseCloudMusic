@@ -23,7 +23,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         private Music[] selectedMusics;
         private bool _isSelectedModel;
         //是否已经加载好数据，如果已经加载，重新导航到当前页面时不执行联网操作
-        
+        private bool _isdataInit;
         public EveryDayMusicRecommendViewModel(INetWorkServices netWorkServices, IRegionManager navigationService)
         {
             this._netWorkServices = netWorkServices;
@@ -33,7 +33,6 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             SelectedCommand = new DelegateCommand<IEnumerable>(SelectedCommandExecute);
             MusicAlbumCommand = new DelegateCommand<Album>(MusicAlbumCommandExecute);
             MusicArtistCommand = new DelegateCommand<long?>(MusicArtistCommandExecute);
-            InitData();
         }
 
         private void MusicArtistCommandExecute(long? id)
@@ -88,7 +87,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
                 this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.MvPlayView), parmater);
             }
         }
-
+        public override void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            if (!_isdataInit)
+            {
+                InitData();
+                _isdataInit = true;
+            }
+        }
         private async void InitData()
         {
             var json =await _netWorkServices.GetAsync("FindMusic", "GetEveryDayMusicRecommend");

@@ -251,7 +251,7 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <ListBox.ItemTemplate>
-                        <DataTemplate DataType="model:PictureListBoxItemModel">
+                        <DataTemplate  >
                             <Grid    MaxHeight=" 240"   Margin=" 10,10,10,0" >
                                 <Grid.RowDefinitions>
                                     <RowDefinition/>
@@ -389,7 +389,7 @@
                     <Button CommandParameter="4"/>
                 </DockPanel>
                 <!-- 推荐MV部分-->
-                <ListBox Style="{StaticResource UniformGridContainerListBoxStyle}" ItemsSource="{Binding RecommendMvList}" AlternationCount="3">
+                <ListBox Style="{StaticResource UniformGridContainerListBoxStyle}" ItemsSource="{Binding RecommendMvList}" AlternationCount="4">
                     <ListBox.ItemTemplate>
                         <DataTemplate  >
                             <Grid MaxHeight=" 240"  Margin=" 10,10,10,0">

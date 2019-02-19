@@ -11,7 +11,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" 
     xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf"
     xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing" 
-   
+   xmlns:popup="clr-namespace:NeteaseCloudMusic.Wpf.View.Popup"
     xmlns:controls1="clr-namespace:NeteaseCloudMusic.Controls;assembly=NeteaseCloudMusic.Controls"
     mc:Ignorable="d"
         Title="MainWindow" MinHeight="500" Width="800" WindowStyle="None" AllowsTransparency="True" MinWidth=" 660"
@@ -33,12 +33,29 @@
         </ResourceDictionary>
 
     </Window.Resources>
+    <i:Interaction.Triggers>
+        <prism:InteractionRequestTrigger SourceObject="{Binding LoginRequest, Mode=OneWay}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True"    >
+                <prism:PopupWindowAction.WindowStyle>
+                    <Style TargetType="Window">
+                        <Setter Property="AllowsTransparency" Value="True"/>
+                        <Setter Property="WindowStyle" Value="None"/>
+                        <Setter Property="ShowInTaskbar" Value="False"/>
+                        <Setter Property="Width" Value="350"/>
+                        <Setter Property="Height" Value="500"/>
+                    </Style>
+                </prism:PopupWindowAction.WindowStyle>
+                <prism:PopupWindowAction.WindowContent>
+                    <popup:LoginPopupView/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+    </i:Interaction.Triggers>
 
     <DockPanel   Margin=" 5">
         <DockPanel.Background>
             <SolidColorBrush Color="{StaticResource WindowBackColor}"/>
         </DockPanel.Background>
-
         <Grid x:Name="titlePart" DockPanel.Dock="Top" Height="30"  MouseMove="Grid_MouseMove" MouseDown="Grid_MouseDown">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80"/>
@@ -94,8 +111,7 @@
                 <controls:TitleButton    Grid.Column=" 1" Click="btnSize_Click">
                     <Rectangle Width="10" Height="10" Stroke="White" StrokeThickness="1"/>
                 </controls:TitleButton>
-                <controls:TitleButton    Grid.Column=" 2" Click="btnClose_Click" MouseOverBackground="Red"
-                                       >
+                <controls:TitleButton    Grid.Column=" 2" Click="btnClose_Click" MouseOverBackground="Red">
                     <Canvas Width="10" Height="10">
                         <Polyline Stroke="White" Points="0,0 10,10" StrokeThickness=" 1.2"/>
                         <Polyline Stroke="White" Points="0,10 10,0" StrokeThickness=" 1.2"/>

@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                  xmlns:prism="http://www.codeplex.com/prism"
     xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
              xmlns:controls="clr-namespace:NeteaseCloudMusic.Controls;assembly=NeteaseCloudMusic.Controls" x:Class="NeteaseCloudMusic.Wpf.View.FeaturedView" 
     xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
@@ -32,23 +34,22 @@
                     <Setter Property="ItemContainerStyle">
                         <Setter.Value >
                             <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultListBoxItemStyle}">
-                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                             </Style>
                         </Setter.Value>
                     </Setter>
-                    <Setter Property="AlternationCount" Value=" 3"/>
+                    <Setter Property="AlternationCount" Value="4"/>
                     <Setter Property="ItemTemplate">
                         <Setter.Value>
                             <DataTemplate>
-                                <Grid Margin=" 10,10,10,0" Height=" 140">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition/>
-                                        <RowDefinition Height=" 40"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid>
-                                        <Image Stretch="UniformToFill"  >
+                                <DockPanel Margin=" 10,10,10,0" >
+                                    <Grid DockPanel.Dock="Top">
+                                        <Image Stretch="Uniform"  >
                                             <Image.Source>
-                                                <BitmapImage UriSource="{Binding Picture, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/DefaultUserImage.png}"/>
+                                                <BitmapImage
+                                                    DecodePixelWidth="200"
+                                                    UriSource="{Binding PicUrl, TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/DefaultUserImage.png}"/>
                                             </Image.Source>
                                         </Image>
                                         <Grid   HorizontalAlignment="Right"  VerticalAlignment="Top" Margin=" 0,2,2,0"
@@ -69,20 +70,20 @@
                                                     Margin="3"  >
 
                                                 </Path>
-                                                <TextBlock  Text  ="{Binding WatchCount,Converter={x:Static converter:ValueConverterFactory.Int2FormatStringConverter} }"  
+                                                <TextBlock  Text  ="{Binding PlayCount,Converter={x:Static converter:ValueConverterFactory.Int2FormatStringConverter} }"  
                                                     VerticalAlignment="Center"  HorizontalAlignment="Right"  Margin="0,0,2,0"
                                                     Foreground="White"/>
                                             </DockPanel>
                                         </Grid>
-                                        <TextBlock Text="{Binding Description}" 
+                                        <TextBlock Text="{Binding Desc}" 
                                            HorizontalAlignment="Left" VerticalAlignment="Bottom"
                                            Style="{StaticResource GrayTopTextBoxStyle}" Foreground="White" Margin="5"/>
                                     </Grid>
-                                    <UniformGrid Columns="1" Grid.Row="1">
-                                        <TextBlock Text="{Binding ArtistName}"   Style="{StaticResource DarkBottomTextBoxStyle}"/>
-                                        <TextBlock Text="{Binding Title}"   Style="{StaticResource GrayTopTextBoxStyle}"/>
+                                    <UniformGrid Columns="1" >
+                                        <TextBlock Text="{Binding Name}"   Style="{StaticResource DarkBottomTextBoxStyle}"/>
+                                        <TextBlock Text="{Binding ArtistName}"   Style="{StaticResource GrayTopTextBoxStyle}"/>
                                     </UniformGrid>
-                                </Grid>
+                                </DockPanel>
                             </DataTemplate>
                         </Setter.Value>
                     </Setter>
@@ -152,8 +153,13 @@
                 </UniformGrid>
                 <Button Style="{StaticResource MoreButtonStyle}" Command="{Binding MoreCommand}" CommandParameter="2"/>
             </DockPanel>
-            <ListBox ItemsSource="{Binding NewMvs}"/>
-
+            <ListBox ItemsSource="{Binding NewMvs}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <prism:InvokeCommandAction  Command="{Binding MvCommand}" TriggerParameterPath="Source.SelectedItem" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListBox>
         </StackPanel>
     </ScrollViewer>
 </ContentControl>

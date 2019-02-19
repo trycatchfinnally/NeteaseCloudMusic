@@ -10,24 +10,41 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using NeteaseCloudMusic.Global.Enums;
 using Prism.Commands;
+using NeteaseCloudMusic.Global.Model;
+using NeteaseCloudMusic.Services.NetWork;
+using Prism.Regions;
+using Newtonsoft.Json;
+using NeteaseCloudMusic.Wpf.View.IndirectView;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
     /// <summary>
     /// 精选页面对应的viewmodel
     /// </summary>
-   public  class FeaturedViewModel:BindableBase
+   public  class FeaturedViewModel:NavigationViewModelBase
     {
-        private LanguageType _languageType;
-        public FeaturedViewModel()
+        private readonly INetWorkServices _netWorkServices;
+        private readonly IRegionManager _navigationService;
+        public FeaturedViewModel(INetWorkServices netWorkServices,
+            IRegionManager navigationService)
         {
-            for (int i = 0; i < 3; i++)
-            {
-                NeteaseProduceds.Add(new Model.MvModel {Title = i + "asdhgreygf", ArtistName = "cegsdh" + i});
-                NewMvs.Add(new Model.MvModel {Title = i + "asdhgreygf", ArtistName = "cegsdh" + i,Description="4ergadshreyaSgdst"});
-            }
-            MoreCommand = new DelegateCommand<string >(MoreCommandImpl);
+            this._netWorkServices = netWorkServices;
+            this._navigationService = navigationService;
+            MvCommand = new DelegateCommand<Mv>(MvCommandExecute);
+
+
         }
+
+        private void MvCommandExecute(Mv obj)
+        {
+            if (obj?.Id>0)
+            {
+                var parmater = new NavigationParameters();
+                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(MvPlayView), parmater);
+            }
+        }
+
         /// <summary>
         /// 点击更多时候执行的命令
         /// </summary>
@@ -43,38 +60,19 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 default: throw new ArgumentOutOfRangeException(nameof(type));
             }
         }
-        /// <summary>
-        /// 语种发生变化的时候请求最新MV的数据
-        /// </summary>
-        private void RequstNewMvs()
-        {
-            Console.WriteLine(LanguageType);
-        }
-        public LanguageType LanguageType
-        {
-            get
-            {
-                return _languageType;
-            }
-
-            set
-            {
-                SetProperty(ref _languageType, value);
-                RequstNewMvs();
-            }
-        }
-       
+        
         /// <summary>
         /// 网易出品
         /// </summary>
-        public ObservableCollection<MvModel> NeteaseProduceds { get; } = new ObservableCollection<MvModel>();
+        public ObservableCollection<Global.Model.Mv> NeteaseProduceds { get; } = new ObservableCollection<Mv>();
         /// <summary>
         /// 最新mv
         /// </summary>
-        public ObservableCollection<MvModel> NewMvs { get; } = new ObservableCollection<MvModel>();
+        public ObservableCollection<Mv> NewMvs { get; } = new ObservableCollection<Mv>();
         /// <summary>
         /// 更多对应的命令
         /// </summary>
         public ICommand MoreCommand { get; }
+        public ICommand MvCommand { get; }
     }
 }

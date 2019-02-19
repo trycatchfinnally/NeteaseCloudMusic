@@ -11,6 +11,8 @@ namespace NeteaseCloudMusic.Wpf
 {
     public static class Session
     {
+        private static  readonly string CookieFile = Environment.CurrentDirectory + "/cookies.dat";
+        private static readonly string UserFile= Environment.CurrentDirectory + "/User.json";
         /// <summary>
         /// 当前登陆的用户
         /// </summary>
@@ -23,9 +25,6 @@ namespace NeteaseCloudMusic.Wpf
         /// <param name="remember"></param>
         public static async Task<string> LogInByCellPhone(string cellPhone, string passWord, bool remember = true)
         {
-            var cookieFile = Environment.CurrentDirectory + "/cookies.dat";
-            if (File.Exists(cookieFile))
-                File.Delete(cookieFile);
             var netWork = CommonServiceLocator.ServiceLocator.Current.GetInstance<Services.NetWork.INetWorkServices>();
             using (var md5 = new MD5CryptoServiceProvider())
             {
@@ -44,26 +43,42 @@ namespace NeteaseCloudMusic.Wpf
             CurrentUser = temp.Value;
             if (temp.Value == null)
             {
-               
                 return temp.Key;
             }
             var cookie = netWork.Cookie;
-            //if (File.Exists(cookieFile))
-            {
-                using (var stream = File.Create(cookieFile))
-                {
-
-
-                    var formatter = new BinaryFormatter();
-                    formatter.Serialize(stream, cookie);
-
-
-                }
-                File.SetLastWriteTime(cookieFile, DateTime.Now);
-                File.SetAttributes(cookieFile, FileAttributes.ReadOnly);
-                File.SetAttributes(cookieFile, FileAttributes.Hidden);
-            }
+            SaveCookie(CookieFile, cookie);
+            WriteToFile(UserFile, JsonConvert.SerializeObject(temp.Value));
             return "OK";
+        }
+        private static void WriteToFile(string filePath,string content)
+        {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath,content);
+            File.SetLastWriteTime(filePath, DateTime.Now);
+            File.SetAttributes(filePath, FileAttributes.ReadOnly);
+            File.SetAttributes(filePath, FileAttributes.Hidden);
+        }
+        private static void SaveCookie(string filePath,object cookie)
+        {
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            using (var stream = File.OpenWrite(filePath))
+            {
+
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(stream, cookie);
+
+
+            }
+            File.SetLastWriteTime(filePath, DateTime.Now);
+            File.SetAttributes(filePath, FileAttributes.ReadOnly);
+            File.SetAttributes(filePath, FileAttributes.Hidden);
+
         }
         public static void LogOut()
         {
@@ -74,13 +89,33 @@ namespace NeteaseCloudMusic.Wpf
         /// 刷新登陆，返回登陆成功与否
         /// </summary>
         /// <returns></returns>
-        public static async Task<bool> RefreshLog( )
+        public static async Task<bool> RefreshLog()
         {
             var netWork = CommonServiceLocator.ServiceLocator.Current.GetInstance<Services.NetWork.INetWorkServices>();
-            var json = await netWork.GetAsync ("Login", "RefreshLog");
+            var json = await netWork.GetAsync("Login", "RefreshLog");
             var data = new { code = 2, message = "" };
             data = JsonConvert.DeserializeAnonymousType(json, data);
-            return data.code == 200;
+            SaveCookie(CookieFile, netWork.Cookie);
+            if (data.code==200)
+            {
+               
+
+                if (File.Exists(UserFile))
+                {
+                    try
+                    {
+                        Session.CurrentUser = JsonConvert.DeserializeObject<Global.Model.User>(File.ReadAllText(UserFile));
+                        return true;
+                    }
+                    catch  
+                    {
+
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return false ;
         }
     }
 }

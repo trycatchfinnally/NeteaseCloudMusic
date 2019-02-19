@@ -24,7 +24,12 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
          
         public  override bool IsNavigationTarget(NavigationContext navigationContext)
         {
-            return navigationContext.Parameters.ContainsKey(NavigationIdParmmeterName);
+            if (!navigationContext.Parameters.ContainsKey(NavigationIdParmmeterName))
+                return false ;
+            return true;
+            //var id =long.Parse( navigationContext.Parameters[NavigationIdParmmeterName].ToString());
+            //if (Id.GetValueOrDefault() == 0) return true;
+            //return id == Id;
         }
         public  override void OnNavigatedTo(NavigationContext navigationContext)
         {
@@ -32,6 +37,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             if (id == Id) return;
             Id = id;
             SetById(id);
+            
         }
         protected abstract  void SetById(long id);
          

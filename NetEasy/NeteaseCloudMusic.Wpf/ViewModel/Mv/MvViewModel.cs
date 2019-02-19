@@ -5,21 +5,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommonServiceLocator;
+using Prism.Regions;
+using Newtonsoft.Json;
+using System.Collections.ObjectModel;
+using NeteaseCloudMusic.Services.NetWork;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
     /// <summary>
     /// mv页面对应的viewmodel
     /// </summary>
-   public  class MvViewModel:BindableBase
+   public  class MvViewModel:NavigationViewModelBase
     {
         private int _selectedIndex ;
         private FeaturedViewModel _featuredViewModel;
         private MvLeaderboardViewModel _mvLeaderboardViewModel;
         private AllMvViewModel _allMvViewModel;
-        public MvViewModel()
+        private readonly INetWorkServices _netWorkServices;
+        private readonly IRegionManager _navigationService;
+        private bool _dataIsInit;
+        public MvViewModel(INetWorkServices netWorkServices, IRegionManager navigationService)
         {
             SelectedIndex = 0;
+            this._netWorkServices = netWorkServices;
+            this._navigationService = navigationService;
         }
         /// <summary>
         /// 选中的项目序号
@@ -82,6 +91,18 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
 
           private   set { SetProperty(ref _allMvViewModel, value); }
+        }
+        public override  async void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            if (SelectedIndex==0&&!_dataIsInit)
+            {
+
+                var json = await _netWorkServices.GetAsync("Mv", "GetNetMv", new { limit = Context.LimitPerPage });
+                FeaturedViewModel. NewMvs.AddRange(JsonConvert.DeserializeObject<Global.Model.Mv[]>(json));
+
+                _dataIsInit = true;
+            }
+            base.OnNavigatedTo(navigationContext);
         }
     }
 }

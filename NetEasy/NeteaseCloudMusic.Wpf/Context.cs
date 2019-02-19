@@ -2,6 +2,7 @@
 using NeteaseCloudMusic.Wpf.Model;
 using Prism.Commands;
 using Prism.Events;
+using Prism.Interactivity.InteractionRequest;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -42,6 +43,7 @@ namespace NeteaseCloudMusic.Wpf
         /// 代表上一个的命令
         /// </summary>
         public static CompositeCommand PrevTrackCommand { get; } = new CompositeCommand();
+        public static InteractionRequest<Confirmation> LoginInteractionRequest { get; } = new InteractionRequest<Confirmation>();
     }
     /// <summary>
     /// 当当前播放音乐发生变化的聚合事件参数

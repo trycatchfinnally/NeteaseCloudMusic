@@ -1,22 +1,17 @@
-﻿using Prism.Unity;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using NeteaseCloudMusic.Services.AudioDecode;
+using NeteaseCloudMusic.Services.NetWork;
+using NeteaseCloudMusic.Wpf.Modules;
 using Prism.Ioc;
 using Prism.Modularity;
-using NeteaseCloudMusic.Wpf.Modules;
-using System.Windows.Navigation;
-using System.Xml.Linq;
+using Prism.Unity;
+using System;
+using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media.Animation;
-using NeteaseCloudMusic.Services.NetWork;
-using NeteaseCloudMusic.Services.AudioDecode;
+using System.Xml.Linq;
 
 namespace NeteaseCloudMusic.Wpf
 {
@@ -25,10 +20,9 @@ namespace NeteaseCloudMusic.Wpf
     /// </summary>
     public partial class App : PrismApplication
     {
-        protected override Window CreateShell()
+        protected override   Window CreateShell()
         {
-
-            return this.Container.Resolve<MainWindow>();
+            return Container.Resolve<MainWindow>();
         }
         protected override async void OnStartup(StartupEventArgs e)
         {
@@ -59,23 +53,22 @@ namespace NeteaseCloudMusic.Wpf
                 }
                 sw.Show();
                 base.OnStartup(e);
-                if (this.MainWindow != null)
+                if (MainWindow != null)
                 {
-                    this.MainWindow.Left = sw.Left;
-                    this.MainWindow.Top = sw.Top;
-                    this.MainWindow.Width = sw.Width;
-                    this.MainWindow.Height = sw.Height;
-                    this.MainWindow.WindowStartupLocation = sw.WindowStartupLocation;
-                    this.MainWindow.WindowState = sw.WindowState;
-                    this.MainWindow.Show();
+                    MainWindow.Left = sw.Left;
+                    MainWindow.Top = sw.Top;
+                    MainWindow.Width = sw.Width;
+                    MainWindow.Height = sw.Height;
+                    MainWindow.WindowStartupLocation = sw.WindowStartupLocation;
+                    MainWindow.WindowState = sw.WindowState;
+                    MainWindow.Show();
                 }
-                //谈出效果退出
                 const int durationMilliseconds = 800;
                 sw.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(0, TimeSpan.FromMilliseconds(durationMilliseconds))
                 {
                     EasingFunction = new PowerEase { EasingMode = EasingMode.EaseInOut, Power = 0.8 }
                 });
-                await Task.Delay(durationMilliseconds);
+                await Task.WhenAll(Task.Delay(durationMilliseconds), Session.RefreshLog());
                 sw.Close();
             }
             catch
@@ -89,7 +82,7 @@ namespace NeteaseCloudMusic.Wpf
                 sw?.Close();
                 base.OnStartup(e);
             }
-         
+
         }
         /// <summary>
         /// 当出了异常才调用父类的show方法

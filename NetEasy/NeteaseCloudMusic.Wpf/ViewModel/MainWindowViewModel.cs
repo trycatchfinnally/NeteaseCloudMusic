@@ -16,6 +16,7 @@ using NeteaseCloudMusic.Services.NetWork;
 using Newtonsoft.Json;
 using System.Threading;
 using Prism.Events;
+using Prism.Interactivity.InteractionRequest;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -452,6 +453,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 _audioPlayableServices.Volumn = value;
                 RaisePropertyChanged();
+                //LoginRequest.Raise(new Confirmation {Title="4472354" });
             }
         }
         /// <summary>
@@ -548,8 +550,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// 导航后退的命令
         /// </summary>
         public ICommand NavBackCommand { get; }
-        
-        
+
+        public InteractionRequest<Confirmation> LoginRequest { get; } =Context.LoginInteractionRequest;
     }
 
 

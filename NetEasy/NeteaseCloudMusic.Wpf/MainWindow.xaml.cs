@@ -88,6 +88,7 @@ namespace NeteaseCloudMusic.Wpf
 
         private async void BtnNavBack_Loaded(object sender, RoutedEventArgs e)
         {
+           
             var button = e.Source as Button;
 
             while (true)
