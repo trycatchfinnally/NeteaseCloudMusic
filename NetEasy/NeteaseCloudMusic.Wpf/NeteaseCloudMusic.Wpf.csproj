@@ -270,6 +270,9 @@
     <Compile Include="View\Popup\LoginPopupView.xaml.cs">
       <DependentUpon>LoginPopupView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Popup\PayMusicPopupView.xaml.cs">
+      <DependentUpon>PayMusicPopupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\RecentlyPlay\RecentlyPlayMusicView.xaml.cs">
       <DependentUpon>RecentlyPlayMusicView.xaml</DependentUpon>
     </Compile>
@@ -466,6 +469,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Popup\PayMusicPopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\RecentlyPlay\RecentlyPlayMusicView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -651,6 +658,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\login_phone.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\pay_vip_pic.scale-200.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

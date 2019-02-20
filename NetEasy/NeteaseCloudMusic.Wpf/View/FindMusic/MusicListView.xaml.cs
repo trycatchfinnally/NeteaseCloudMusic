@@ -64,7 +64,6 @@ namespace NeteaseCloudMusic.Wpf.View
         {
             var v1 = e.ExtentHeight - e.VerticalOffset;
             var v2 = e.ViewportHeight;
-
             if (v1 <= v2)
             {
                 //currentPageoffset++;

@@ -48,13 +48,13 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
         private void PlayListSelectedCommandExecute(PlayList playListModel)
         {
-            if (playListModel!=null &&playListModel.Id!=0)
+            if (playListModel != null && playListModel.Id != 0)
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, playListModel.Id);
                 this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayListDetailView), parmater);
             }
-          
+
         }
 
         private void CategoryCommandExecute(string tag)
@@ -79,7 +79,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 if (MorePage)
                 {
-                    var json = await this._netWorkServices.GetAsync("FindMusic", "GetTopPlayListByTag", new { cat = SelectedTag, hot = true, limit = LimitPerPage, offset = CurrentPlayListPageOffset });
+                    var json = await this._netWorkServices.GetAsync("FindMusic", "GetTopPlayListByTag",
+                        new
+                        {
+                            cat = SelectedTag,
+                            hot = true,
+                            limit = LimitPerPage,
+                            offset = CurrentPlayListPageOffset*LimitPerPage
+                        });
                     var temp = JsonConvert.DeserializeObject<KeyValuePair<bool, Global.Model.PlayList[]>>(json);
                     MorePage = temp.Key;
                     SelectedPlayList.AddRange(temp.Value);

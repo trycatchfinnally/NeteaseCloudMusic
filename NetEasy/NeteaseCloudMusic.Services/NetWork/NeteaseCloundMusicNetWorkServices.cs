@@ -24,8 +24,8 @@ namespace NeteaseCloudMusic.Services.NetWork
         /// <summary>
         /// 服务器的基础地址
         /// </summary>
-       // private const string ServicesBaseUrl = "http://localhost:10086/api/";
-        private const string ServicesBaseUrl = "http://47.101.43.134/api/";
+       //  private const string ServicesBaseUrl = "http://localhost:10086/api/";
+      private const string ServicesBaseUrl = "http://47.101.43.134/api/";
 
         private readonly HttpClient httpClient;
         private   HttpClientHandler httpClientHandler;

@@ -1,0 +1,49 @@
+﻿<ContentControl x:Class="NeteaseCloudMusic.Wpf.View.Popup.PayMusicPopupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View.Popup"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="350">
+    <StackPanel>
+        <Image Stretch="Uniform">
+            <Image.Source>
+                <BitmapImage  UriSource="/NeteaseCloudMusic.Wpf;component/Assets/pay_vip_pic.scale-200.png" />
+            </Image.Source>
+        </Image>
+        <TextBlock Style="{StaticResource DarkBottomTextBoxStyle}" Margin="0,10"
+                   Text="版权方要求，当前歌曲仅限开通音乐包使用" HorizontalAlignment="Center">
+            <TextBlock.Foreground>
+                <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+            </TextBlock.Foreground>
+        </TextBlock>
+        <Button Content="开通音乐包" Foreground="White"  Margin="20,0" x:Name="btnOpenVip"
+                
+                     Height="35"  
+                    IsDefault="True" >
+            <Button.Background>
+                <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+            </Button.Background>
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Border Background="White" x:Name="border" Opacity="0">
+                        </Border>
+                        <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Opacity" Value="0.3" TargetName="border"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+
+            </Button.Template>
+            
+        </Button>
+        <Button Content="2元购买此单曲>>" Margin="0,15,0,5" x:Name="buyThisMusic"
+                HorizontalAlignment="Center"
+                Style="{StaticResource EmptyButtonWithFocusStyle}" Foreground="Blue"/>
+    </StackPanel>
+</ContentControl>

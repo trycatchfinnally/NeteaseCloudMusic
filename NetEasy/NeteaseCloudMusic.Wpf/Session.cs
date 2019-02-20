@@ -50,6 +50,33 @@ namespace NeteaseCloudMusic.Wpf
             WriteToFile(UserFile, JsonConvert.SerializeObject(temp.Value));
             return "OK";
         }
+        public static async Task<string >LoginByEmail(string email, string passWord, bool remember = true)
+        {
+            var netWork = CommonServiceLocator.ServiceLocator.Current.GetInstance<Services.NetWork.INetWorkServices>();
+            using (var md5 = new MD5CryptoServiceProvider())
+            {
+
+                byte[] passWordBytes = Encoding.UTF8.GetBytes(passWord);
+                byte[] targetData = md5.ComputeHash(passWordBytes);
+                var sb = new StringBuilder();
+                for (int i = 0; i < targetData.Length; i++)
+                {
+                    sb.Append(targetData[i].ToString("x2"));
+                }
+                passWord = sb.ToString();
+            }
+
+            var temp = JsonConvert.DeserializeObject<KeyValuePair<string, Global.Model.User>>(await netWork.PostAsync("Login", "LoginByEmail", new {   email, passWord, remember = true }));
+            CurrentUser = temp.Value;
+            if (temp.Value == null)
+            {
+                return temp.Key;
+            }
+            var cookie = netWork.Cookie;
+            SaveCookie(CookieFile, cookie);
+            WriteToFile(UserFile, JsonConvert.SerializeObject(temp.Value));
+            return "OK";
+        }
         private static void WriteToFile(string filePath,string content)
         {
             if (File.Exists(filePath))
