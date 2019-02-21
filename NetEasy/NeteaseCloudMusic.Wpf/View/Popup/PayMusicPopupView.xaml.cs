@@ -26,6 +26,14 @@ namespace NeteaseCloudMusic.Wpf.View.Popup
             this.btnOpenVip.Click += BtnOpenVip_Click;
             this.buyThisMusic.Click -= BuyThisMusic_Click;
             this.buyThisMusic.Click += BuyThisMusic_Click;
+            btnClose.Click -= BtnClose_Click;
+            btnClose.Click += BtnClose_Click;
+        }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            var window = Window.GetWindow(this);
+            window.Close();
         }
 
         private void BuyThisMusic_Click(object sender, RoutedEventArgs e)

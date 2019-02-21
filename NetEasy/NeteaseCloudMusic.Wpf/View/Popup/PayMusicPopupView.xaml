@@ -7,6 +7,27 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="350">
     <StackPanel>
+        <Button  x:Name="btnClose">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource EmptyButtonStyle}">
+                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                    <Setter Property="Width" Value=" 30"/>
+                    <Setter Property="Height" Value=" 20"/>
+                    <Setter Property="Margin" Value="5"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+
+            </Button.Style>
+            <Canvas Width="10" Height="10">
+                <Polyline Stroke="Gray" Points="0,0 10,10" StrokeThickness=" 1.2"/>
+                <Polyline Stroke="Gray" Points="0,10 10,0" StrokeThickness=" 1.2"/>
+            </Canvas>
+        </Button>
         <Image Stretch="Uniform">
             <Image.Source>
                 <BitmapImage  UriSource="/NeteaseCloudMusic.Wpf;component/Assets/pay_vip_pic.scale-200.png" />

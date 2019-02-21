@@ -17,6 +17,8 @@ using Newtonsoft.Json;
 using System.Threading;
 using Prism.Events;
 using Prism.Interactivity.InteractionRequest;
+using NeteaseCloudMusic.Global.Model;
+using NeteaseCloudMusic.Wpf.View.IndirectView;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -48,13 +50,30 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             MyMusicCommand = new DelegateCommand<int?>(MyMusicCommandImpl);
             OpenPlayPanelCommand = new DelegateCommand(OpenPlayPanelCommandExecute);
             ClearCurrentPlayListCommand = new DelegateCommand(ClearCurrentPlayListCommandImpl);
+            UserPlayListCommand = new DelegateCommand<PlayList>(UserPlayListCommandExecute);
             NavBackCommand = new DelegateCommand(NavBackCommandExecute);
+            AddPlayListCommand = new DelegateCommand(AddPlayListCommandExecute);
             InitData();
             Context.PlayCommand.RegisterCommand(new DelegateCommand<Global.Model.Music>(Play));
             Context.PauseCommand.RegisterCommand(new DelegateCommand(Pause));
             Context.NextTrackCommand.RegisterCommand(new DelegateCommand(Next));
             Context.PrevTrackCommand.RegisterCommand(new DelegateCommand(Prev));
            
+        }
+
+        private void AddPlayListCommandExecute()
+        {
+            AddPlayListRequest.Raise(new Confirmation { Title = "哈哈哈哈" });
+        }
+
+        private void UserPlayListCommandExecute(PlayList obj)
+        {
+            if (obj?.Id>0)
+            {
+                var parmater = new NavigationParameters();
+                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayListDetailView), parmater);
+            }
         }
 
         private void NavBackCommandExecute()
@@ -294,10 +313,27 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// </summary>
         private async void InitData()
         {
-           // await _netWorkServices.PostAsync("Login", "LoginByCellPhone", new { phone = 15696469238, passWord = "15523738779", remember = true });
+            Session.LoginStateChanged += Session_LoginStateChanged;
             await Task.Delay(100);
 
         }
+
+        private async void Session_LoginStateChanged(object sender, bool e)
+        {
+            CreatedTracks.Clear();
+            FavoriteTracks.Clear();
+            if (e)
+            {
+                var json = await _netWorkServices.GetAsync("User", "GetUserPlayList", new { limit = Context.LimitPerPage, offset = 0, id = Session.CurrentUser.UserId });
+                var temp = JsonConvert.DeserializeObject<PlayList[]>(json);
+                var query = temp.GroupBy(x => x.CreateUser.UserId == Session.CurrentUser.UserId).ToDictionary(x=>x.Key,x=>x.Select(y=>y));
+                CreatedTracks.AddRange(query[true]);
+                FavoriteTracks.AddRange(query[false]);
+                RaisePropertyChanged(nameof(LoginInUser));
+            }
+
+        }
+
         private void SysListCommandImpl(int? index)
         {
             switch (index)
@@ -369,11 +405,15 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             CurrentPlayList.Clear();
         }
 
-
-        public UserModel User
+        private User _defaultUser;
+        public User LoginInUser
         {
-            get { return _user; }
-            set { SetProperty(ref _user, value); }
+            get
+            {
+                if (Session.CurrentUser == null)
+                    return _defaultUser?? (_defaultUser=new User());
+                return Session.CurrentUser;
+            }
         }
         /// <summary>
         /// 发现音乐等部分对应的命令
@@ -401,7 +441,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// <summary>
         /// 创建的歌单
         /// </summary>
-        public ObservableCollection<MenuListItemModel> CreatedTracks { get; } = new ObservableCollection<MenuListItemModel>();
+        public ObservableCollection<PlayList> CreatedTracks { get; } = new ObservableCollection<PlayList>();
+        /// <summary>
+        /// 收藏的歌单
+        /// </summary>
+        public ObservableCollection<PlayList> FavoriteTracks { get; } = new ObservableCollection<PlayList>();
         /// <summary>
         /// 当前播放音乐的图片
         /// </summary>
@@ -550,8 +594,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// 导航后退的命令
         /// </summary>
         public ICommand NavBackCommand { get; }
+        public ICommand UserPlayListCommand { get; }
+        /// <summary>
+        /// 添加播放列表的命令
+        /// </summary>
+        public ICommand AddPlayListCommand { get; }
 
         public InteractionRequest<Confirmation> LoginRequest { get; } =Context.LoginInteractionRequest;
+        public InteractionRequest<Confirmation> AddPlayListRequest { get; } = new InteractionRequest<Confirmation>();
     }
 
 

@@ -14,9 +14,14 @@ namespace NeteaseCloudMusic.Wpf
         private static  readonly string CookieFile = Environment.CurrentDirectory + "/cookies.dat";
         private static readonly string UserFile= Environment.CurrentDirectory + "/User.json";
         /// <summary>
+        /// 当登陆状态发生变化时候引发的事件
+        /// </summary>
+        public static event EventHandler<bool> LoginStateChanged;
+        /// <summary>
         /// 当前登陆的用户
         /// </summary>
         public static Global.Model.User CurrentUser { get; private set; }
+        public static bool IsLoginIn { get; private set; }
         /// <summary>
         /// 通过手机号登陆
         /// </summary>
@@ -43,11 +48,14 @@ namespace NeteaseCloudMusic.Wpf
             CurrentUser = temp.Value;
             if (temp.Value == null)
             {
+                IsLoginIn = false;
                 return temp.Key;
             }
             var cookie = netWork.Cookie;
             SaveCookie(CookieFile, cookie);
             WriteToFile(UserFile, JsonConvert.SerializeObject(temp.Value));
+            IsLoginIn = true;
+            LoginStateChanged?.Invoke(null, true);
             return "OK";
         }
         public static async Task<string >LoginByEmail(string email, string passWord, bool remember = true)
@@ -66,15 +74,18 @@ namespace NeteaseCloudMusic.Wpf
                 passWord = sb.ToString();
             }
 
-            var temp = JsonConvert.DeserializeObject<KeyValuePair<string, Global.Model.User>>(await netWork.PostAsync("Login", "LoginByEmail", new {   email, passWord, remember = true }));
+            var temp = JsonConvert.DeserializeObject<KeyValuePair<string, Global.Model.User>>(await netWork.PostAsync("Login", "LoginByEmail", new {  email, passWord, remember = true }));
             CurrentUser = temp.Value;
             if (temp.Value == null)
             {
+                IsLoginIn = false;
                 return temp.Key;
             }
             var cookie = netWork.Cookie;
             SaveCookie(CookieFile, cookie);
             WriteToFile(UserFile, JsonConvert.SerializeObject(temp.Value));
+            IsLoginIn = true;
+            LoginStateChanged?.Invoke(null, true);
             return "OK";
         }
         private static void WriteToFile(string filePath,string content)
@@ -110,6 +121,8 @@ namespace NeteaseCloudMusic.Wpf
         public static void LogOut()
         {
             var netWork = CommonServiceLocator.ServiceLocator.Current.GetInstance<Services.NetWork.INetWorkServices>();
+            IsLoginIn = false;
+            LoginStateChanged?.Invoke(null, false );
 
         }
         /// <summary>
@@ -132,6 +145,9 @@ namespace NeteaseCloudMusic.Wpf
                     try
                     {
                         Session.CurrentUser = JsonConvert.DeserializeObject<Global.Model.User>(File.ReadAllText(UserFile));
+                        IsLoginIn = true;
+                        LoginStateChanged?.Invoke(null, true);
+
                         return true;
                     }
                     catch  

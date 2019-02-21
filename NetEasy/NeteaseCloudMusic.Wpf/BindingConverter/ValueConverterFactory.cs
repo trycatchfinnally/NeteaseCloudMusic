@@ -19,6 +19,7 @@ namespace NeteaseCloudMusic.Wpf.BindingConverter
        public static  IValueConverter Int2FormatStringConverter { get; } = new Int2FormatStringConverter();
        public static IValueConverter Text2PopupIsOpenConverter { get; } = new Text2PopupIsOpenConverter();
        public static IValueConverter TimeSpan2MillSecondsConverter { get; } = new TimeSpan2MillSecondsConverter();
+        public static IValueConverter TextLenthConverter { get; } = new TextLenthConverter();
      
    }
 

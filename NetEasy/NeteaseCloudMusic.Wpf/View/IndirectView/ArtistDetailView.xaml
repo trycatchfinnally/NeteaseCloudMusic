@@ -474,7 +474,8 @@
                 <TabItem Header="相似歌手">
                     <Grid Margin=" 0,10">
                         <ListBox Style="{StaticResource ArtistInfoListBoxStyle}" 
-                                 AlternationCount="5">
+                                 AlternationCount="5"
+                                 ItemsSource="{Binding SimiArtists}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel>

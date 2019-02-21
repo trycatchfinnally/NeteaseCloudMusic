@@ -20,7 +20,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 {
     public class ArtistDetailViewModel : IndirectViewModelBase
     {
-        private const int RequireCountPerPage = 30;
+        private const int RequireCountPerPage = Context.LimitPerPage;
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
         private bool _isSelectedModel;
@@ -64,7 +64,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
                 if (MoreAlbums)
                 {
                     var json = await _netWorkServices.GetAsync("Artist", "GetArtistAlbum",
-                        new { id = Id, offset = CurrentAlbumPageOffset, limit = RequireCountPerPage }, cancelToken: _albumOffsetCancellationToken.Token);
+                        new { id = Id, offset = CurrentAlbumPageOffset* RequireCountPerPage, limit = RequireCountPerPage }, cancelToken: _albumOffsetCancellationToken.Token);
                     var moreAndAlbums = JsonConvert.DeserializeObject<KeyValuePair<bool, List<Global.Model.Album>>>(json);
                     MoreAlbums = moreAndAlbums.Key;
                     Albums.AddRange(moreAndAlbums.Value);

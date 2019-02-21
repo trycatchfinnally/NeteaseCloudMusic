@@ -1,0 +1,135 @@
+﻿<ContentControl x:Class="NeteaseCloudMusic.Wpf.View.Popup.AddPlayListPopupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View.Popup"
+                xmlns:convert="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
+             mc:Ignorable="d" 
+                Loaded="ContentControl_Loaded"
+             d:DesignHeight="200" d:DesignWidth="350">
+    <StackPanel Background="White">
+        <TextBlock Text="新建歌单" Style="{StaticResource DarkBottomTextBoxStyle}" Margin="5,10"/>
+        <Rectangle Style="{StaticResource HorizontalDecorationRectangleStyle}"/>
+        <StackPanel  Margin="25,20,25,10">
+            <TextBox  Height="30" MaxLength="20" VerticalContentAlignment="Center"
+                      TextChanged="TxtTitle_TextChanged"
+                      x:Name="txtTitle">
+                <TextBox.Resources>
+                    <VisualBrush x:Key="HintText" TileMode="None" Opacity="0.5" Stretch="None" AlignmentX="Left">
+                        <VisualBrush.Visual>
+                            <TextBlock 
+                            Style="{StaticResource GrayTopTextBoxStyle}" FontSize="{StaticResource WindowMainFontSize}"
+                            Text="歌单标题"/>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </TextBox.Resources>
+                <TextBox.Style>
+                    <Style TargetType="TextBox" >
+                        <Setter Property="FontFamily" Value="{StaticResource WindowMainFont}"/>
+                        <Setter Property="FontSize" Value="{StaticResource WindowMainFontSize}"/>
+                        <Setter Property="Foreground">
+                            <Setter.Value >
+                                <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Template">
+                            <Setter.Value >
+                                <ControlTemplate TargetType="TextBox">
+                                    <Border BorderThickness="0.5"
+                                        Background="{TemplateBinding Background}"
+                                        SnapsToDevicePixels="True">
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="{StaticResource  WindowForeGrayColor}"/>
+                                        </Border.BorderBrush>
+                                        <DockPanel >
+                                            <TextBlock Text="{Binding  RelativeSource={RelativeSource Mode=TemplatedParent},Path=Text.Length}" DockPanel.Dock="Right" 
+                                                   VerticalAlignment="Center"
+                                                   Style="{StaticResource DarkBottomTextBoxStyle}">
+                                                <TextBlock.Foreground>
+                                                    <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                                                </TextBlock.Foreground>
+                                            </TextBlock>
+                                            <ScrollViewer x:Name="PART_ContentHost"/>
+                                        </DockPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource HintText}"/>
+                            </Trigger>
+                            <Trigger Property="Text" Value="">
+                                <Setter Property="Background" Value="{StaticResource HintText}"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <TextBlock Text="歌单名不能为空" Style="{StaticResource ViewTitleTextBoxStyle}" x:Name="txtNotEmpty"
+                       Margin="0,10"
+                       Foreground="Red"/>
+            <CheckBox Content="设置为隐私歌单" x:Name="cbPrivate"
+                      FontSize="{StaticResource WindowMainFontSize}" FontFamily="{StaticResource WindowMainFont}">
+                <CheckBox.Foreground>
+                    <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
+                </CheckBox.Foreground>
+            </CheckBox>
+            <DockPanel Margin="0,25,0,0"  Height="30" >
+                <Button Content="取消" DockPanel.Dock="Right"
+                        x:Name="btnCancel" Click="BtnCancel_Click"
+                       Width="60"  >
+                    <Button.Foreground>
+                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                    </Button.Foreground>
+                    <Button.BorderBrush>
+                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                    </Button.BorderBrush>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <Border BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}">
+                                    <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                 />
+                                </Border>
+                                <Border x:Name="border" Background="White" Opacity="0"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver"  Value="true">
+                                    <Setter Property="Opacity" Value="0.3" TargetName="border"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Content="确定"  Foreground="White" 
+                        x:Name="btnComfirm"
+                        IsEnabled="False"
+                       Click="BtnComfirm_Click"
+                        Width="60"
+                        IsDefault="True"
+                        HorizontalAlignment="Right" Margin="0,0,10,0">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid Background="{TemplateBinding Background}">
+                                <Border Background="White" x:Name="border" Opacity="0">
+                                </Border>
+                                <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Opacity" Value="0.3" TargetName="border"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                    <Button.Background>
+                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                    </Button.Background>
+                </Button>
+            </DockPanel>
+        </StackPanel>
+    </StackPanel>
+</ContentControl>

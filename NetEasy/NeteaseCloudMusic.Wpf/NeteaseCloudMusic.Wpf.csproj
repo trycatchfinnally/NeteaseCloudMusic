@@ -161,6 +161,7 @@
     <Compile Include="BindingConverter\Int2FormatStringConverter.cs" />
     <Compile Include="BindingConverter\ItemBackgroundConverter.cs" />
     <Compile Include="BindingConverter\Text2PopupIsOpenConverter.cs" />
+    <Compile Include="BindingConverter\TextLenthConverter.cs" />
     <Compile Include="BindingConverter\TimeSpan2MillSecondsConverter.cs" />
     <Compile Include="BindingConverter\TimeSpan2TextConverter.cs" />
     <Compile Include="BindingConverter\ValueConverterFactory.cs" />
@@ -267,6 +268,9 @@
     <Compile Include="View\Mv\MvView.xaml.cs">
       <DependentUpon>MvView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Popup\AddPlayListPopupView.xaml.cs">
+      <DependentUpon>AddPlayListPopupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Popup\LoginPopupView.xaml.cs">
       <DependentUpon>LoginPopupView.xaml</DependentUpon>
     </Compile>
@@ -365,10 +369,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\MenuPartControlStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles\MoreButtonStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -462,6 +462,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Mv\MvView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Popup\AddPlayListPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

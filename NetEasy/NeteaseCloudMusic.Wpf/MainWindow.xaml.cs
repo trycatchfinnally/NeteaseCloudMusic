@@ -111,5 +111,23 @@ namespace NeteaseCloudMusic.Wpf
                 await Task.Delay(200);
             }
         }
+
+        private void ToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+            if (tgSwitch.IsChecked==true)
+            {
+                this.leftPartPanel.Width = 140;
+                this.bottomUserPart.Orientation = Orientation.Horizontal;
+                hiddlePart.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.leftPartPanel.Width = 40;
+                this.bottomUserPart.Orientation = Orientation.Vertical;
+                hiddlePart.Visibility = Visibility.Collapsed;
+
+            }
+        }
     }
 }
