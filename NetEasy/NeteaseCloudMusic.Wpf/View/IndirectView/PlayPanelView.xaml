@@ -10,26 +10,11 @@
                 Loaded="ContentControl_Loaded"
              xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View.IndirectView"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="800">
-    <!--<ContentControl.Resources>
-        <Storyboard x:Key="OnLoaded1" RepeatBehavior="Forever"  >
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="grdImage">
-                <EasingDoubleKeyFrame KeyTime="0:0:5" Value="360"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-    </ContentControl.Resources>
-    <ContentControl.Triggers>
-        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard Storyboard="{StaticResource OnLoaded1}" />
-        </EventTrigger>
-        --><!--<EventTrigger RoutedEvent="FrameworkElement.Unloaded">
-            <RemoveStoryboard  BeginStoryboardName="main"   />
-        </EventTrigger>--><!--
-    </ContentControl.Triggers>-->
-    <ScrollViewer>
+             d:DesignHeight="800" d:DesignWidth="800" >
+    <ScrollViewer x:Name="rootScroll">
         <Grid Margin="10,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="400"/>
+                <RowDefinition Height="400" x:Name="lrcPanelPart"/>
                 <RowDefinition  />
             </Grid.RowDefinitions>
             <!--点击用户名称导航命令-->
@@ -402,7 +387,8 @@
                         </Grid.Background>
                         <StackPanel Margin="8">
                             <Grid>
-                                <TextBox Height="80" TextWrapping="Wrap" AcceptsReturn="True" MaxLength="140" x:Name="txtInput"></TextBox>
+                                <TextBox Height="80" TextWrapping="Wrap" AcceptsReturn="True"
+                                         MaxLength="140" x:Name="txtInput"></TextBox>
                                 <TextBlock Text="{Binding ElementName=txtInput,Path=Text.Length,UpdateSourceTrigger=PropertyChanged  }" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="3"/>
                             </Grid>
                             <Grid Margin="0,15,0,0">
@@ -427,7 +413,11 @@
                                         <TextBlock Text="#"  />
                                     </Button>
                                 </StackPanel>
-                                <Button HorizontalAlignment="Right">
+                                <Button HorizontalAlignment="Right" IsDefault="True"
+                                        IsEnabled="{Binding ElementName=txtInput,Path=Text.Length,Converter={x:Static converter:ValueConverterFactory.TextLenthConverter}}"
+                                       Command="{Binding AddCommentCommand}"
+                                        CommandParameter="{Binding ElementName=txtInput,Path=Text}"
+                                        >
                                     <TextBlock Text="评论" Style="{StaticResource GrayTopTextBoxStyle}"/>
                                 </Button>
                             </Grid>

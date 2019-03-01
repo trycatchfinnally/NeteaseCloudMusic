@@ -7,14 +7,13 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="350">
     <StackPanel>
-        <Button  x:Name="btnClose">
+        <Button  x:Name="btnClose" Click="BtnClose_Click">
             <Button.Style>
                 <Style TargetType="Button" BasedOn="{StaticResource EmptyButtonStyle}">
                     <Setter Property="HorizontalAlignment" Value="Right"/>
                     <Setter Property="Width" Value=" 30"/>
                     <Setter Property="Height" Value=" 20"/>
                     <Setter Property="Margin" Value="5"/>
-                    <Setter Property="Background" Value="Transparent"/>
                     <Style.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter Property="Background" Value="Red"/>
@@ -33,14 +32,13 @@
                 <BitmapImage  UriSource="/NeteaseCloudMusic.Wpf;component/Assets/pay_vip_pic.scale-200.png" />
             </Image.Source>
         </Image>
-        <TextBlock Style="{StaticResource DarkBottomTextBoxStyle}" Margin="0,10"
+        <TextBlock Style="{StaticResource DarkBottomTextBoxStyle}" Margin="0,8"
                    Text="版权方要求，当前歌曲仅限开通音乐包使用" HorizontalAlignment="Center">
             <TextBlock.Foreground>
                 <SolidColorBrush Color="{StaticResource WindowForeGrayColor}"/>
             </TextBlock.Foreground>
         </TextBlock>
-        <Button Content="开通音乐包" Foreground="White"  Margin="20,0" x:Name="btnOpenVip"
-                
+        <Button Content="开通音乐包" Foreground="White"  Margin="20,0" x:Name="btnOpenVip" Click="BtnOpenVip_Click"
                      Height="35"  
                     IsDefault="True" >
             <Button.Background>
@@ -63,7 +61,7 @@
             </Button.Template>
             
         </Button>
-        <Button Content="2元购买此单曲>>" Margin="0,15,0,5" x:Name="buyThisMusic"
+        <Button Content="2元购买此单曲>>" Margin="0,15,0,5" x:Name="buyThisMusic" Click="BuyThisMusic_Click"
                 HorizontalAlignment="Center"
                 Style="{StaticResource EmptyButtonWithFocusStyle}" Foreground="Blue"/>
     </StackPanel>

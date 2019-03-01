@@ -171,6 +171,7 @@
     <Compile Include="Controls\TitleButton.cs" />
     <Compile Include="Controls\TwoLineLabel.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
+    <Compile Include="InteractionRequests.cs" />
     <Compile Include="Model\AnchorRadioCatalogueModel.cs" />
     <Compile Include="Model\ArtistModel.cs" />
     <Compile Include="Model\BannerModel.cs" />
@@ -274,8 +275,14 @@
     <Compile Include="View\Popup\LoginPopupView.xaml.cs">
       <DependentUpon>LoginPopupView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Popup\LoginUserInfoPopup.xaml.cs">
+      <DependentUpon>LoginUserInfoPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Popup\PayMusicPopupView.xaml.cs">
       <DependentUpon>PayMusicPopupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Popup\WaitPayResultPopupView.xaml.cs">
+      <DependentUpon>WaitPayResultPopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\RecentlyPlay\RecentlyPlayMusicView.xaml.cs">
       <DependentUpon>RecentlyPlayMusicView.xaml</DependentUpon>
@@ -473,7 +480,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Popup\LoginUserInfoPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Popup\PayMusicPopupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Popup\WaitPayResultPopupView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

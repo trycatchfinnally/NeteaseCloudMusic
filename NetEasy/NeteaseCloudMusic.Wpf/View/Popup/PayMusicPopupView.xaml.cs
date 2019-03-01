@@ -11,7 +11,7 @@ namespace NeteaseCloudMusic.Wpf.View.Popup
         public PayMusicPopupView()
         {
             InitializeComponent();
-            Loaded += PayMusicPopupView_Loaded;
+         //   Loaded += PayMusicPopupView_Loaded;
         }
         private Confirmation Confirmation
         {
@@ -20,31 +20,37 @@ namespace NeteaseCloudMusic.Wpf.View.Popup
                 return DataContext as Confirmation;
             }
         }
-        private void PayMusicPopupView_Loaded(object sender, RoutedEventArgs e)
-        {
-            this.btnOpenVip.Click -= BtnOpenVip_Click;
-            this.btnOpenVip.Click += BtnOpenVip_Click;
-            this.buyThisMusic.Click -= BuyThisMusic_Click;
-            this.buyThisMusic.Click += BuyThisMusic_Click;
-            btnClose.Click -= BtnClose_Click;
-            btnClose.Click += BtnClose_Click;
-        }
-
+      
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
             var window = Window.GetWindow(this);
-            window.Close();
+            if (Confirmation != null)
+            {
+                Confirmation.Confirmed = false;
+            }
+            window?.Close();
         }
 
         private void BuyThisMusic_Click(object sender, RoutedEventArgs e)
         {
             if (Confirmation != null)
-                System.Diagnostics.Process.Start($"https://music.163.com/store/product/detail?id=5933052&songId={Confirmation.Content}");
+            {
+                System.Diagnostics.Process.Start(
+                    $"https://music.163.com/store/product/detail?id=5933052&songId={Confirmation.Content}");
+                Confirmation.Confirmed = true;
+            }
+
+            Window.GetWindow(this)?.Close();
         }
 
         private void BtnOpenVip_Click(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("https://music.163.com/store/vip?null");
+            if (Confirmation != null)
+            {
+                Confirmation.Confirmed = true;
+            }
+            Window.GetWindow(this)?.Close();
         }
     }
 }

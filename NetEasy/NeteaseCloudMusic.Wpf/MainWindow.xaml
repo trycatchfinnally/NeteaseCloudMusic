@@ -63,6 +63,38 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding  PayRequest,Mode=OneWay}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True"    >
+                <prism:PopupWindowAction.WindowStyle>
+                    <Style TargetType="Window">
+                        <Setter Property="AllowsTransparency" Value="True"/>
+                        <Setter Property="WindowStyle" Value="None"/>
+                        <Setter Property="ShowInTaskbar" Value="False"/>
+                        <Setter Property="Width" Value="350"/>
+                        <Setter Property="Height" Value="300"/>
+                    </Style>
+                </prism:PopupWindowAction.WindowStyle>
+                <prism:PopupWindowAction.WindowContent>
+                    <popup:PayMusicPopupView/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding  WaitPayRequest,Mode=OneWay}">
+            <prism:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True"    >
+                <prism:PopupWindowAction.WindowStyle>
+                    <Style TargetType="Window">
+                        <Setter Property="AllowsTransparency" Value="True"/>
+                        <Setter Property="WindowStyle" Value="None"/>
+                        <Setter Property="ShowInTaskbar" Value="False"/>
+                        <Setter Property="Width" Value="350"/>
+                        <Setter Property="Height" Value="160"/>
+                    </Style>
+                </prism:PopupWindowAction.WindowStyle>
+                <prism:PopupWindowAction.WindowContent>
+                    <popup:WaitPayResultPopupView/>
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <DockPanel   Margin=" 5">
         <DockPanel.Background>
@@ -320,7 +352,9 @@
                     <SolidColorBrush x:Key="Fore"  Color="{StaticResource WindowForeGrayColor}"></SolidColorBrush>
                     <SolidColorBrush x:Key="DefaultLikeBrush" Color="Red"/>
                 </Grid.Resources>
-                <controls1:CycleTypeButton    SelectIndex="{Binding IsLike,Converter={x:Static converter:ValueConverterFactory.BoolOrEnum2Int32Converter},Mode=TwoWay}">
+                <ToggleButton Style="{StaticResource LikeToggleButtonStyle}"
+                              IsChecked="{Binding IsLike}"></ToggleButton>
+                <!--<controls1:CycleTypeButton    SelectIndex="{Binding IsLike,Converter={x:Static converter:ValueConverterFactory.BoolOrEnum2Int32Converter},Mode=TwoWay}">
                     <Path Stroke="{StaticResource Fore }"   
                               HorizontalAlignment="Center" VerticalAlignment="Center"
                                
@@ -391,7 +425,7 @@
                             </DrawingImage>
                         </Image.Source>
                     </Image>
-                </controls1:CycleTypeButton>
+                </controls1:CycleTypeButton>-->
                 <controls1:CycleTypeButton  Grid.Column=" 1"  SelectIndex="{Binding CycleType,Converter={x:Static converter:ValueConverterFactory.BoolOrEnum2Int32Converter},Mode=TwoWay}">
 
                     <Image   >

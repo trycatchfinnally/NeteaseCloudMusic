@@ -1,0 +1,12 @@
+﻿<ContentControl x:Class="NeteaseCloudMusic.Wpf.View.Popup.LoginUserInfoPopup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View.Popup"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="600">
+    <Grid Background="White">
+            
+    </Grid>
+</ContentControl>

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Enums\ArtistType.cs" />
     <Compile Include="Enums\ChinesePinYinHeadType.cs" />
+    <Compile Include="Enums\CommentType.cs" />
     <Compile Include="Enums\LanguageType.cs" />
     <Compile Include="Enums\MusicQualityLevel.cs" />
     <Compile Include="Enums\MvOrderbyType.cs" />

@@ -62,7 +62,8 @@
                 <ResourceDictionary Source="Styles/EmptyTextOnlyRadioButtonStyle.xaml"/>
                 <ResourceDictionary Source="Styles/DecorationRectangleStyle.xaml"/>
                 <ResourceDictionary Source="Styles/EmptyToggleButtonStyle.xaml"/>
-                
+                <ResourceDictionary Source="Styles/LikeToggleButtonStyle.xaml"/>
+
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>

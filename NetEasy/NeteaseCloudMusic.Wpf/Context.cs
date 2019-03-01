@@ -43,10 +43,7 @@ namespace NeteaseCloudMusic.Wpf
         /// 代表上一个的命令
         /// </summary>
         public static CompositeCommand PrevTrackCommand { get; } = new CompositeCommand();
-        /// <summary>
-        /// 表示登陆弹出窗口
-        /// </summary>
-        public static InteractionRequest<Confirmation> LoginInteractionRequest { get; } = new InteractionRequest<Confirmation>();
+       
 
     }
     /// <summary>

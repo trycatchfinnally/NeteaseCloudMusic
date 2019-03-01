@@ -40,6 +40,7 @@ namespace NeteaseCloudMusic.Wpf.View.Popup
             if (Confirmation != null)
             {
                 Confirmation.Confirmed = true;
+                Confirmation.Content = txtTitle.Text;
             }
             Window.GetWindow(this).Close();
         }

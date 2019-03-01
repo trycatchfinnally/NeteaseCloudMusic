@@ -47,7 +47,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
             else
             {
-                Context.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
+                InteractionRequests.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
                 {
                     Title = "登陆"
                 }, x =>
@@ -74,7 +74,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             if (Session.CurrentUser != null)
                 this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.EveryDayMusicRecommendView));
             else
-                Context.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
+                InteractionRequests.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
                 {
                     Title = "登陆"
                 }, x =>

@@ -8,12 +8,11 @@ namespace NeteaseCloudMusic.Wpf.BindingConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var txt = value as System.Windows.Controls.TextBox;
-            if (txt != null)
+            if (value is int lenth)
             {
-                return txt.MaxLength - (txt.Text?.Length ?? 0);
+                return lenth > 0;
             }
-            return 1024;
+            return false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

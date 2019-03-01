@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using NeteaseCloudMusic.Global.Model;
+﻿using NeteaseCloudMusic.Global.Model;
 using NeteaseCloudMusic.Services.NetWork;
 using NeteaseCloudMusic.Wpf.Extensions;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Regions;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 {
@@ -26,7 +23,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             IRegionManager navigationService, IEventAggregator eventAggregator
             )
         {
-            _netWorkServices = netWorkServices;
+            this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
             eventAggregator.GetEvent<CurrentPlayMusicChangeEventArgs>().Subscribe(RefreshMusic);
             UserCommand = new DelegateCommand<long?>(UserCommandExecute);
@@ -34,9 +31,25 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             ArtistCommand = new DelegateCommand<long?>(ArtistCommandExecute);
             SimiMusicCommand = new DelegateCommand<Music>(SimiMusicCommandExecute);
             SimiPlayListCommand = new DelegateCommand<PlayList>(SimiPlayListCommandExecute);
+            AddCommentCommand = new DelegateCommand<string>(AddCommentCommandExecute);
         }
 
-      
+        private async void AddCommentCommandExecute(string commentContent)
+        {
+            if (string.IsNullOrEmpty(commentContent))
+            {
+                return;
+            }
+            var json = await this._netWorkServices.GetAsync("Common", "AddComment", new
+            {
+                resourceId = Id.Value,
+                type = Global.Enums.CommentType.R_SO_4_,
+                content = commentContent
+            });
+            NewComments.Insert(0, JsonConvert.DeserializeObject<Global.Model.Comment>(json));
+        }
+
+
 
         /// <summary>
         /// 刷新音乐
@@ -44,24 +57,24 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         /// <param name="music"></param>
         private void RefreshMusic(Music music)
         {
-            if (music!=null &&Id!=music.Id)
+            if (music != null && Id != music.Id)
             {
                 Id = music.Id;
-                this.SetById(music.Id);
+                SetById(music.Id);
             }
         }
         private void SimiPlayListCommandExecute(PlayList obj)
         {
-            if (obj?.Id>0 )
+            if (obj?.Id > 0)
             {
                 var parmater = new NavigationParameters();
-                parmater.Add( NavigationIdParmmeterName, obj.Id);
+                parmater.Add(NavigationIdParmmeterName, obj.Id);
                 this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.PlayListDetailView), parmater);
             }
         }
         private void SimiMusicCommandExecute(Music music)
         {
-            if (music!=null )
+            if (music != null)
             {
                 Context.PlayCommand.Execute(music);
             }
@@ -75,7 +88,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
                 this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.UserZoneView), parmater);
             }
         }
-       private void AlbumCommandExecute(long? id)
+        private void AlbumCommandExecute(long? id)
         {
             if (id.HasValue)
             {
@@ -95,39 +108,39 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         }
         protected override async void SetById(long id)
         {
-            var task1 = _netWorkServices.GetAsync("Music", "GetMusicDetailById", new { id });
-            var task2 = _netWorkServices.GetAsync("Music", "GetSimiMusic", new { id });
-            var task3 = _netWorkServices.GetAsync("Common", "GetCommentById", new { commentThreadId = $"R_SO_4_{id}" });
-            var task4 = _netWorkServices.GetAsync("Music", "GetLyricByMusicId", new { id });
-            var task5 = _netWorkServices.GetAsync("Music", "GetSimiPlayList", new { id });
-            await Task.WhenAll(task1, task2, task3,task4,task5);
-            _innerMusic = JsonConvert.DeserializeObject<Music>(task1.Result);
-            _innerComment = JsonConvert.DeserializeObject<CommentCollection>(task3.Result);
+            var task1 = this._netWorkServices.GetAsync("Music", "GetMusicDetailById", new { id });
+            var task2 = this._netWorkServices.GetAsync("Music", "GetSimiMusic", new { id });
+            var task3 = this._netWorkServices.GetAsync("Common", "GetCommentById", new { commentThreadId = $"R_SO_4_{id}" });
+            var task4 = this._netWorkServices.GetAsync("Music", "GetLyricByMusicId", new { id });
+            var task5 = this._netWorkServices.GetAsync("Music", "GetSimiPlayList", new { id });
+            await Task.WhenAll(task1, task2, task3, task4, task5);
+            this._innerMusic = JsonConvert.DeserializeObject<Music>(task1.Result);
+            this._innerComment = JsonConvert.DeserializeObject<CommentCollection>(task3.Result);
             await Task.WhenAll(
-            Artists.AddRangeAsync(_innerMusic.Artists),
+            Artists.AddRangeAsync(this._innerMusic.Artists),
             SimiMusics.AddRangeAsync(JsonConvert.DeserializeObject<List<Music>>(task2.Result)),
-            NewComments.AddRangeAsync(_innerComment.Comments),
-            HotComments.AddRangeAsync(_innerComment.HotComments),
+            NewComments.AddRangeAsync(this._innerComment.Comments),
+            HotComments.AddRangeAsync(this._innerComment.HotComments),
              Lryics.AddRangeAsync(JsonConvert.DeserializeObject<List<Lyric>>(task4.Result)),
              ContainsThisTrackList.AddRangeAsync(JsonConvert.DeserializeObject<PlayList[]>(task5.Result)));
             RaiseAllPropertyChanged();
-           
+
         }
         /// <summary>
         /// 代表播放内容的图片
         /// </summary>
-        public string TrackImage => _innerMusic.PicUrl;
+        public string TrackImage => this._innerMusic.PicUrl;
         /// <summary>
         /// 代表播放内容的名称
         /// </summary>
-        public string TrackName => _innerMusic.Name;
+        public string TrackName => this._innerMusic.Name;
         /// <summary>
         ///代表对应的专辑名称
         /// </summary>
-        public string AlbumName => _innerMusic.Album?.Name;
-        public long? AlbumId=> _innerMusic.Album?.Id;
+        public string AlbumName => this._innerMusic.Album?.Name;
+        public long? AlbumId => this._innerMusic.Album?.Id;
         public ObservableCollection<Artist> Artists { get; } = new ObservableCollection<Artist>();
-        public int CommentCount => _innerComment?.Total??0;
+        public int CommentCount => this._innerComment?.Total ?? 0;
         /// <summary>
         /// 代表歌词的
         /// </summary>
@@ -140,6 +153,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         public ICommand ArtistCommand { get; }
         public ICommand SimiMusicCommand { get; }
         public ICommand SimiPlayListCommand { get; }
+        public ICommand AddCommentCommand { get; }
+
         /// <summary>
         /// 包含这首歌的集合
         /// </summary>
