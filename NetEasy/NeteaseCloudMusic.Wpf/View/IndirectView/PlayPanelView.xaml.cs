@@ -96,6 +96,14 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
             dynamic item = (e.Source as Button).Content;
             this._audioPlayableServices.Position = item.Time;
         }
+
+        private void BtnReplied_Click(object sender, RoutedEventArgs e)
+        {
+            this.txtInput.Text = string.Empty;
+            var btn = e.Source as Button;
+            string userName = btn?.Tag?.ToString();
+            this.txtInput.Text = "@" + userName;
+        }
     }
 
 }

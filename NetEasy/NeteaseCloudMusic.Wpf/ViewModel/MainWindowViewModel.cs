@@ -12,6 +12,7 @@ using Prism.Mvvm;
 using Prism.Regions;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,8 +31,9 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         private bool _isPlaying;
         private PlayCycleType _cycleType;
         private bool _isExpandCurrentPlayList;
-        private Global.Model.Music _currentPlayMusic;
+        private Music _currentPlayMusic;
         private int[] _randomIndex;
+        private readonly object _lockObj = new object();
         public MainWindowViewModel(IRegionManager navigationService,
             IAudioPlayableServices audioPlayableServices,
             INetWorkServices netWorkServices,
@@ -49,13 +51,24 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             NavBackCommand = new DelegateCommand(NavBackCommandExecute);
             AddPlayListCommand = new DelegateCommand(AddPlayListCommandExecute);
             InitData();
-            Context.PlayCommand.RegisterCommand(new DelegateCommand<Global.Model.Music>(Play));
+            Context.PlayCommand.RegisterCommand(new DelegateCommand<Music>(Play));
             Context.PauseCommand.RegisterCommand(new DelegateCommand(Pause));
             Context.NextTrackCommand.RegisterCommand(new DelegateCommand(Next));
             Context.PrevTrackCommand.RegisterCommand(new DelegateCommand(Prev));
 
         }
 
+        private void WriteDebugInfoInText(object msg)
+        {
+            var filePath = Path.Combine(Environment.CurrentDirectory, "debug.txt");
+            lock (this._lockObj)
+            {
+                using (var tw = new StreamWriter(filePath, true))
+                {
+                    tw.WriteLine(DateTime.Now + "      " + msg);
+                }
+            }
+        }
         #region 命令实现
         private void SysListCommandImpl(int? index)
         {
@@ -128,9 +141,9 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         private void OpenPlayPanelCommandExecute()
         {
             if (CurrentPlayMusic != null)
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.PlayPanelView) +
+                this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayPanelView) +
                     $"?{IndirectView.IndirectViewModelBase.NavigationIdParmmeterName}={CurrentPlayMusic.Id}");
-        } 
+        }
         #endregion
         /// <summary>
         /// 表示购买音乐的对应操作流程
@@ -165,23 +178,38 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// <summary>
         /// 播放当前的项目
         /// </summary>
-        private async void Play(Global.Model.Music music = null)
+        private async void Play(Music music = null)
         {
             if (this._audioPlayableServices.PlayState == PlayState.Paused)
             {
                 this._audioPlayableServices.Resume();
+                WriteDebugInfoInText("play从暂停恢复播放++++++++");
+                WriteDebugInfoInText("当前的音乐id" + CurrentPlayMusic?.Id);
+                WriteDebugInfoInText("play从暂停恢复播放++++++++");
                 return;
             }
             Stop();
             if (CurrentPlayList.Count == 0)
             {
-                if (music == null) return;
+                if (music == null)
+                {
+                    WriteDebugInfoInText("play传入音乐为null,，播放列表长度为0++++++++");
+                    WriteDebugInfoInText("当前的音乐id" + CurrentPlayMusic?.Id);
+                    WriteDebugInfoInText("play传入音乐为null，播放列表长度为0++++++++");
+                    return;
+                }
                 CurrentPlayList.Add(music);
             }
             if (music == null)
             {
                 if (CurrentPlayMusic == null)
-                { CurrentPlayMusic = CurrentPlayList[0]; return; }
+                {
+                    CurrentPlayMusic = CurrentPlayList[0];
+                    WriteDebugInfoInText("play传入音乐为null,当前音乐为null++++++++");
+                    WriteDebugInfoInText("播放列表的第一项idca" + CurrentPlayMusic?.Id);
+                    WriteDebugInfoInText("play传入音乐为null当前音乐为null++++++++");
+                    return;
+                }
                 music = CurrentPlayMusic;
             }
             else
@@ -196,20 +224,28 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
                     CurrentPlayList.Add(music);
                     CurrentPlayMusic = music;
-                    return;
+                  
                 }
+                WriteDebugInfoInText("play传入音乐在播放列表未找到或者找到，为当前音乐赋值++++++++");
+                WriteDebugInfoInText("当前音乐ididca" + CurrentPlayMusic?.Id);
+                WriteDebugInfoInText("play传入音乐在播放列表未找到或者找到，为当前音乐赋值++++++++");
+                return;
+
             }
             // if (string.IsNullOrEmpty(music.Url))  
             {
                 var json = await this._netWorkServices.GetAsync("Common", "GetMusicById", new { music.Id });
-                var url = JsonConvert.DeserializeObject<Global.Model.Music>(json)?.Url;
+                var url = JsonConvert.DeserializeObject<Music>(json)?.Url;
                 music.Url = url;
+                WriteDebugInfoInText("play请求url++++++++");
+                WriteDebugInfoInText("请求音乐的id" + CurrentPlayMusic?.Id);
+                WriteDebugInfoInText("请求音乐地址" + url);
+                WriteDebugInfoInText("play请求url，为当前音乐赋值++++++++");
                 //music.Url = $"https://music.163.com/song/media/outer/url?id={ music.Id}.mp3";
             }
             if (!string.IsNullOrEmpty(music.Url))//如果没有权限或者需要购买等
             {
                 this._audioPlayableServices.Play(music.Url);
-                // IsPlaying = true;
                 await TimeRefresherAsync();
             }
             else
@@ -218,7 +254,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 if (PayMusicProgress(music))
                 {
                     var json = await this._netWorkServices.GetAsync("Common", "GetMusicById", new { music.Id });
-                    var url = JsonConvert.DeserializeObject<Global.Model.Music>(json)?.Url;
+                    var url = JsonConvert.DeserializeObject<Music>(json)?.Url;
                     music.Url = url;
                     if (!string.IsNullOrEmpty(music.Url))//如果没有权限或者需要购买等
                     {
@@ -229,57 +265,6 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
                 }
             }
-            //if (parameters.PlayMusic != null)
-            //{
-            //    if (parameters.PlayMusic.Id == 0)
-            //        throw new ArgumentException("添加的音乐无效！");
-            //    var temp = CurrentPlayList.FirstOrDefault(x => x.Id == parameters.PlayMusic.Id);
-            //    if (temp != null)
-            //    {
-            //        CurrentPlayMusic = temp; return;
-            //    }
-            //    CurrentPlayList.Add(parameters.PlayMusic);
-            //    this.CurrentPlayMusic = parameters.PlayMusic; return;
-            //}
-            //if (_audioPlayableServices.PlayState == PlayState.Playing)
-            //{
-            //    if (parameters.RePlay)
-            //        _audioPlayableServices.Stop();
-            //    else
-            //    {
-            //        _audioPlayableServices.Pause(); IsPlaying = false;
-            //        return;
-            //    }
-            //    //IsPlaying = false;
-            //    // return;
-            //}
-            //else if (_audioPlayableServices.PlayState == PlayState.Paused)
-            //{
-            //    _audioPlayableServices.Resume(); IsPlaying = true; return;
-            //}
-            //if (CurrentPlayMusic == null)//给当前音乐赋值的时候会引发当前命令
-            //{
-            //    CurrentPlayMusic = CurrentPlayList.FirstOrDefault(); return;
-            //}
-            //var music = CurrentPlayMusic;
-            //_audioPlayableServices.Stop();
-            //if (music != null)
-            //{
-            //    if (string.IsNullOrEmpty(music.Url))
-            //    {
-            //        var json = await _netWorkServices.GetAsync("Common", "GetMusicById", new { music.Id });
-            //        var url = JsonConvert.DeserializeObject<Global.Model.Music>(json)?.Url;
-            //        music.Url = url;
-            //        //music.Url = $"https://music.163.com/song/media/outer/url?id={ music.Id}.mp3";
-            //    }
-
-            //    if (!string.IsNullOrEmpty(music.Url))
-            //    {
-            //        _audioPlayableServices.Play(music.Url);
-            //        IsPlaying = true;
-            //        await TimeRefresherAsync();
-            //    }
-            //}
         }
 
         private void Pause()
@@ -324,6 +309,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            WriteDebugInfoInText("next++++++++");
+            WriteDebugInfoInText("当前的音乐id" + CurrentPlayMusic?.Id);
+            WriteDebugInfoInText("next++++++++");
+
 
         }
         /// <summary>
@@ -380,9 +370,12 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
                            RaisePropertyChanged(nameof(CurrentTimeSpan));
 
-                           System.Threading.Thread.Sleep(150);
+                           Thread.Sleep(150);
                        }
                    }, this._timerCancelToken.Token);
+                WriteDebugInfoInText("刷新时间的下一曲++++++++");
+                WriteDebugInfoInText("当前的音乐id" + CurrentPlayMusic?.Id);
+                WriteDebugInfoInText("刷新时间的下一曲++++++++");
                 Context.NextTrackCommand.Execute(null);
             }
             catch (OperationCanceledException)
@@ -428,7 +421,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// <param name="like"></param>
         private async void LikeOrDisLikeCurrentMusic(bool like)
         {
-            
+            if (like)
+                await Task.Delay(1);
         }
 
         /// <summary>
@@ -563,10 +557,10 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             get { return CurrentPlayMusic?.IsLike ?? false; }
             set
             {
-                if (CurrentPlayMusic == null|| value == CurrentPlayMusic.IsLike) return;
+                if (CurrentPlayMusic == null || value == CurrentPlayMusic.IsLike) return;
                 if (!Session.IsLoginIn)
                 {
-                    LoginRequest.Raise(new Confirmation{Title="登陆"});
+                    LoginRequest.Raise(new Confirmation { Title = "登陆" });
                     RaisePropertyChanged();
                     return;
                 }
@@ -622,14 +616,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// <summary>
         /// 当前的播放列表
         /// </summary>
-        public ObservableCollection<Global.Model.Music> CurrentPlayList
+        public ObservableCollection<Music> CurrentPlayList
         {
             get;
         } = Context.CurrentPlayMusics;
         /// <summary>
         /// 当前正在播放的项目
         /// </summary>
-        public Global.Model.Music CurrentPlayMusic
+        public Music CurrentPlayMusic
         {
             get
             {
@@ -654,9 +648,6 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 else throw new ArgumentException("只能播放位于播放列表中的项目，请先添加进当前播放列表！");
                 this._eventAggregator.GetEvent<CurrentPlayMusicChangeEventArgs>().Publish(value);
                 RaisePropertyChanged(nameof(MusicImage));
-
-
-                // RaisePropertyChanged(nameof());
             }
         }
         /// <summary>

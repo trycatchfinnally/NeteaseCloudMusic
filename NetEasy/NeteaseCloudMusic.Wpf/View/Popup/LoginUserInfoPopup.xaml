@@ -3,10 +3,44 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View.Popup"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="600">
     <Grid Background="White">
-            
+        <Grid Margin="10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <DockPanel>
+                <TextBlock Text="账号" Style="{StaticResource DarkBottomTextBoxStyle}" VerticalAlignment="Center"/>
+                <Button Style="{StaticResource DefaultButtonStyle}" Content="编辑"   
+                        HorizontalAlignment="Right">
+                    <Button.Foreground>
+                        <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                    </Button.Foreground>
+                </Button>
+            </DockPanel>
+            <StackPanel Grid.Row="1">
+                <DockPanel>
+                    <Button Style="{StaticResource DefaultButtonStyle}" Content="签到" DockPanel.Dock="Right">
+                        <Button.Foreground>
+                            <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                        </Button.Foreground>
+                    </Button>
+                    <Image Stretch="Uniform" Width="60" DockPanel.Dock="Left">
+                        <Image.Source>
+                            <BitmapImage DecodePixelWidth="60" UriSource="/NeteaseCloudMusic.Wpf;component/Assets/TestImages/电台测试.png"  />
+                        </Image.Source>
+                        <Image.Clip>
+                            <EllipseGeometry Center="30,30" RadiusX="30" RadiusY="30"/>
+                        </Image.Clip>
+                    </Image>
+                    <TextBlock Text="用户未知" Style="{StaticResource DarkBottomTextBoxStyle}"
+                               Margin="10"
+                               VerticalAlignment="Center"/>
+                </DockPanel>
+
+            </StackPanel>
+        </Grid>
     </Grid>
 </ContentControl>

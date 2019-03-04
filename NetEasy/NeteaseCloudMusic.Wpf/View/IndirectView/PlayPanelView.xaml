@@ -8,7 +8,6 @@
                 xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
                 xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
                 Loaded="ContentControl_Loaded"
-             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.View.IndirectView"
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800" >
     <ScrollViewer x:Name="rootScroll">
@@ -18,11 +17,14 @@
                 <RowDefinition  />
             </Grid.RowDefinitions>
             <!--点击用户名称导航命令-->
-            <Button x:Name="btnCommand"  Command="{Binding UserCommand}" Visibility="Collapsed"/>
+            <Button x:Name="btnCommand"
+                    Command="{Binding UserCommand}" Visibility="Collapsed"/>
             <!--点击专辑名称导航-->
-            <Button x:Name="btnArtistCommand"  Command="{Binding ArtistCommand}" Visibility="Collapsed"/>
-
-            <Grid>
+            <Button x:Name="btnArtistCommand"  Grid.Row="0"
+                    Command="{Binding ArtistCommand}" Visibility="Collapsed"/>
+            <Button x:Name="btnThumbsUpCommand"  Grid.Row="0"
+                    Command="{Binding ThumbsUpCommand}" Visibility="Collapsed"/>
+            <Grid  Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="350"/>
                     <ColumnDefinition />
@@ -338,11 +340,24 @@
 
                                                 <DockPanel DockPanel.Dock="Bottom">
                                                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                                                        <TextBlock Style="{StaticResource GrayTopTextBoxStyle}" Text="{Binding LikedCount,StringFormat=👍({0})}"/>
+                                                        <Button Style="{StaticResource EmptyButtonWithFocusStyle}" 
+                                                                Command="{Binding ElementName=btnThumbsUpCommand,Path=Command}"
+                                                                CommandParameter="{Binding CommentId}">
+                                                            <TextBlock Style="{StaticResource GrayTopTextBoxStyle}" 
+                                                                       Text="{Binding LikedCount,StringFormat=👍({0})}"
+                                                                       Foreground="{Binding RelativeSource={RelativeSource AncestorLevel=1,AncestorType=Button},Path=Foreground}"/>
+                                                        </Button>
                                                         <Rectangle Margin="5,0" Style="{StaticResource VerticalDecorationRectangleStyle}"/>
-                                                        <TextBlock Style="{StaticResource GrayTopTextBoxStyle}" Text="分享"/>
+                                                        <!--<TextBlock Style="{StaticResource GrayTopTextBoxStyle}" Text="分享"/>-->
+                                                        <Button Style="{StaticResource EmptyButtonWithFocusStyle}" Content="分享"
+                                                                VerticalAlignment="Top" FontSize="{StaticResource WindowGrayFontSize}" 
+                                                               />
                                                         <Rectangle Margin="5,0" Style="{StaticResource VerticalDecorationRectangleStyle}"/>
-                                                        <TextBlock Style="{StaticResource GrayTopTextBoxStyle}" Text="回复"/>
+                                                        <Button Style="{StaticResource EmptyButtonWithFocusStyle}" Content="回复"
+                                                                x:Name="btnReplied" Click="BtnReplied_Click"
+                                                               VerticalAlignment="Top" FontSize="{StaticResource WindowGrayFontSize}" 
+                                                                Tag="{Binding User.UserName}"/>
+                                                        <!--<TextBlock Style="{StaticResource GrayTopTextBoxStyle}" Text="回复"/>-->
                                                     </StackPanel>
                                                     <TextBlock Style="{StaticResource GrayTopTextBoxStyle}" Text="{Binding Time}"  />
                                                 </DockPanel>

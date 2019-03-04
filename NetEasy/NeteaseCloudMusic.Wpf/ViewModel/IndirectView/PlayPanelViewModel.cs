@@ -7,6 +7,7 @@ using Prism.Events;
 using Prism.Regions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -17,8 +18,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
 
-        private Global.Model.Music _innerMusic = new Global.Model.Music();
-        private Global.Model.CommentCollection _innerComment;
+        private Music _innerMusic = new Music();
+        private  CommentCollection _innerComment;
         public PlayPanelViewModel(INetWorkServices netWorkServices,
             IRegionManager navigationService, IEventAggregator eventAggregator
             )
@@ -32,11 +33,43 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             SimiMusicCommand = new DelegateCommand<Music>(SimiMusicCommandExecute);
             SimiPlayListCommand = new DelegateCommand<PlayList>(SimiPlayListCommandExecute);
             AddCommentCommand = new DelegateCommand<string>(AddCommentCommandExecute);
+            ThumbsUpCommand = new DelegateCommand<long?>(ThumbsUpCommandExecute);
+        }
+
+        private async void ThumbsUpCommandExecute(long? obj)
+        {
+            if (obj > 0)
+            {
+                 await this._netWorkServices.GetAsync("Common", "ThumbsUpComment", new
+                {
+                    commentId = obj.Value,
+                    commentThreadId = Global.Enums.CommentType.R_SO_4_.ToString() + Id,
+                    thumbsUp = true
+                });
+                var query = HotComments.Select((x, i) => new {Model = x, Index = i})
+                    .FirstOrDefault(x => x.Model.CommentId == obj);
+                if (query!=null )
+                {
+                    query.Model.LikedCount++;
+                    HotComments.RemoveAt(query.Index);
+                    HotComments.Insert(query.Index, query.Model);
+                    return;
+                }
+                query = NewComments.Select((x, i) => new { Model = x, Index = i })
+                    .FirstOrDefault(x => x.Model.CommentId == obj);
+                if (query != null)
+                {
+                    query.Model.LikedCount++;
+                    NewComments.RemoveAt(query.Index);
+                    NewComments.Insert(query.Index, query.Model);
+                }
+
+            }
         }
 
         private async void AddCommentCommandExecute(string commentContent)
         {
-            if (string.IsNullOrEmpty(commentContent))
+            if (string.IsNullOrEmpty(commentContent)||!Id.HasValue)
             {
                 return;
             }
@@ -46,7 +79,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
                 type = Global.Enums.CommentType.R_SO_4_,
                 content = commentContent
             });
-            NewComments.Insert(0, JsonConvert.DeserializeObject<Global.Model.Comment>(json));
+            NewComments.Insert(0, JsonConvert.DeserializeObject< Comment>(json));
         }
 
 
@@ -126,6 +159,18 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             RaiseAllPropertyChanged();
 
         }
+        public override void OnNavigatedTo(NavigationContext navigationContext)
+        {
+            if (navigationContext.Parameters.ContainsKey(nameof(Id)) && Id> 0)
+            {
+                var id = System.Convert.ToInt64(navigationContext.Parameters[nameof(Id)]);
+                if (id != Id)
+                {
+                    SetById(Id.Value);
+                }
+            }
+            base.OnNavigatedTo(navigationContext);
+        }
         /// <summary>
         /// 代表播放内容的图片
         /// </summary>
@@ -144,16 +189,19 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         /// <summary>
         /// 代表歌词的
         /// </summary>
-        public ObservableCollection<Global.Model.Lyric> Lryics { get; } = new ObservableCollection<Lyric>();
+        public ObservableCollection<Lyric> Lryics { get; } = new ObservableCollection<Lyric>();
         public ObservableCollection<Comment> NewComments { get; } = new ObservableCollection<Comment>();
         public ObservableCollection<Comment> HotComments { get; } = new ObservableCollection<Comment>();
 
+        #region 命令
         public ICommand UserCommand { get; }
         public ICommand AlbumCommand { get; }
         public ICommand ArtistCommand { get; }
         public ICommand SimiMusicCommand { get; }
         public ICommand SimiPlayListCommand { get; }
         public ICommand AddCommentCommand { get; }
+        public ICommand ThumbsUpCommand { get; }
+        #endregion
 
         /// <summary>
         /// 包含这首歌的集合
