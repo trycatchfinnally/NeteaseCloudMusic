@@ -58,8 +58,11 @@
     <Compile Include="Model\Artist.cs" />
     <Compile Include="Model\Banner.cs" />
     <Compile Include="Model\BillBoard.cs" />
+    <Compile Include="Model\CloudDisk.cs" />
+    <Compile Include="Model\CloudMusic.cs" />
     <Compile Include="Model\Comment.cs" />
     <Compile Include="Model\CommentCollection.cs" />
+    <Compile Include="Model\FileSize.cs" />
     <Compile Include="Model\Lyric.cs" />
     <Compile Include="Model\MenuListItem.cs" />
     <Compile Include="Model\Music.cs" />

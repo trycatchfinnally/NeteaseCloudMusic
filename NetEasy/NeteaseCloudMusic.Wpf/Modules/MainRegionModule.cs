@@ -1,13 +1,8 @@
-﻿using Prism.Modularity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Prism.Ioc;
-using Prism.Regions;
-using NeteaseCloudMusic.Wpf.View;
+﻿using NeteaseCloudMusic.Wpf.View;
 using NeteaseCloudMusic.Wpf.View.IndirectView;
+using Prism.Ioc;
+using Prism.Modularity;
+using Prism.Regions;
 
 namespace NeteaseCloudMusic.Wpf.Modules
 {
@@ -15,7 +10,7 @@ namespace NeteaseCloudMusic.Wpf.Modules
     {
         public void OnInitialized(IContainerProvider containerProvider)
         {
-           
+
 
             var regionManager = containerProvider.Resolve<IRegionManager>();
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(FindMusicView));
@@ -25,7 +20,7 @@ namespace NeteaseCloudMusic.Wpf.Modules
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(LocalMusicView));
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(DownloadManagerView));
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(RecentlyPlayView));
-           regionManager.RegisterViewWithRegion(Context.RegionName, typeof(PlayListDetailView));
+            regionManager.RegisterViewWithRegion(Context.RegionName, typeof(PlayListDetailView));
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(MvPlayView));
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(UserZoneView));
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(PlayPanelView));
@@ -34,13 +29,14 @@ namespace NeteaseCloudMusic.Wpf.Modules
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(EveryDayMusicRecommendView));
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(BillBoardView));
             regionManager.RegisterViewWithRegion(Context.RegionName, typeof(TopArtistsBillBoardView));
+            regionManager.RegisterViewWithRegion(Context.RegionName, typeof(View.Cloud.CloudMusicView));
 
             //  regionManager.Regions[Context.RegionName].Add(containerProvider.Resolve<PlayListDetailView>());
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            
+
             //throw new NotImplementedException();
         }
     }

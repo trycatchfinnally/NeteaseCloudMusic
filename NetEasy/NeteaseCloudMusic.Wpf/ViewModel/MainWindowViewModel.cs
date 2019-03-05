@@ -17,6 +17,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.View.Cloud;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -101,7 +102,9 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                     this._navigationService.RequestNavigate(Context.RegionName, nameof(DownloadManagerView));
                     break;
                 case 2:
-                    this._navigationService.RequestNavigate(Context.RegionName, nameof(RecentlyPlayView));
+                    this._navigationService.RequestNavigate(Context.RegionName, nameof(RecentlyPlayView));break;
+                case 3:
+                    this._navigationService.RequestNavigate(Context.RegionName, nameof(CloudMusicView));
                     break;
             }
         }
@@ -240,6 +243,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 WriteDebugInfoInText("play请求url++++++++");
                 WriteDebugInfoInText("请求音乐的id" + CurrentPlayMusic?.Id);
                 WriteDebugInfoInText("请求音乐地址" + url);
+                WriteDebugInfoInText("请求音乐名称" + JsonConvert.DeserializeObject<Music>(json)?.Name);
                 WriteDebugInfoInText("play请求url，为当前音乐赋值++++++++");
                 //music.Url = $"https://music.163.com/song/media/outer/url?id={ music.Id}.mp3";
             }

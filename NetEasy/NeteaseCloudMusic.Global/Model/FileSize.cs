@@ -4,60 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NeteaseCloudMusic.Wpf.Model
+namespace NeteaseCloudMusic.Global.Model
 {
-    public class LocalMusicModel : MusicModel
-    {
-        private string _filePath;
-
-        /// <summary>
-        /// 本地文件的地址
-        /// </summary>
-        public string FilePath
-        {
-            get
-            {
-                return _filePath;
-            }
-
-            set
-            {
-                SetProperty(ref _filePath, value);
-            }
-        }
-        /// <summary>
-        /// 本地文件的大小
-        /// </summary>
-        public FileSize FileSize
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(FilePath) || !System.IO.File.Exists(FilePath))
-                    return 0;
-                return new System.IO.FileInfo(FilePath).Length;
-            }
-        }
-        /// <summary>
-        /// 本地文件的图片
-        /// </summary>
-        public string ArtistImage
-        {
-            /*  get { return innerModel.Artist?.ArtistImage; }
-              set
-              {
-                  if (innerModel.Artist == null)
-                      innerModel.Artist = new Global.Model.Artist();
-                  innerModel.Artist.ArtistImage = value;
-                  RaisePropertyChanged();
-              }*/
-            set;get;
-        }
-
-    }
-    /// <summary>
-    /// 代表本地文件大小的结构
-    /// </summary>
-    public struct FileSize: IFormattable
+    public struct FileSize : IFormattable
     {
         public static readonly FileSize EmptyFileSize = new FileSize(0);
         private const long BytesPerKiloByte = 1024;
@@ -210,5 +159,4 @@ namespace NeteaseCloudMusic.Wpf.Model
         public static implicit operator long(FileSize fileSize) => fileSize.Size;
 
     }
-
 }

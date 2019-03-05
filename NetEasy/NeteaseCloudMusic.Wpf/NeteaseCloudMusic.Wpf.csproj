@@ -189,6 +189,7 @@
     <Compile Include="SplashscreenWindow.xaml.cs">
       <DependentUpon>SplashscreenWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\Cloud\CloudMusicViewModel.cs" />
     <Compile Include="ViewModel\DownloadPage\DownloadedMusicViewModel.cs" />
     <Compile Include="ViewModel\DownloadPage\DownloadManagerViewModel.cs" />
     <Compile Include="ViewModel\FindMusic\AnchorRadioViewModel.cs" />
@@ -218,6 +219,9 @@
     <Compile Include="ViewModel\RecentlyPlay\RecentlyPlayMusicViewModel.cs" />
     <Compile Include="ViewModel\RecentlyPlay\RecentlyPlayProgramViewModel.cs" />
     <Compile Include="ViewModel\RecentlyPlay\RecentlyPlayViewModel.cs" />
+    <Compile Include="View\Cloud\CloudMusicView.xaml.cs">
+      <DependentUpon>CloudMusicView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DownloadPage\DownloadedMusicView.xaml.cs">
       <DependentUpon>DownloadedMusicView.xaml</DependentUpon>
     </Compile>
@@ -401,6 +405,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\VolumnSliderStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Cloud\CloudMusicView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -681,6 +689,7 @@
   <ItemGroup>
     <Resource Include="Assets\pay_vip_pic.scale-200.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

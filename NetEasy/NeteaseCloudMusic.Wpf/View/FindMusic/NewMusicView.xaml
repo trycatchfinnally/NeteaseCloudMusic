@@ -221,7 +221,6 @@ xmlns:prism="http://www.codeplex.com/prism"
                     </ListBox.Resources>
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem" BasedOn="{StaticResource DefaultTwoColorListBoxItemStyle}">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         </Style>
                     </ListBox.ItemContainerStyle>
                     <ListBox.Template>
