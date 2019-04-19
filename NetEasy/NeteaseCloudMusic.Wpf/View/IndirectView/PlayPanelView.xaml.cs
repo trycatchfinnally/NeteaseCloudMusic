@@ -14,10 +14,10 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
     /// </summary>
     public partial class PlayPanelView
     {
-        private readonly Services.AudioDecode.IAudioPlayableServices _audioPlayableServices;
+        private readonly NeteaseCloudMusic. Services.AudioDecode.IAudioPlayableServices _audioPlayableServices;
         private DoubleAnimation _diskRotate;
         private DoubleAnimation _diskControlRotate;
-        public PlayPanelView(ViewModel.IndirectView.PlayPanelViewModel viewModel, Services.AudioDecode.IAudioPlayableServices audioPlayableServices)
+        public PlayPanelView(ViewModel.IndirectView.PlayPanelViewModel viewModel, NeteaseCloudMusic.Services.AudioDecode.IAudioPlayableServices audioPlayableServices)
         {
             DataContext = viewModel;
             this._audioPlayableServices = audioPlayableServices;
@@ -65,7 +65,7 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
                             this.lstLryics.ScrollIntoView(item);
                     }
                 }
-                SetDiskControl(this._audioPlayableServices.PlayState == Services.AudioDecode.PlayState.Playing);
+                SetDiskControl(this._audioPlayableServices.PlayState == NeteaseCloudMusic.Services.AudioDecode.PlayState.Playing);
                 await Task.Delay(100);
             }
         }
@@ -103,6 +103,7 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
             var btn = e.Source as Button;
             string userName = btn?.Tag?.ToString();
             this.txtInput.Text = "@" + userName;
+            this.txtInput.Focus();
         }
     }
 

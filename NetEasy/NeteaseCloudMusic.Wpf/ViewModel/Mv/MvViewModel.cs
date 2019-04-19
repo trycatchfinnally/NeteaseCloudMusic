@@ -97,10 +97,18 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             if (SelectedIndex==0&&!_dataIsInit)
             {
 
-                var json = await _netWorkServices.GetAsync("Mv", "GetNetMv", new { limit = Context.LimitPerPage });
-                FeaturedViewModel. NewMvs.AddRange(JsonConvert.DeserializeObject<Global.Model.Mv[]>(json));
+                var netWorkDataResult = await _netWorkServices.GetAsync<Global.Model.Mv[]>("Mv", "GetNetMv", new { limit = Context.LimitPerPage });
 
-                _dataIsInit = true;
+                if (netWorkDataResult.Successed)
+                {
+                    FeaturedViewModel.NewMvs.AddRange(netWorkDataResult.Data);
+
+                    _dataIsInit = true; 
+                }
+                else
+                {
+                    //todo 网络连接失败
+                }
             }
             base.OnNavigatedTo(navigationContext);
         }

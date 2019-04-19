@@ -97,9 +97,16 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         }
         private async void InitData()
         {
-            var json =await _netWorkServices.GetAsync("FindMusic", "GetEveryDayMusicRecommend");
-            var temp = JsonConvert.DeserializeObject<List<Global.Model.Music>>(json);
-            await RecommendMusics.AddRangeAsync(temp);
+            var netWorkDataResult=await _netWorkServices.GetAsync<Music[]>("FindMusic", "GetEveryDayMusicRecommend");
+            if (netWorkDataResult.Successed)
+            {
+                var temp = netWorkDataResult.Data;
+                await RecommendMusics.AddRangeAsync(temp); 
+            }
+            else
+            {
+                //todo 网络失败
+            }
         }
         /// <summary>
         /// 每日推荐对应的日

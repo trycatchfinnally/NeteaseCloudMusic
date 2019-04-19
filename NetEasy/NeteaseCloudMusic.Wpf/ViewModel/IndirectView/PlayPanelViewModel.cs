@@ -40,7 +40,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         {
             if (obj > 0)
             {
-                 await this._netWorkServices.GetAsync("Common", "ThumbsUpComment", new
+                 await this._netWorkServices.GetAsync<Dictionary<string ,object>>("Common", "ThumbsUpComment", new
                 {
                     commentId = obj.Value,
                     commentThreadId = Global.Enums.CommentType.R_SO_4_.ToString() + Id,
@@ -73,13 +73,20 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 return;
             }
-            var json = await this._netWorkServices.GetAsync("Common", "AddComment", new
+            var netWorkDataResult= await this._netWorkServices.GetAsync<Comment>("Common", "AddComment", new
             {
                 resourceId = Id.Value,
                 type = Global.Enums.CommentType.R_SO_4_,
                 content = commentContent
             });
-            NewComments.Insert(0, JsonConvert.DeserializeObject< Comment>(json));
+            if (netWorkDataResult.Successed)
+            {
+                NewComments.Insert(0, netWorkDataResult.Data);
+            }
+            else
+            {
+                //todo 显示提示信息
+            }
         }
 
 
@@ -141,22 +148,34 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         }
         protected override async void SetById(long id)
         {
-            var task1 = this._netWorkServices.GetAsync("Music", "GetMusicDetailById", new { id });
-            var task2 = this._netWorkServices.GetAsync("Music", "GetSimiMusic", new { id });
-            var task3 = this._netWorkServices.GetAsync("Common", "GetCommentById", new { commentThreadId = $"R_SO_4_{id}" });
-            var task4 = this._netWorkServices.GetAsync("Music", "GetLyricByMusicId", new { id });
-            var task5 = this._netWorkServices.GetAsync("Music", "GetSimiPlayList", new { id });
+            var task1 = this._netWorkServices.GetAsync<Music>("Music", "GetMusicDetailById", new { id });
+            var task2 = this._netWorkServices.GetAsync<List<Music>>("Music", "GetSimiMusic", new { id });
+            var task3 = this._netWorkServices.GetAsync<CommentCollection>("Common", "GetCommentById", new { commentThreadId = $"R_SO_4_{id}" });
+            var task4 = this._netWorkServices.GetAsync<List<Lyric>>("Music", "GetLyricByMusicId", new { id });
+            var task5 = this._netWorkServices.GetAsync<PlayList[]>("Music", "GetSimiPlayList", new { id });
             await Task.WhenAll(task1, task2, task3, task4, task5);
-            this._innerMusic = JsonConvert.DeserializeObject<Music>(task1.Result);
-            this._innerComment = JsonConvert.DeserializeObject<CommentCollection>(task3.Result);
-            await Task.WhenAll(
-            Artists.AddRangeAsync(this._innerMusic.Artists),
-            SimiMusics.AddRangeAsync(JsonConvert.DeserializeObject<List<Music>>(task2.Result)),
-            NewComments.AddRangeAsync(this._innerComment.Comments),
-            HotComments.AddRangeAsync(this._innerComment.HotComments),
-             Lryics.AddRangeAsync(JsonConvert.DeserializeObject<List<Lyric>>(task4.Result)),
-             ContainsThisTrackList.AddRangeAsync(JsonConvert.DeserializeObject<PlayList[]>(task5.Result)));
-            RaiseAllPropertyChanged();
+
+            if (task1.Result.Successed&&
+                task2.Result.Successed&&
+                task3.Result.Successed&&
+                task4.Result.Successed&&
+                task5.Result.Successed)
+            {
+                this._innerMusic = task1.Result.Data;
+                this._innerComment = task3.Result.Data;
+                await Task.WhenAll(
+                Artists.AddRangeAsync(this._innerMusic.Artists),
+                SimiMusics.AddRangeAsync(task2.Result.Data),
+                NewComments.AddRangeAsync(this._innerComment.Comments),
+                HotComments.AddRangeAsync(this._innerComment.HotComments),
+                 Lryics.AddRangeAsync(task4.Result.Data),
+                 ContainsThisTrackList.AddRangeAsync(task5.Result.Data));
+                RaiseAllPropertyChanged();
+            }
+            else
+            {
+                //todo 提示信息
+            }
 
         }
         public override void OnNavigatedTo(NavigationContext navigationContext)
@@ -169,6 +188,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
                     SetById(Id.Value);
                 }
             }
+
+            
             base.OnNavigatedTo(navigationContext);
         }
         /// <summary>

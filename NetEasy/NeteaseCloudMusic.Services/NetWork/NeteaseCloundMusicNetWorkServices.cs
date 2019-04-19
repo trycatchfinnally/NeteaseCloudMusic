@@ -15,49 +15,50 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Xml.Linq;
+using NeteaseCloudMusic.Services.HttpCookie;
+using NeteaseCloudMusic.Services.Properties;
 
 namespace NeteaseCloudMusic.Services.NetWork
 {
 
     public class NeteaseCloundMusicNetWorkServices : INetWorkServices 
     {
+        private readonly ICookieService _cookieService;
+
         /// <summary>
         /// 服务器的基础地址
         /// </summary>
-       //  private const string ServicesBaseUrl = "http://localhost:10086/api/";
-      private const string ServicesBaseUrl = "http://47.101.43.134/api/";
-
-        private readonly HttpClient httpClient;
-        private   HttpClientHandler httpClientHandler;
-        public NeteaseCloundMusicNetWorkServices()
+      //private const string ServicesBaseUrl = "http://localhost:10086/api/";
+     private readonly  string ServicesBaseUrl = $"{Resources.ServiceUri}/api/";
+      //  public string ServicesBaseUrl { get; }= "http://47.101.43.134/api/";
+        private readonly HttpClient _httpClient;
+        private readonly HttpClientHandler _httpClientHandler;
+        public NeteaseCloundMusicNetWorkServices(ICookieService cookieService)
         {
-            var cookieFile = Environment.CurrentDirectory + "/cookies.dat";
-            CookieContainer cookie = null;
-            if (File.Exists(cookieFile))
-            {
-                using (var stream = File.OpenRead(cookieFile))
-                {
-
-
-                    var formatter = new BinaryFormatter();
-                    cookie= formatter.Deserialize(stream ) as CookieContainer;
-                }
-            }
-            httpClientHandler = new HttpClientHandler { UseCookies = true  };
-            if (cookie != null) httpClientHandler.CookieContainer = cookie;
-             httpClient = new HttpClient(httpClientHandler);
+            this._cookieService = cookieService;
+            var (cookieContainer, user) = cookieService.ReadCookie();
+            this._httpClientHandler = new HttpClientHandler { UseCookies = true  };
+            if (cookieContainer != null) this._httpClientHandler.CookieContainer = cookieContainer;
+             this._httpClient = new HttpClient(this._httpClientHandler);
+             
         }
         public CookieContainer Cookie
         {
-            get { return httpClientHandler.CookieContainer; }
-            set { httpClientHandler.CookieContainer = value ; }
+            get { return this._httpClientHandler.CookieContainer; }
+            set { this._httpClientHandler.CookieContainer = value ; }
         }
-        public async Task<string> GetAsync(string controllerName, string actionName, object queryStringData = null)
+
+        public async Task<NetWorkDataResult<T>> GetAnonymousTypeAsync<T>(string controllerName, string actionName, object queryStringData, T anonymousTypeObject)  
         {
-            return await GetAsync(controllerName, actionName, queryStringData, CancellationToken.None);
+            return await GetAsync<T>(controllerName, actionName, queryStringData, CancellationToken.None);
+        }
+
+        public async Task<NetWorkDataResult<T>> GetAsync<T>(string controllerName, string actionName, object queryStringData = null)
+        {
+            return await GetAsync<T>(controllerName, actionName, queryStringData, CancellationToken.None);
         }
  
-        public async Task<string> GetAsync(string controllerName, string actionName, object queryStringData, CancellationToken cancelToken)
+        public async Task<NetWorkDataResult<T>> GetAsync<T>(string controllerName, string actionName, object queryStringData, CancellationToken cancelToken)
         {
 
             if (string.IsNullOrEmpty(controllerName) || string.IsNullOrEmpty(actionName))
@@ -77,38 +78,48 @@ namespace NeteaseCloudMusic.Services.NetWork
                     urlSb.Append($"&{props[i].Name}={props[i].GetValue(queryStringData)}");
                 }
             }
-             
-         //  HttpClient hClient = new HttpClient(_httpClientHandler) { Timeout = TimeSpan.FromSeconds(90) };
-           // try
+
+            //  HttpClient hClient = new HttpClient(_httpClientHandler) { Timeout = TimeSpan.FromSeconds(90) };
+            var result = new NetWorkDataResult<T>();
+            try
             {
 
-                var tmp = await httpClient.GetAsync(urlSb.ToString(), cancelToken);
+                var tmp = await this._httpClient.GetAsync(urlSb.ToString(), cancelToken);
                 if (tmp.RequestMessage.Headers.Contains("Cookies")|| tmp.RequestMessage.Headers.Contains("Set-Cookie")) {
                     Console.WriteLine(tmp.RequestMessage.Headers);
                 }
                // tmp.Wait();
                 tmp.EnsureSuccessStatusCode();
                 cancelToken.ThrowIfCancellationRequested();
-                return await tmp.Content.ReadAsStringAsync();
+                string json= await tmp.Content.ReadAsStringAsync();
+                result.Successed = true;
+                if (typeof(T) == typeof(string))
+                    result.Data =(T)(object)json;
+                else
+                result.Data = JsonConvert.DeserializeObject<T>(json);
             }
-            
-
+            catch(System.Net.Http.HttpRequestException exception)
+            {
+                result.Successed = false;
+                result.ErrorMessage = exception.Message;
+            }
+            return result;
             
 
         }
-        public XDocument Json2Xml(string json)
-        {
-            if (string.IsNullOrEmpty(json))
-                throw new ArgumentNullException(nameof(json));
-            return JsonConvert.DeserializeXNode(json,"Root");
-        }
+        //public XDocument Json2Xml(string json)
+        //{
+        //    if (string.IsNullOrEmpty(json))
+        //        throw new ArgumentNullException(nameof(json));
+        //    return JsonConvert.DeserializeXNode(json,"Root");
+        //}
 
         public async Task<string> PostAsync(string controllerName, string actionName, object postData)
         {
             if (string.IsNullOrEmpty(controllerName) || string.IsNullOrEmpty(actionName))
                 throw new ArgumentException("控制器名或者行为名不合法！");
             HttpContent requestContent = new FormUrlEncodedContent(postData.GetType().GetProperties().Select(x=>new KeyValuePair<string, string>(x.Name,x.GetValue(postData).ToString())) );
-            var temp = await httpClient.PostAsync(ServicesBaseUrl + controllerName + "/" + actionName, requestContent);
+            var temp = await this._httpClient.PostAsync(ServicesBaseUrl + controllerName + "/" + actionName, requestContent);
             temp.EnsureSuccessStatusCode();
             return await temp.Content.ReadAsStringAsync();
         }

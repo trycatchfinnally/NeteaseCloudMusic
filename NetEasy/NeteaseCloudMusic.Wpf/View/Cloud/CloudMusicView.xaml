@@ -29,80 +29,145 @@
                 <ProgressBar Maximum="{Binding MaxSize.Size}" Margin="10,0" Value="{Binding Size.Size}" Width="120" Height="8" />
                 </StackPanel>
             <DockPanel Grid.Row="1">
-                <StackPanel Orientation="Horizontal"   Margin=" 2" DockPanel.Dock="Top">
-                    <Button Style="{StaticResource EmptyButtonStyle}" Command="{Binding PlayAllCloudMusicCommand}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width=" 20"/>
-                                <ColumnDefinition  />
-                            </Grid.ColumnDefinitions>
+                <DockPanel    Margin=" 2" DockPanel.Dock="Top">
+                    <TextBox Margin=" 0,2"   Text="{Binding SearchKeyWord,UpdateSourceTrigger=PropertyChanged}" 
+                             DockPanel.Dock="Right"
+                     x:Name="txtKeyWord"
+                    Width="200">
+
+                        <TextBox.Resources>
+                            <VisualBrush x:Key="HintText" TileMode="None" Opacity="0.5" Stretch="None" AlignmentX="Left">
+                                <VisualBrush.Visual>
+                                    <TextBlock 
+                            Style="{StaticResource GrayTopTextBoxStyle}" FontSize="{StaticResource WindowMainFontSize}"
+                            Text="搜索歌单歌曲"/>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </TextBox.Resources>
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" >
+                                <Setter Property="FontFamily" Value="{StaticResource WindowMainFont}"/>
+                                <Setter Property="FontSize" Value="{StaticResource WindowMainFontSize}"/>
+                                <!--<Setter Property="Tag" Value="True"/>-->
+                                <Setter Property="Foreground">
+                                    <Setter.Value >
+                                        <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Template">
+                                    <Setter.Value >
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Border BorderThickness="0.5"
+                                        Background="{TemplateBinding Background}"
+                                            CornerRadius="15"
+                                        SnapsToDevicePixels="True">
+                                                <Border.BorderBrush>
+                                                    <SolidColorBrush Color="{StaticResource  WindowForeGrayColor}"/>
+                                                </Border.BorderBrush>
+                                                <DockPanel >
+                                                    <Button DockPanel.Dock="Right"   
+                                                Style="{StaticResource EmptyButtonWithFocusStyle}" 
+                                               >
+                                                        <Path  Width=" 12" Stretch="Uniform" Data="F1M16998,7516L17049,7465 16624,7081 16599,7106 16571,7129z M16722,6827L16718,6778 16709,6730 16693,6683 16671,6639 16644,6598 16611,6560 16574,6528 16533,6500 16489,6478 16442,6463 16393,6453 16344,6450 16295,6453 16246,6463 16200,6478 16155,6500 16114,6528 16077,6560 16045,6598 16017,6639 15995,6683 15979,6730 15970,6778 15967,6827 15970,6877 15979,6925 15995,6972 16017,7016 16045,7057 16077,7095 16114,7127 16155,7155 16200,7176 16246,7192 16295,7202 16344,7205 16393,7202 16442,7192 16489,7176 16533,7155 16574,7127 16611,7095 16644,7057 16671,7016 16693,6972 16709,6925 16718,6877z M16624,7081L17049,7465 M16571,7129L16998,7516 M16998,7516L17049,7465" >
+                                                            <Path.Stroke>
+                                                                <Binding RelativeSource="{RelativeSource AncestorLevel=1 ,AncestorType=Button}" Path="Foreground"/>
+                                                            </Path.Stroke>
+                                                        </Path>
+                                                    </Button>
+                                                    <ScrollViewer x:Name="PART_ContentHost" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+                                                </DockPanel>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource HintText}"/>
+                                        <!--<Setter Property="Tag" Value="False"/>-->
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Background" Value="{StaticResource HintText}"/>
+                                        <!--<Setter Property="Tag" Value="False"/>-->
+                                    </Trigger>
+
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource EmptyButtonStyle}" Command="{Binding PlayAllCloudMusicCommand}">
                             <Grid>
-                                <Ellipse   Height=" 20" >
-                                    <Ellipse.Stroke >
-                                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
-                                    </Ellipse.Stroke>
-                                </Ellipse>
-                                <ed:RegularPolygon PointCount=" 3" Width=" 10" Height=" 8" RenderTransformOrigin="0.5,0.5" Margin="4,0,0,0">
-                                    <ed:RegularPolygon.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform/>
-                                            <SkewTransform/>
-                                            <RotateTransform Angle="90"/>
-                                            <TranslateTransform/>
-                                        </TransformGroup>
-                                    </ed:RegularPolygon.RenderTransform>
-                                    <ed:RegularPolygon.Fill>
-                                        <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
-                                    </ed:RegularPolygon.Fill>
-                                </ed:RegularPolygon>
-                            </Grid>
-                            <TextBlock Text="播放全部" Grid.Column="1" Margin=" 2,0,0,0"
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width=" 20"/>
+                                    <ColumnDefinition  />
+                                </Grid.ColumnDefinitions>
+                                <Grid>
+                                    <Ellipse   Height=" 20" >
+                                        <Ellipse.Stroke >
+                                            <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                        </Ellipse.Stroke>
+                                    </Ellipse>
+                                    <ed:RegularPolygon PointCount=" 3" Width=" 10" Height=" 8" RenderTransformOrigin="0.5,0.5" Margin="4,0,0,0">
+                                        <ed:RegularPolygon.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform/>
+                                                <SkewTransform/>
+                                                <RotateTransform Angle="90"/>
+                                                <TranslateTransform/>
+                                            </TransformGroup>
+                                        </ed:RegularPolygon.RenderTransform>
+                                        <ed:RegularPolygon.Fill>
+                                            <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
+                                        </ed:RegularPolygon.Fill>
+                                    </ed:RegularPolygon>
+                                </Grid>
+                                <TextBlock Text="播放全部" Grid.Column="1" Margin=" 2,0,0,0"
                                    VerticalAlignment="Center" 
                                    Style="{StaticResource DarkBottomTextBoxStyle}"
                                    />
-                        </Grid>
-                    </Button>
-                    <Rectangle Margin="2,4" Style="{StaticResource VerticalDecorationRectangleStyle}"/>
-                    <ToggleButton x:Name="selectToggleButton" IsThreeState="False" 
+                            </Grid>
+                        </Button>
+                        <Rectangle Margin="2,4" Style="{StaticResource VerticalDecorationRectangleStyle}"/>
+                        <ToggleButton x:Name="selectToggleButton" IsThreeState="False" 
                                   Unchecked="SelectToggleButton_CheckChanged"   
                                   Checked="SelectToggleButton_CheckChanged">
-                        <ToggleButton.Template  >
-                            <ControlTemplate TargetType="ToggleButton">
-                                <Grid Background="Transparent" >
-                                    <StackPanel Orientation="Horizontal" x:Name="part1StackPanel"
+                            <ToggleButton.Template  >
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Grid Background="Transparent" >
+                                        <StackPanel Orientation="Horizontal" x:Name="part1StackPanel"
                                     >
-                                        <Path Width=" 18" Stretch="Uniform" Data="F1M14290,7397L14881,7397 M14290,7088L14881,7088 M13956,7705L14881,7705 M13956,7034L14032,7140 M14032,7140L14227,6965 M13956,7343L14032,7448 M14032,7448L14227,7274" StrokeThickness="1">
-                                            <Path.Stroke>
-                                                <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
-                                            </Path.Stroke>
-                                        </Path>
-                                        <TextBlock Margin="2,0,0,0" Style="{StaticResource DarkBottomTextBoxStyle}" Text="选择" VerticalAlignment="Center" />
-                                    </StackPanel>
-                                    <StackPanel  
+                                            <Path Width=" 18" Stretch="Uniform" Data="F1M14290,7397L14881,7397 M14290,7088L14881,7088 M13956,7705L14881,7705 M13956,7034L14032,7140 M14032,7140L14227,6965 M13956,7343L14032,7448 M14032,7448L14227,7274" StrokeThickness="1">
+                                                <Path.Stroke>
+                                                    <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"/>
+                                                </Path.Stroke>
+                                            </Path>
+                                            <TextBlock Margin="2,0,0,0" Style="{StaticResource DarkBottomTextBoxStyle}" Text="选择" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <StackPanel  
                                         Visibility="Collapsed"
                                         Orientation="Horizontal" x:Name="part2StackPanel">
-                                        <Path Width="18"  Stretch="Uniform " Stroke="Blue" Data="F1M16574,4833L16711,5024 M16711,5024L17066,4707 M17193,4885L17192,4853 17188,4821 17182,4790 17173,4759 17162,4729 17149,4700 17134,4672 17116,4645 17097,4620 17075,4597 17052,4575 17027,4555 17001,4536 16973,4520 16944,4507 16914,4495 16884,4486 16853,4479 16821,4475 16789,4473 16757,4474 16725,4477 16694,4482 16663,4490 16633,4501 16603,4513 16575,4528 16548,4545 16522,4564 16498,4585 16476,4608 16455,4633 16437,4659 16420,4686 16406,4715 16394,4744 16384,4775 16377,4806 16372,4837 16369,4869 16369,4901 16372,4933 16377,4964 16384,4995 16394,5026 16406,5055 16420,5084 16437,5111 16455,5137 16476,5162 16498,5185 16522,5206 16548,5225 16575,5242 16603,5257 16633,5269 16663,5280 16694,5288 16725,5293 16757,5296 16789,5297 16821,5295 16853,5291 16884,5284 16914,5275 16944,5263 16973,5250 17001,5234 17027,5215 17052,5195 17075,5173 17097,5150 17116,5125 17134,5098 17149,5070 17162,5041 17173,5011 17182,4980 17188,4949 17192,4917z" />
-                                        <TextBlock  Text="完成" Style="{StaticResource DarkBottomTextBoxStyle}" 
+                                            <Path Width="18"  Stretch="Uniform " Stroke="Blue" Data="F1M16574,4833L16711,5024 M16711,5024L17066,4707 M17193,4885L17192,4853 17188,4821 17182,4790 17173,4759 17162,4729 17149,4700 17134,4672 17116,4645 17097,4620 17075,4597 17052,4575 17027,4555 17001,4536 16973,4520 16944,4507 16914,4495 16884,4486 16853,4479 16821,4475 16789,4473 16757,4474 16725,4477 16694,4482 16663,4490 16633,4501 16603,4513 16575,4528 16548,4545 16522,4564 16498,4585 16476,4608 16455,4633 16437,4659 16420,4686 16406,4715 16394,4744 16384,4775 16377,4806 16372,4837 16369,4869 16369,4901 16372,4933 16377,4964 16384,4995 16394,5026 16406,5055 16420,5084 16437,5111 16455,5137 16476,5162 16498,5185 16522,5206 16548,5225 16575,5242 16603,5257 16633,5269 16663,5280 16694,5288 16725,5293 16757,5296 16789,5297 16821,5295 16853,5291 16884,5284 16914,5275 16944,5263 16973,5250 17001,5234 17027,5215 17052,5195 17075,5173 17097,5150 17116,5125 17134,5098 17149,5070 17162,5041 17173,5011 17182,4980 17188,4949 17192,4917z" />
+                                            <TextBlock  Text="完成" Style="{StaticResource DarkBottomTextBoxStyle}" 
                                         VerticalAlignment="Center"  Foreground="Blue"
                                                 Margin="2,0"/>
-                                    </StackPanel>
+                                        </StackPanel>
 
-                                </Grid>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsChecked" Value="false">
-                                        <Setter Property="Visibility" Value="Collapsed" TargetName="part2StackPanel"/>
-                                        <Setter Property="Visibility" Value="Visible" TargetName="part1StackPanel"/>
-                                    </Trigger>
-                                    <Trigger Property="IsChecked" Value="true">
-                                        <Setter Property="Visibility" Value="Collapsed" TargetName="part1StackPanel"/>
-                                        <Setter Property="Visibility" Value="Visible" TargetName="part2StackPanel"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </ToggleButton.Template>
-                    </ToggleButton>
-
-                </StackPanel>
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="false">
+                                            <Setter Property="Visibility" Value="Collapsed" TargetName="part2StackPanel"/>
+                                            <Setter Property="Visibility" Value="Visible" TargetName="part1StackPanel"/>
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="true">
+                                            <Setter Property="Visibility" Value="Collapsed" TargetName="part1StackPanel"/>
+                                            <Setter Property="Visibility" Value="Visible" TargetName="part2StackPanel"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+                    </StackPanel>
+                </DockPanel>
                 <ListBox AlternationCount="2" Background="Transparent" BorderThickness="0"
                          ItemsSource="{Binding CloudMusics}">
                     <ListBox.ItemContainerStyle>
@@ -127,7 +192,7 @@
                                                 Content="{Binding AlbumName}"  Margin="10,0,30,0"  
                                                 DockPanel.Dock="Right"
                                                 Command="{Binding ElementName=btnAlbumCommand,Path=Command}"
-                                                CommandParameter="{Binding Id}"
+                                                CommandParameter="{Binding Album.Id}"
                                         />
                                         <ItemsControl ItemsSource="{Binding Artists}"  >
                                             <ItemsControl.ItemsPanel>

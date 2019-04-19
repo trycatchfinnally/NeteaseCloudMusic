@@ -9,6 +9,7 @@ using Prism.Regions;
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using NeteaseCloudMusic.Services.Identity;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -16,12 +17,15 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
     {
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
+        private readonly IdentityService _dentityService;
 
-        public PersonalityRecommendViewModel(INetWorkServices netWorkServices, IRegionManager navigationService)
+        public PersonalityRecommendViewModel(INetWorkServices netWorkServices, 
+            IRegionManager navigationService,IdentityService dentityService)
         {
 
             this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
+            this._dentityService = dentityService;
             InitData();
             MoreCommand = new DelegateCommand<string>(MoreCommandExecute);
             RecommendPlayListCommend = new DelegateCommand<PlayList>(RecommendPlayListCommendExecute);
@@ -36,14 +40,21 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
         private async void PersonalFmCommandExecute()
         {
-            if (Session.CurrentUser != null)
+            if (this._dentityService.CurrentUser != null)
             {
-                var json = await this._netWorkServices.GetAsync("FindMusic", "GetPersonalFm");
-                var temp = JsonConvert.DeserializeObject<Music[]>(json);
-                await Context.CurrentPlayMusics.AddRangeAsync(temp, x => Context.PlayCommand.Execute(x[0]));
-                var parmater = new NavigationParameters();
-                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, temp[0].Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayPanelView), parmater);
+                var netWorkDataResult= await this._netWorkServices.GetAsync< Music[]>("FindMusic", "GetPersonalFm");
+                if (netWorkDataResult.Successed)
+                {
+                    var temp = netWorkDataResult.Data;
+                    await Context.CurrentPlayMusics.AddRangeAsync(temp, x => Context.PlayCommand.Execute(x[0]));
+                    var parmater = new NavigationParameters();
+                    parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, temp[0].Id);
+                    this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayPanelView), parmater); 
+                }
+                else
+                {
+                    //todo 提示网络
+                }
             }
             else
             {
@@ -71,7 +82,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         }
         private void EveryDayMusicRecommendCommandExecute()
         {
-            if (Session.CurrentUser != null)
+            if (this._dentityService.CurrentUser!= null)
                 this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.EveryDayMusicRecommendView));
             else
                 InteractionRequests.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
@@ -141,8 +152,13 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// </summary>
         private async void InitData()
         {
-            var json = await this._netWorkServices.GetAsync("FindMusic", "PersonalityRecommend", new { limit = 10 });
-            var temp = JsonConvert.DeserializeObject<Global.Model.PersonalityRecommend>(json);
+            var netWorkDataResult = await this._netWorkServices.GetAsync< PersonalityRecommend>("FindMusic", "PersonalityRecommend", new { limit = 10 });
+            if (!netWorkDataResult.Successed)
+            {
+                //todo 网络提示信息
+                return;
+            }
+            var temp = netWorkDataResult.Data;
             if (temp?.RecommendList != null)
             {
                 // RecommendList.Clear();

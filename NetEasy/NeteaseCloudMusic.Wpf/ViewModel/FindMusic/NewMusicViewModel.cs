@@ -81,9 +81,16 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         {
             NewMusicList.Clear();
             var temp = string.IsNullOrEmpty(type) ? 1 : int.Parse(type);
-            var json = await this._netWorkServices.GetAsync("FindMusic", "TopMusics", new { Type = temp });
-
-            await NewMusicList.AddRangeAsync(JsonConvert.DeserializeObject<Global.Model.Music[]>(json));
+            var netWorkDataResult= await this._netWorkServices.GetAsync< Music[]>("FindMusic", "TopMusics", new { Type = temp });
+            if (netWorkDataResult.Successed)
+            {
+                await NewMusicList.AddRangeAsync(netWorkDataResult.Data);
+            }
+            else
+            {
+                //todo 网络提示
+            }
+            //await NewMusicList.AddRangeAsync(JsonConvert.DeserializeObject<Global.Model.Music[]>(json));
         }
         private async void NewMusicOrDiskCommandImpl(string msg)
         {
@@ -106,17 +113,21 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             try
             {
                 if (this._totalSize <= this._pageOffset * Context.LimitPerPage) return;
-                var json = await this._netWorkServices.GetAsync("FindMusic", "TopAlbum",
+                var netWorkDataResult= await this._netWorkServices.GetAsync< KeyValuePair<int, Album[]>>("FindMusic", "TopAlbum",
                     new
                     {
                         limit = Context.LimitPerPage,
                         offset = this._pageOffset
                     });
-
-                var temp = JsonConvert.DeserializeObject<KeyValuePair<int, Album[]>>(json);
-                this._totalSize = temp.Key;
-                NewAlbumList.AddRange(temp.Value);
-                this._pageOffset++;
+                if (netWorkDataResult.Successed)
+                {
+                    var temp = netWorkDataResult.Data;
+                    this._totalSize = temp.Key;
+                    NewAlbumList.AddRange(temp.Value);
+                    this._pageOffset++;
+                }
+              //  var temp = JsonConvert.DeserializeObject<KeyValuePair<int, Album[]>>(json);
+                
             }
             catch (OperationCanceledException)
             {

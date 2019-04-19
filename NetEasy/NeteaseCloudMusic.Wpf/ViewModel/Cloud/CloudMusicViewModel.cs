@@ -33,13 +33,13 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.Cloud
         {
             if (obj == null) return;
             var tmp = obj.Cast<CloudMusic>().ToArray();
-            if (tmp.Length==1)
+            if (tmp.Length == 1)
             {
                 Context.PlayCommand.Execute(new Music
                 {
-                    Id=tmp[0].Id,
-                    Name=tmp[0].Name,
-                    Duration=tmp[0].SimpleMusic?.Duration??TimeSpan.Zero
+                    Id = tmp[0].Id,
+                    Name = tmp[0].Name,
+                    Duration = tmp[0].SimpleMusic?.Duration ?? TimeSpan.FromSeconds(120)
                 });
             }
         }
@@ -82,12 +82,22 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.Cloud
         {
             if (!this._dataIsInit)
             {
-                var json = await this._netWorkServices.GetAsync("User", "UserCloud", new { limit = 200, offset = 0 });
-                this._innerModel = JsonConvert.DeserializeAnonymousType(json, this._innerModel);
-                await CloudMusics.AddRangeAsync(this._innerModel.CloudMusics);
-                RaisePropertyChanged(nameof(Size));
-                RaisePropertyChanged(nameof(MaxSize));
-                this._dataIsInit = true;
+                //var json = await this._netWorkServices.GetAsync("User", "UserCloud", new { limit = 200, offset = 0 });
+                //this._innerModel = JsonConvert.DeserializeAnonymousType(json, this._innerModel);
+                var networkResult = await this._netWorkServices.GetAnonymousTypeAsync("User", "UserCloud", new { limit = 200, offset = 0 }, this._innerModel);
+                if (networkResult.Successed)
+                {
+                    this._innerModel = networkResult.Data;
+                    await CloudMusics.AddRangeAsync(this._innerModel.CloudMusics);
+                    RaisePropertyChanged(nameof(Size));
+                    RaisePropertyChanged(nameof(MaxSize));
+                    this._dataIsInit = true;
+                }
+                else
+                {
+                   //显示网络连接失败的提示信息
+                }
+
             }
             base.OnNavigatedTo(navigationContext);
         }

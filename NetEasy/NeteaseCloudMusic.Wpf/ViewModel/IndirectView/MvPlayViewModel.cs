@@ -41,20 +41,31 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         protected override async void   SetById(long id)
         {
            
-            var json = await this._netWorkServices.GetAsync("Common", "GetMvById", new { id });
-            _innerMv = JsonConvert.DeserializeObject<Global.Model.Mv>(json);
-            var task1 = _netWorkServices.GetAsync("Common", "GetCommentById", new { commentThreadId = _innerMv.CommendThreadId });
-            var task2 = _netWorkServices.GetAsync("Common", "GetSimiMv", new { id });
+            var innerMvdataResult= await this._netWorkServices.GetAsync<Mv>("Common", "GetMvById", new { id });
+            if (!innerMvdataResult.Successed)
+            {
+                //todo 网络连接四百
+                return;
+            }
+            _innerMv = innerMvdataResult.Data;
+            var task1 = _netWorkServices.GetAsync<CommentCollection>("Common", "GetCommentById", new { commentThreadId = _innerMv.CommendThreadId });
+            var task2 = _netWorkServices.GetAsync<Mv[]>("Common", "GetSimiMv", new { id });
             await Task.WhenAll(task1, task2);
-            _innerComment = JsonConvert.DeserializeObject<Global.Model.CommentCollection>(task1.Result);
-            NewComments.Clear(); HotComments.Clear();
-            NewComments.AddRange(_innerComment.Comments);
-            HotComments.AddRange(_innerComment.HotComments);
-            SimiMvs.Clear();
-            SimiMvs.AddRange(JsonConvert.DeserializeObject<List<Mv>>(task2.Result));
-            RaiseAllPropertyChanged();
-            RefreshCompleated?.Invoke(this, EventArgs.Empty);
-
+            if (task1.Result.Successed&&task2.Result.Successed)
+            {
+                _innerComment = task1.Result.Data;
+                NewComments.Clear(); HotComments.Clear();
+                NewComments.AddRange(_innerComment.Comments);
+                HotComments.AddRange(_innerComment.HotComments);
+                SimiMvs.Clear();
+                SimiMvs.AddRange(task2.Result.Data);
+                RaiseAllPropertyChanged();
+                RefreshCompleated?.Invoke(this, EventArgs.Empty); 
+            }
+            else
+            {
+                //todo 网络连接四百
+            }
         }
         #endregion
         private void SimiMvSelectedCommandExecute(IEnumerable items)

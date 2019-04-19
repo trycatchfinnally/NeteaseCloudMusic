@@ -1,15 +1,14 @@
 ﻿using NeteaseCloudMusic.Wpf.ViewModel;
+
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using System.Xml.Linq;
+using Unity;
 using Unity.Attributes;
-
 
 namespace NeteaseCloudMusic.Wpf
 {
@@ -70,19 +69,8 @@ namespace NeteaseCloudMusic.Wpf
         }
         protected override void OnClosing(CancelEventArgs e)
         {
-            var configXml = new XDocument();
-            var root = new XElement("Root");
-            root.Add(new XElement("WindowLeft", Left));
-            root.Add(new XElement("WindowTop", Top));
-            root.Add(new XElement("WindowSize", RenderSize));
-            root.Add(new XElement("WindowStartupLocation", (int)WindowStartupLocation));
-            root.Add(new XElement("WindowState", (int)WindowState));
-            configXml.Add(root);
-            var path = Path.Combine(Environment.CurrentDirectory, "WindowStartupInfo.xml");
-            if (File.Exists(path))
-                File.SetAttributes(path, FileAttributes.Normal);
-            configXml.Save(path);
-            File.SetAttributes(path, FileAttributes.Hidden | FileAttributes.ReadOnly);
+            Properties.Settings.Default.WindowLocation= this.RestoreBounds;
+            Properties.Settings.Default.Save();
             base.OnClosing(e);
         }
 

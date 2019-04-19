@@ -48,16 +48,23 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 
         protected override async void SetById(long id)
         {
-            var detailTask = _netWorkServices.GetAsync("User", "GetUserById", new { id });
-            var playListTask = _netWorkServices.GetAsync("User", "GetUserPlayList", new { id });
+            var detailTask = _netWorkServices.GetAsync<Global.Model.User>("User", "GetUserById", new { id });
+            var playListTask = _netWorkServices.GetAsync<Global.Model.PlayList[]>("User", "GetUserPlayList", new { id });
             await Task.WhenAll(detailTask, playListTask);
-            _innerUser = JsonConvert.DeserializeObject<Global.Model.User>(detailTask.Result);
-            var playList = JsonConvert.DeserializeObject<List<Global.Model.PlayList>>(playListTask.Result);
-            this.UserCreatedPlayLists.Clear();
-            UserCreatedPlayLists.AddRange(playList.Where(x => x.CreateUser?.UserId == id));
-            this.UserCollectionPlayLists.Clear();
-            UserCollectionPlayLists.AddRange(playList.Where(x => x.CreateUser?.UserId != id));
-            RaiseAllPropertyChanged();
+            if (detailTask.Result.Successed&&playListTask.Result.Successed)
+            {
+                _innerUser = detailTask.Result.Data;
+                var playList = playListTask.Result.Data;
+                this.UserCreatedPlayLists.Clear();
+                UserCreatedPlayLists.AddRange(playList.Where(x => x.CreateUser?.UserId == id));
+                this.UserCollectionPlayLists.Clear();
+                UserCollectionPlayLists.AddRange(playList.Where(x => x.CreateUser?.UserId != id));
+                RaiseAllPropertyChanged(); 
+            }
+            else
+            {
+                //todo 网络连接失败
+            }
         }
         #endregion
         /// <summary>

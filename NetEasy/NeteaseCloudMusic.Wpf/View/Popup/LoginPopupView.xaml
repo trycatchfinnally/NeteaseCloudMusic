@@ -37,7 +37,7 @@
                         <VisualBrush.Visual>
                             <TextBlock 
                             Style="{StaticResource GrayTopTextBoxStyle}" FontSize="{StaticResource WindowMainFontSize}"
-                            Text="请输入手机号"/>
+                            Text="请输入手机号或邮箱"/>
                         </VisualBrush.Visual>
                     </VisualBrush>
                 </TextBox.Resources>

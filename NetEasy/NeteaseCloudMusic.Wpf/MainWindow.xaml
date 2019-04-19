@@ -95,6 +95,24 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger  SourceObject="{ x:Static local:Context.AutoDisplayPopupRequest}">
+            <prism:PopupWindowAction IsModal="False" CenterOverAssociatedObject="True"    >
+                <prism:PopupWindowAction.WindowStyle>
+                    <Style TargetType="Window">
+                        <Setter Property="AllowsTransparency" Value="True"/>
+                        <Setter Property="WindowStyle" Value="None"/>
+                        <Setter Property="ShowInTaskbar" Value="False"/>
+                        <Setter Property="Width" Value="auto"/>
+                        <Setter Property="Height" Value="auto"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+                    </Style>
+                </prism:PopupWindowAction.WindowStyle>
+                <prism:PopupWindowAction.WindowContent>
+                    <popup:AutoDisplayPopup  />
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <DockPanel   Margin=" 5">
         <DockPanel.Background>

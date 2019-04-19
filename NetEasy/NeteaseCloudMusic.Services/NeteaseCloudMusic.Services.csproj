@@ -39,9 +39,8 @@
       <HintPath>..\packages\NAudio.1.8.5\lib\net35\NAudio.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Prism, Version=7.1.0.431, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.7.1.0.431\lib\net45\Prism.dll</HintPath>
@@ -52,6 +51,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,13 +65,37 @@
     <Compile Include="AudioDecode\IAudioPlayableServices.cs" />
     <Compile Include="AudioDecode\NAudioPlayableServices.cs" />
     <Compile Include="AudioDecode\PlayState.cs" />
+    <Compile Include="HttpCookie\ICookieService.cs" />
+    <Compile Include="HttpCookie\LocalFileCookieService.cs" />
+    <Compile Include="Identity\DefaultIdentityService.cs" />
+    <Compile Include="Identity\IdentityService.cs" />
+    <Compile Include="LocalFile\IFileServices.cs" />
     <Compile Include="NetWork\INetWorkServices.cs" />
     <Compile Include="NetWork\NeteaseCloundMusicNetWorkServices.cs" />
+    <Compile Include="NetWork\NetWorkDataResult.cs" />
+    <Compile Include="NetWork\NetWorkDataResultBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NeteaseCloudMusic.Global\NeteaseCloudMusic.Global.csproj">
+      <Project>{743f86e0-4a7e-4a74-9c0a-2b1620c703da}</Project>
+      <Name>NeteaseCloudMusic.Global</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

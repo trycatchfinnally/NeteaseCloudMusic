@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace NeteaseCloudMusic.Global.Model
 {
+    /// <summary>
+    /// 表示本地文件的大小
+    /// </summary>
     public struct FileSize : IFormattable
     {
         public static readonly FileSize EmptyFileSize = new FileSize(0);

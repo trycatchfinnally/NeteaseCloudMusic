@@ -1,27 +1,30 @@
-﻿namespace NeteaseCloudMusic.Global.Model
+﻿using System;
+
+namespace NeteaseCloudMusic.Global.Model
 {
-   public  class User
+    [Serializable]
+    public class User
     {
         /// <summary>
         /// 获取或设置用户头像
         /// </summary>
-        public string  UserImage
+        public string UserImage
         {
-            set;get;
+            set; get;
         }
         /// <summary>
         /// 获取或设置用户名
         /// </summary>
         public string Province { get; set; }
-        public string City  { get; set; }
-        public string  UserName
+        public string City { get; set; }
+        public string UserName
         {
-            get;set;
+            get; set;
         }
         /// <summary>
         /// 用户的id
         /// </summary>
-        public long  UserId { get; set; }
+        public long UserId { get; set; }
         /// <summary>
         /// 关注数量
         /// </summary>
@@ -41,7 +44,7 @@
         /// <summary>
         /// vip点击
         /// </summary>
-        public string  VipLevel { get; set; }
+        public string VipLevel { get; set; }
         /// <summary>
         /// 签名
         /// </summary>

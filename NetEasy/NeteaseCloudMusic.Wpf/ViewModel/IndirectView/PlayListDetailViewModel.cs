@@ -46,12 +46,19 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         protected override async void SetById(long id)
         {
             Console.WriteLine(id);
-            var json = await this._netWorkServices.GetAsync("Common", "GetPlaylistById", new { id });
-            var model = JsonConvert.DeserializeObject<PlayListDetail>(json);
-            this._innerPlayList = model;
-            _tracks = null;//更新数据
-            OnSearchKeyWordChanged();
-            RaiseAllPropertyChanged();
+            var netWorkDataResult= await this._netWorkServices.GetAsync<PlayListDetail>("Common", "GetPlaylistById", new { id });
+            if (netWorkDataResult.Successed)
+            {
+                var model = netWorkDataResult.Data;
+                this._innerPlayList = model;
+                _tracks = null;//更新数据
+                OnSearchKeyWordChanged();
+                RaiseAllPropertyChanged(); 
+            }
+            else
+            {
+                //todo 网络连接失败
+            }
         }
         private async void PlayAllCommandExecute()
         {

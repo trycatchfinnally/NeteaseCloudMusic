@@ -97,11 +97,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 this._nextPageCancel?.Cancel();
                 var newCancel = new CancellationTokenSource();
                 this._nextPageCancel = newCancel;
-                if (Context.LimitPerPage*(_tabKeyAndOffset[tabKey]+1)<_tabKeyAndTotal[tabKey])
+                if (Context.LimitPerPage * (_tabKeyAndOffset[tabKey] + 1) < _tabKeyAndTotal[tabKey])
                 {
                     try
                     {
-                        var json = await this._netWorkServices.GetAsync("Search", "Search",
+                        var netWorkDataResult = await this._netWorkServices.GetAsync<SearchResultModel>("Search", "Search",
                             new
                             {
                                 KeyWord,
@@ -109,7 +109,12 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                                 limit = Context.LimitPerPage,
                                 offset = ++this._tabKeyAndOffset[tabKey]
                             });
-                        var temp = JsonConvert.DeserializeObject<SearchResultModel>(json);
+                        if (!netWorkDataResult.Successed)
+                        {
+                            //todo 网络连接失败
+                            throw new OperationCanceledException();
+                        }
+                        var temp = netWorkDataResult.Data;
                         switch (_tabKeyAndType[tabKey])
                         {
                             case Global.Enums.SearchResultType.Music:
@@ -143,7 +148,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
                     }
                 }
-               
+
                 if (newCancel == this._nextPageCancel)
                     this._nextPageCancel = null;
             }
@@ -235,13 +240,22 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
         private async void Init()
         {
-            var json = await this._netWorkServices.GetAsync("search", "hot");
-            var xdoc = this._netWorkServices.Json2Xml(json);
-            var tmp = xdoc.Element("Root").Element("result").Elements("hots");
-            foreach (var item in tmp)
+            var anoumsData = new { code = 100, result = new { hots = new[] { new { first = "", second = "", third = string.Empty } } } };
+            var netWorkDataResult = await this._netWorkServices.GetAnonymousTypeAsync("search", "hot", null, anoumsData);
+            if (netWorkDataResult.Successed)
             {
-                SearchRecomend.Add(item.Element("first").Value);
+                await SearchRecomend.AddRangeAsync(netWorkDataResult.Data.result.hots.Select(x => x.first));
             }
+            else
+            {
+                //todo 提示错误
+            }
+            //var xdoc = this._netWorkServices.Json2Xml(json);
+            //var tmp = xdoc.Element("Root").Element("result").Elements("hots");
+            //foreach (var item in tmp)
+            //{
+            //    SearchRecomend.Add(item.Element("first").Value);
+            //}
         }
         private void DeleteHistoryCommandImpl(string key)
         {
@@ -304,31 +318,38 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         }
         private async Task SearchAllResultAsync()
         {
-            var json = await this._netWorkServices.GetAsync("Search", "Search", new { keyWord = KeyWord, Global.Enums.SearchResultType.All, limit = Context.LimitPerPage });
-            var temp = JsonConvert.DeserializeObject<SearchResultModel>(json);
+            var netWorkDataResult = await this._netWorkServices.GetAsync<SearchResultModel>("Search", "Search", new { keyWord = KeyWord, Global.Enums.SearchResultType.All, limit = Context.LimitPerPage });
+            if (netWorkDataResult.Successed)
+            {
 
-            this._tabKeyAndTotal["1"] = temp.Musics.Key;
-            this._tabKeyAndTotal["2"] = temp.Artists.Key;
-            this._tabKeyAndTotal["3"] = temp.Albums.Key;
-            this._tabKeyAndTotal["4"] = temp.Mvs.Key;
-            this._tabKeyAndTotal["5"] = temp.PlayLists.Key;
-            this._tabKeyAndTotal["6"] = temp.Radios.Key;
-            this._tabKeyAndTotal["7"] = temp.Users.Key;
+                var temp = netWorkDataResult.Data;
+                this._tabKeyAndTotal["1"] = temp.Musics.Key;
+                this._tabKeyAndTotal["2"] = temp.Artists.Key;
+                this._tabKeyAndTotal["3"] = temp.Albums.Key;
+                this._tabKeyAndTotal["4"] = temp.Mvs.Key;
+                this._tabKeyAndTotal["5"] = temp.PlayLists.Key;
+                this._tabKeyAndTotal["6"] = temp.Radios.Key;
+                this._tabKeyAndTotal["7"] = temp.Users.Key;
 
-            await Task.WhenAll(MusicResults.AddRangeAsync(temp.Musics.Value),
-                ArtistResults.AddRangeAsync(temp.Artists.Value),
-                AlbumResults.AddRangeAsync(temp.Albums.Value),
-                MvResults.AddRangeAsync(temp.Mvs.Value),
-                UserResults.AddRangeAsync(temp.Users.Value),
-                PlayListResults.AddRangeAsync(temp.PlayLists.Value));
-            this._tabKeyAndOffset["1"] = 0;
-            this._tabKeyAndOffset["2"] =0;
-            this._tabKeyAndOffset["3"] =0;
-            this._tabKeyAndOffset["4"] =0;
-            this._tabKeyAndOffset["5"] =0;
-            this._tabKeyAndOffset["6"] =0;
-            this._tabKeyAndOffset["7"] = 0;
-           
+                await Task.WhenAll(MusicResults.AddRangeAsync(temp.Musics.Value),
+                    ArtistResults.AddRangeAsync(temp.Artists.Value),
+                    AlbumResults.AddRangeAsync(temp.Albums.Value),
+                    MvResults.AddRangeAsync(temp.Mvs.Value),
+                    UserResults.AddRangeAsync(temp.Users.Value),
+                    PlayListResults.AddRangeAsync(temp.PlayLists.Value));
+                this._tabKeyAndOffset["1"] = 0;
+                this._tabKeyAndOffset["2"] = 0;
+                this._tabKeyAndOffset["3"] = 0;
+                this._tabKeyAndOffset["4"] = 0;
+                this._tabKeyAndOffset["5"] = 0;
+                this._tabKeyAndOffset["6"] = 0;
+                this._tabKeyAndOffset["7"] = 0;
+            }
+            else
+            {
+                //todo 网络连接失败
+            }
+
         }
         /// <summary>
         /// 搜索关键字
@@ -337,13 +358,43 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// <returns></returns>
         private async Task<List<string>> SearhResultAsync(CancellationToken ct)
         {
+            //var anoumousData = new {
+            //    albums=Array.Empty <Album>(),
+            //    mvs=Array.Empty<Mv>(),
+            //   songs=Array.Empty<Music>(),
+            //    playlists=Array .Empty <PlayList>(),
+            //    orders=Array.Empty <string >()
+            //};
+            //var netWorkDataResult=    await _netWorkServices.GetAsync<string>("search", "suggest", new { KeyWord }, ct);
+            //    if (netWorkDataResult.Successed)
+            //    {
+            //        //anoumousData = netWorkDataResult.Data;
+            //        //IEnumerable<string> result = Array.Empty<string>();
+            //        //if (anoumousData.songs?.Length > 0)
+            //            //result = result.Union(anoumousData.songs.Select(x => x.Name));
+            //        //if (anoumousData.playlists?.Length > 0)
+            //            //result = result.Union(anoumousData.playlists.Select(x => x.Name));
+            //        //if (anoumousData.mvs?.Length > 0)
+            //            //result = result.Union(anoumousData.mvs.Select(x => x.Name));
+            //        //if (anoumousData.albums?.Length > 0)
+            //            //result = result.Union(anoumousData.albums.Select(x => x.Name));
+            //        //if (anoumousData.orders?.Length > 0)
+            //            //result = result.Union(anoumousData.orders);
+            //        //return result.ToList();
 
-            //var json =  ( await _netWorkServices.GetAsync("search", "suggest", new { KeyWord }, ct));
-            return await this._netWorkServices.GetAsync("search", "suggest", new { KeyWord }, ct).ContinueWith<List<string>>(tempJson =>
+            //    }
+            //    else
+            //    {
+            //        //todo 提示错误
+            //        await Task.Delay(100);
+            //        return new List<string>();
+            //    }
+            // var json =  ( await _netWorkServices.GetAsync<string>("search", "suggest", new { KeyWord }, ct));
+            return await this._netWorkServices.GetAsync<string>("search", "suggest", new { KeyWord }, ct).ContinueWith<List<string>>(tempJsonTask =>
            {
                string regex = $"{KeyWord}";
-               if (tempJson.IsCanceled || string.IsNullOrWhiteSpace(regex)) return new List<string>();
-               var json = tempJson.Result;
+               if (tempJsonTask.IsCanceled || string.IsNullOrWhiteSpace(regex) || !tempJsonTask.Result.Successed) return new List<string>();
+               var json = tempJsonTask.Result.Data;
                var tempIndex = Regex.Matches(json, regex).Cast<Match>().Select(x => x.Index);
                var result = new List<string>();
                foreach (var item in tempIndex)
@@ -369,6 +420,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                ct.ThrowIfCancellationRequested();
                return result.Distinct().ToList();
            }, ct);
+
         }
 
         /// <summary>

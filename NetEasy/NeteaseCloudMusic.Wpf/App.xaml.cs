@@ -12,6 +12,8 @@ using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media.Animation;
 using System.Xml.Linq;
+using NeteaseCloudMusic.Services.HttpCookie;
+using NeteaseCloudMusic.Services.Identity;
 
 namespace NeteaseCloudMusic.Wpf
 {
@@ -26,31 +28,18 @@ namespace NeteaseCloudMusic.Wpf
         }
         protected override async void OnStartup(StartupEventArgs e)
         {
-            string path = Path.Combine(Environment.CurrentDirectory, "WindowStartupInfo.xml");
+            Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+           // var dentityService = CommonServiceLocator.ServiceLocator.Current.GetInstance<IdentityService>();
             SplashscreenWindow sw = new Wpf.SplashscreenWindow();
             try
             {
                 FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(
                     XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
-                XDocument xdoc = null;
-                if (File.Exists(path))
-                {
-                    xdoc = XDocument.Load(path);
-                }
-                if (xdoc != null)
-                {
-                    var root = xdoc.Root;
-                    if (root == null)
-                        throw new ArgumentNullException();
-
-                    sw.Left = Convert.ToDouble(root.Element("WindowLeft").Value);
-                    sw.Top = Convert.ToDouble(root.Element("WindowTop").Value);
-                    var temp = Size.Parse(root.Element("WindowSize").Value);
-                    sw.Width = temp.Width;
-                    sw.Height = temp.Height;
-                    sw.WindowStartupLocation = (WindowStartupLocation)int.Parse((root.Element("WindowStartupLocation").Value));
-                    sw.WindowState = (WindowState)int.Parse(root.Element("WindowState").Value);
-                }
+                var rect = ( NeteaseCloudMusic.Wpf.Properties.Settings.Default.WindowLocation);
+                sw.Left = rect.Left;
+                sw.Top = rect.Top;
+                sw.Width = rect.Width;
+                sw.Height = rect.Height;
                 sw.Show();
                 base.OnStartup(e);
                 if (MainWindow != null)
@@ -59,8 +48,6 @@ namespace NeteaseCloudMusic.Wpf
                     MainWindow.Top = sw.Top;
                     MainWindow.Width = sw.Width;
                     MainWindow.Height = sw.Height;
-                    MainWindow.WindowStartupLocation = sw.WindowStartupLocation;
-                    MainWindow.WindowState = sw.WindowState;
                     MainWindow.Show();
                 }
                 const int durationMilliseconds = 800;
@@ -68,37 +55,39 @@ namespace NeteaseCloudMusic.Wpf
                 {
                     EasingFunction = new PowerEase { EasingMode = EasingMode.EaseInOut, Power = 0.8 }
                 });
-                await Task.WhenAll(Task.Delay(durationMilliseconds), Session.RefreshLog());
+                await Task.WhenAll(Task.Delay(durationMilliseconds)
+                    //, Session.RefreshLog()
+                    );
                 sw.Close();
             }
             catch
             {
-                if (File.Exists(path))
-                {
-                    File.SetAttributes(path, FileAttributes.Normal);
-                    File.Delete(path);
-                }
-
                 sw?.Close();
                 base.OnStartup(e);
             }
 
         }
-        /// <summary>
-        /// 当出了异常才调用父类的show方法
-        /// </summary>
-        protected override void OnInitialized()
+
+        private void Current_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
-            if (!File.Exists(Path.Combine(Environment.CurrentDirectory, "WindowStartupInfo.xml")))
-                base.OnInitialized();
+            Console.WriteLine(e.Exception.StackTrace);
+            if (e.Exception is System.Net.Http.HttpRequestException)
+            {
+                e.Handled = true;
+                return;
+            }
+            Application.Current.Shutdown();
         }
 
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterSingleton<ICookieService,LocalFileCookieService>();
             containerRegistry.RegisterSingleton<INetWorkServices, NeteaseCloundMusicNetWorkServices>();
             containerRegistry.RegisterSingleton<IAudioPlayableServices, NAudioPlayableServices>();
-
+            containerRegistry
+                .RegisterSingleton<NeteaseCloudMusic.Services.LocalFile.IFileServices, Services.WindowsFileServices>();
+            containerRegistry.RegisterSingleton<IdentityService,DefaultIdentityService>();
         }
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {

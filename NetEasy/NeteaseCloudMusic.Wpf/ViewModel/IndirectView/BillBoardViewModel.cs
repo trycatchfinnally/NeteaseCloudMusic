@@ -51,11 +51,18 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 return;
             }
-            var json = await this._netWorkServices.GetAsync("BillBoard", "GetTopList");
-            var temp = JsonConvert.DeserializeObject<List<Global.Model.BillBoard>>(json);
-            await Task.WhenAll(NeteaseCloudMusicBillBoard.AddRangeAsync(temp.Where(x => (x.SomeTracksName?.Count).GetValueOrDefault() > 0)),
-                GlobalBillBoard.AddRangeAsync(temp.Where(x => x.SomeTracksName == null || x.SomeTracksName.Count == 0)));
-            this._dataHasInited = true;
+            var netWorkDataResult= await this._netWorkServices.GetAsync<BillBoard[]>("BillBoard", "GetTopList");
+            if (netWorkDataResult.Successed)
+            {
+                var temp = netWorkDataResult.Data;
+                await Task.WhenAll(NeteaseCloudMusicBillBoard.AddRangeAsync(temp.Where(x => (x.SomeTracksName?.Count).GetValueOrDefault() > 0)),
+                    GlobalBillBoard.AddRangeAsync(temp.Where(x => x.SomeTracksName == null || x.SomeTracksName.Count == 0)));
+                this._dataHasInited = true; 
+            }
+            else
+            {
+                //todo 网络连接失败
+            }
         }
 
 

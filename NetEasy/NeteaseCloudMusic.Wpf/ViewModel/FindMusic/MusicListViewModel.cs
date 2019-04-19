@@ -9,6 +9,7 @@ using Prism.Regions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -79,18 +80,25 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 if (MorePage)
                 {
-                    var json = await this._netWorkServices.GetAsync("FindMusic", "GetTopPlayListByTag",
+                    var netWorkDataResult = await this._netWorkServices.GetAsync<KeyValuePair<bool, Global.Model.PlayList[]>>("FindMusic", "GetTopPlayListByTag",
                         new
                         {
                             cat = SelectedTag,
                             hot = true,
                             limit = LimitPerPage,
-                            offset = CurrentPlayListPageOffset*LimitPerPage
+                            offset = CurrentPlayListPageOffset * LimitPerPage
                         });
-                    var temp = JsonConvert.DeserializeObject<KeyValuePair<bool, Global.Model.PlayList[]>>(json);
-                    MorePage = temp.Key;
-                    SelectedPlayList.AddRange(temp.Value);
-                    CurrentPlayListPageOffset++;
+                    if (netWorkDataResult.Successed)
+                    {
+                        var temp = netWorkDataResult.Data;
+                        MorePage = temp.Key;
+                        SelectedPlayList.AddRange(temp.Value);
+                        CurrentPlayListPageOffset++;
+                    }
+                    else
+                    {
+                        //todo 显示网络提示信息
+                    }
                 }
 
             }
@@ -109,11 +117,18 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// </summary>
         private async void InitCategories()
         {
-            var task1 = this._netWorkServices.GetAsync("FindMusic", "GetPlayListCategories");
-            var task2 = this._netWorkServices.GetAsync("FindMusic", "GetHotPlayListCategories");
-            await Task.WhenAll(task1, task2);
-            await Task.WhenAll(AllCategories.AddRangeAsync(JsonConvert.DeserializeObject<Global.Model.PlayListCategory[]>(task1.Result)),
-                   HotCategories.AddRangeAsync(JsonConvert.DeserializeObject<Global.Model.PlayListCategory[]>(task2.Result)));
+            var tasks = new[] { this._netWorkServices.GetAsync<PlayListCategory[]>("FindMusic", "GetPlayListCategories"),
+                this._netWorkServices.GetAsync<PlayListCategory[]>("FindMusic", "GetHotPlayListCategories")
+        };
+            await Task.WhenAll(tasks);
+            if (tasks.All(x=>x.Result.Successed))
+            {
+                await Task.WhenAll(AllCategories.AddRangeAsync(tasks[0].Result.Data),HotCategories.AddRangeAsync(tasks[1].Result.Data));
+            }
+            else
+            {
+                //todo 网络提示信息
+            }
         }
 
 

@@ -35,12 +35,19 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 return;
             }
-            var task1 = _netWorkServices.GetAsync("FindMusic", "GetAnchorRadioCategories");
-            var task2= _netWorkServices.GetAsync("FindMusic", "GetRecommendProgram");
-            await Task.WhenAll(task1,task2);
-            await
-               Task.WhenAll( AnchorRadioCatalogues.AddRangeAsync(JsonConvert.DeserializeObject<Global.Model.AnchorRadioCatalogue[]>(task1.Result)),
-               WonderfulRadioRecommends.AddRangeAsync(JsonConvert.DeserializeObject<Global.Model.Program[]>(task2.Result)));
+
+            var task1 = _netWorkServices.GetAsync<Global.Model.AnchorRadioCatalogue[]>("FindMusic", "GetAnchorRadioCategories");
+            var task2 = _netWorkServices.GetAsync<Global.Model.Program[]>("FindMusic", "GetRecommendProgram");
+            await Task.WhenAll(task1, task2);
+            if (task1.Result.Successed && task2.Result.Successed)
+            {
+                await Task.WhenAll(AnchorRadioCatalogues.AddRangeAsync(task1.Result.Data),
+                    WonderfulRadioRecommends.AddRangeAsync(task2.Result.Data));
+            }
+            else
+            {
+                //todo 显示提示信息
+            }
         }
         /// <summary>
         /// 电台目录的集合数据
@@ -49,7 +56,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// <summary>
         /// 精彩节目推荐的集合数据
         /// </summary>
-        public ObservableCollection<Global.Model.Program> WonderfulRadioRecommends { get; } = new ObservableCollection<Global.Model.Program>();  
+        public ObservableCollection<Global.Model.Program> WonderfulRadioRecommends { get; } = new ObservableCollection<Global.Model.Program>();
 
 
         /// <summary>

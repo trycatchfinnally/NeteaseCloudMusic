@@ -44,7 +44,7 @@
                             <Border.Clip>
                                 <EllipseGeometry Center="172,122" RadiusX="80" RadiusY=" 80"/>
                             </Border.Clip>
-                            <Image Stretch="Uniform" Source="{Binding TrackImage}"  >
+                            <Image Stretch="Uniform" Source="{Binding TrackImage,TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/player_disk_cover.scale-200.png}"  >
                                 <!--<Image.Source>
                                     <BitmapImage UriSource="{Binding TrackImage,TargetNullValue=/NeteaseCloudMusic.Wpf;component/Assets/player_disk_cover.scale-200.png}" />
                                 </Image.Source>-->

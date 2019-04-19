@@ -81,7 +81,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                         catString = "10" + SelectedGender;
                     if (catString.EndsWith("99"))
                         catString = catString.Substring(0, 2) + "01";
-                    var json = await this._netWorkServices.GetAsync("FindMusic", "ArtistsList",
+                    var netWorkDataResult = await this._netWorkServices.GetAsync<KeyValuePair<bool, Global.Model.Artist[]>>("FindMusic", "ArtistsList",
                         new
                         {
                             limit = Context.LimitPerPage,
@@ -89,9 +89,17 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                             cat = int.Parse(catString),
                             initial = SelectedPinYin == "99" ? 0 : Convert.ToChar(SelectedPinYin)
                         });
-                    var temp = JsonConvert.DeserializeObject<KeyValuePair<bool, Global.Model.Artist[]>>(json);
-                    this._offset++; this._morePage = temp.Key;
-                    Artists.AddRange(temp.Value);
+                    if (netWorkDataResult.Successed)
+                    {
+                        var temp = netWorkDataResult.Data;
+                        this._offset++; this._morePage = temp.Key;
+                        Artists.AddRange(temp.Value);
+                    }
+                    else
+                    {
+                        //todo 引发提示信息
+                    }
+
                 }
             }
             catch (OperationCanceledException)

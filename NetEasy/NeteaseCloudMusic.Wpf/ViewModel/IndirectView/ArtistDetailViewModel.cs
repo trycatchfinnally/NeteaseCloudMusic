@@ -63,12 +63,19 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 if (MoreAlbums)
                 {
-                    var json = await _netWorkServices.GetAsync("Artist", "GetArtistAlbum",
-                        new { id = Id, offset = CurrentAlbumPageOffset* RequireCountPerPage, limit = RequireCountPerPage }, cancelToken: _albumOffsetCancellationToken.Token);
-                    var moreAndAlbums = JsonConvert.DeserializeObject<KeyValuePair<bool, List<Global.Model.Album>>>(json);
-                    MoreAlbums = moreAndAlbums.Key;
-                    Albums.AddRange(moreAndAlbums.Value);
-                    CurrentAlbumPageOffset++;
+                    var netWorkDataResult = await _netWorkServices.GetAsync<KeyValuePair<bool, List<Global.Model.Album>>>("Artist", "GetArtistAlbum",
+                        new { id = Id, offset = CurrentAlbumPageOffset * RequireCountPerPage, limit = RequireCountPerPage }, cancelToken: _albumOffsetCancellationToken.Token);
+                    if (netWorkDataResult.Successed)
+                    {
+                        var moreAndAlbums = netWorkDataResult.Data;
+                        MoreAlbums = moreAndAlbums.Key;
+                        Albums.AddRange(moreAndAlbums.Value);
+                        CurrentAlbumPageOffset++;
+                    }
+                    else
+                    {
+                        //todo 网络连接失败
+                    }
                 }
             }
             catch (OperationCanceledException)
@@ -87,12 +94,20 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 if (MoreMvs)
                 {
-                    var json = await _netWorkServices.GetAsync("Artist", "GetArtistMv",
+                    var netWorkDataResult= await _netWorkServices.GetAsync<KeyValuePair<bool,Mv[]>>("Artist", "GetArtistMv",
                         new { id = Id, offset = CurrentMvPageOffset, limit = RequireCountPerPage }, cancelToken: _mvOffsetCancellationToken.Token);
-                    var moreAndMvs = JsonConvert.DeserializeObject<KeyValuePair<bool, List<Global.Model.Mv>>>(json);
-                    MoreMvs = moreAndMvs.Key;
-                    Mvs.AddRange(moreAndMvs.Value);
-                    CurrentMvPageOffset++;
+                    if (netWorkDataResult.Successed)
+                    {
+                        var moreAndMvs = netWorkDataResult.Data;
+                        MoreMvs = moreAndMvs.Key;
+                        Mvs.AddRange(moreAndMvs.Value);
+                        CurrentMvPageOffset++;
+                    }
+                    else
+                    {
+                        //todo 网络连接失败
+                        throw new OperationCanceledException();
+                    }
                 }
             }
             catch (OperationCanceledException)
@@ -116,27 +131,39 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 
         protected override async void SetById(long id)
         {
-            var task1 = _netWorkServices.GetAsync("Artist", "GetArtistDetailById", new { id });
-            var task2 = _netWorkServices.GetAsync("Artist", "GetArtistAlbum", new { id, offset = 0, limit = RequireCountPerPage });
-            var task3 = _netWorkServices.GetAsync("Artist", "GetArtistMv", new { id, offset = 0, limit = RequireCountPerPage });
-            var task4 = _netWorkServices.GetAsync("Artist", "GetArtistIntroduction", new
+            var task1 = _netWorkServices.GetAsync<Artist>("Artist", "GetArtistDetailById", new { id });
+            var task2 = _netWorkServices.GetAsync<KeyValuePair<bool, List<Global.Model.Album>>>("Artist", "GetArtistAlbum", new { id, offset = 0, limit = RequireCountPerPage });
+            var task3 = _netWorkServices.GetAsync<KeyValuePair<bool, List<Global.Model.Mv>>>("Artist", "GetArtistMv", new { id, offset = 0, limit = RequireCountPerPage });
+            var task4 = _netWorkServices.GetAsync<List<KeyValuePair<string, string>>>("Artist", "GetArtistIntroduction", new
             {
                 id
             });
-            var task5 = _netWorkServices.GetAsync("Artist", "GetSimiArtists", new { id });
+            var task5 = _netWorkServices.GetAsync<List<Global.Model.Artist>>("Artist", "GetSimiArtists", new { id });
             //  KeyValuePair<bool, List<Global.Model.Album>>
             await Task.WhenAll(task1, task2, task3, task4, task5);
-            _innerArtist = JsonConvert.DeserializeObject<Artist>(task1.Result);
-            var moreAndAlbums = JsonConvert.DeserializeObject<KeyValuePair<bool, List<Global.Model.Album>>>(task2.Result);
-            MoreAlbums = moreAndAlbums.Key;
-            var moreAndMvs = JsonConvert.DeserializeObject<KeyValuePair<bool, List<Global.Model.Mv>>>(task3.Result);
-            MoreMvs = moreAndMvs.Key;
-            await Task.WhenAll(HotMusics.AddRangeAsync(_innerArtist.HotMusics),
-                Albums.AddRangeAsync(moreAndAlbums.Value),
-                Mvs.AddRangeAsync(moreAndMvs.Value),
-                ArtistIntroductions.AddRangeAsync(JsonConvert.DeserializeObject<List<KeyValuePair<string, string>>>(task4.Result)),
-               SimiArtists.AddRangeAsync(JsonConvert.DeserializeObject<List<Global.Model.Artist>>(task5.Result)));
-            RaiseAllPropertyChanged();
+            if (task1.Result.Successed &&
+                task2.Result.Successed &&
+                task3.Result.Successed &&
+                task4.Result.Successed &&
+                task5.Result.Successed)
+            {
+                _innerArtist = task1.Result.Data;
+                var moreAndAlbums = task2.Result.Data;
+                MoreAlbums = moreAndAlbums.Key;
+                var moreAndMvs = task3.Result.Data;
+                MoreMvs = moreAndMvs.Key;
+                await Task.WhenAll(HotMusics.AddRangeAsync(_innerArtist.HotMusics),
+                    Albums.AddRangeAsync(moreAndAlbums.Value),
+                    Mvs.AddRangeAsync(moreAndMvs.Value),
+                    ArtistIntroductions.AddRangeAsync(task4.Result.Data),
+                   SimiArtists.AddRangeAsync(task5.Result.Data));
+                RaiseAllPropertyChanged();
+            }
+            else
+            {
+                //todo 网络连接四百
+            }
+
         }
         private async void PlayAllCommandExecute()
         {

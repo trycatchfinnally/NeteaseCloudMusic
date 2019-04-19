@@ -1,6 +1,7 @@
 ﻿using Prism.Interactivity.InteractionRequest;
 using System.Windows;
 using System.Windows.Controls;
+using NeteaseCloudMusic.Services.Identity;
 
 namespace NeteaseCloudMusic.Wpf.View.Popup
 {
@@ -61,7 +62,8 @@ namespace NeteaseCloudMusic.Wpf.View.Popup
             if (this.txtPhone.Text.Length != 11)
             { this.txtError.Text = "请输入11位数字的电话号码"; return; }
             if (!string.IsNullOrEmpty(this.txtError.Text)) return;
-            var loginResult = await Session.LogInByCellPhone(this.txtPhone.Text, this.txtPassword.Password);
+            var tmp = CommonServiceLocator.ServiceLocator.Current.GetInstance<IdentityService>();
+            var loginResult = await tmp.LoginInAsync(this.txtPhone.Text, this.txtPassword.Password,true);
             if (loginResult != "OK")
             {
                 this.txtError.Text = loginResult;

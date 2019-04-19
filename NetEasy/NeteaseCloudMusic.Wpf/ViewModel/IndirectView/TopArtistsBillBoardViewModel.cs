@@ -51,20 +51,27 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 return;
             }
-            var tasks = new List<Task<string>>(4);
+            var tasks = new List<Task<NetWorkDataResult<KeyValuePair<DateTime, Global.Model.Artist[]>>>>(4);
             for (int i = 1; i < 5; i++)
             {
-                tasks.Add(_netWorkServices.GetAsync("BillBoard", "GetTopArtist", new { type = i }));
+                tasks.Add(_netWorkServices.GetAsync<KeyValuePair<DateTime, Global.Model.Artist[]>>("BillBoard", "GetTopArtist", new { type = i }));
             }
             await Task.WhenAll(tasks);
-            var temp = tasks.Select(x => JsonConvert.DeserializeObject<KeyValuePair<DateTime, Global.Model.Artist[]>>(x.Result)).ToArray();
-            this.LastUpdateDate = temp[0].Key;
-            await Task.WhenAll(ChineseArtists.AddRangeAsync(temp[0].Value),
-                  EruoArtists.AddRangeAsync(temp[1].Value),
-                  KoreaArtists.AddRangeAsync(temp[2].Value),
-                  JapanArtists.AddRangeAsync(temp[3].Value));
-            RaisePropertyChanged(nameof(LastUpdateDate));
-            _dataHasInit = true;
+            if (tasks.All(x=>x.Result.Successed))
+            {
+                var temp = tasks.Select(x => x.Result.Data).ToArray();
+                this.LastUpdateDate = temp[0].Key;
+                await Task.WhenAll(ChineseArtists.AddRangeAsync(temp[0].Value),
+                      EruoArtists.AddRangeAsync(temp[1].Value),
+                      KoreaArtists.AddRangeAsync(temp[2].Value),
+                      JapanArtists.AddRangeAsync(temp[3].Value));
+                RaisePropertyChanged(nameof(LastUpdateDate));
+                _dataHasInit = true;
+
+            }else
+            {
+                //todo 网络连接失败
+            }
         }
         /// <summary>
         /// 最近更新

@@ -63,6 +63,8 @@
     <Compile Include="Model\Comment.cs" />
     <Compile Include="Model\CommentCollection.cs" />
     <Compile Include="Model\FileSize.cs" />
+    <Compile Include="Model\LocalArtist.cs" />
+    <Compile Include="Model\LocalMusic.cs" />
     <Compile Include="Model\Lyric.cs" />
     <Compile Include="Model\MenuListItem.cs" />
     <Compile Include="Model\Music.cs" />

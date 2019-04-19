@@ -18,7 +18,9 @@ namespace NeteaseCloudMusic.Wpf
         /// 当前的区域名
         /// </summary>
         public const string RegionName = "MainRegion";
-        public const string SupportFileExtension = "*.mp3|*.flac|*.cs";
+        //public const string SupportFileExtension = "*.mp3|*.flac|*.cs";
+        public const string SupportFileExtension = "*.mp3|";
+
         /// <summary>
         /// 每页请求的数据限制
         /// </summary>
@@ -43,7 +45,7 @@ namespace NeteaseCloudMusic.Wpf
         /// 代表上一个的命令
         /// </summary>
         public static CompositeCommand PrevTrackCommand { get; } = new CompositeCommand();
-       
+        public static InteractionRequest<Notification> AutoDisplayPopupRequest { get; } = new InteractionRequest<Notification>();
 
     }
     /// <summary>

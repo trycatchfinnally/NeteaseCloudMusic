@@ -3,6 +3,7 @@ using NeteaseCloudMusic.Global.Model;
 using NeteaseCloudMusic.Services.AudioDecode;
 using NeteaseCloudMusic.Services.NetWork;
 using NeteaseCloudMusic.Wpf.View;
+using NeteaseCloudMusic.Wpf.View.Cloud;
 using NeteaseCloudMusic.Wpf.View.IndirectView;
 using Newtonsoft.Json;
 using Prism.Commands;
@@ -17,7 +18,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using NeteaseCloudMusic.Wpf.View.Cloud;
+using NeteaseCloudMusic.Services.Identity;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -27,6 +28,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         private readonly IAudioPlayableServices _audioPlayableServices;
         private readonly INetWorkServices _netWorkServices;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IdentityService _dentityService;
         private CancellationTokenSource _timerCancelToken;
         private ICommand _closePopupCommand;
         private bool _isPlaying;
@@ -38,12 +40,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         public MainWindowViewModel(IRegionManager navigationService,
             IAudioPlayableServices audioPlayableServices,
             INetWorkServices netWorkServices,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            IdentityService dentityService)
         {
             this._navigationService = navigationService;
             this._audioPlayableServices = audioPlayableServices;
             this._netWorkServices = netWorkServices;
             this._eventAggregator = eventAggregator;
+            this._dentityService = dentityService;
             SysListCommand = new DelegateCommand<int?>(SysListCommandImpl);
             MyMusicCommand = new DelegateCommand<int?>(MyMusicCommandImpl);
             OpenPlayPanelCommand = new DelegateCommand(OpenPlayPanelCommandExecute);
@@ -51,7 +55,9 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             UserPlayListCommand = new DelegateCommand<PlayList>(UserPlayListCommandExecute);
             NavBackCommand = new DelegateCommand(NavBackCommandExecute);
             AddPlayListCommand = new DelegateCommand(AddPlayListCommandExecute);
-            InitData();
+            // InitData();
+            dentityService.LoginStateChanged += Session_LoginStateChanged;
+            Session_LoginStateChanged(null, dentityService.CurrentUser != null);
             Context.PlayCommand.RegisterCommand(new DelegateCommand<Music>(Play));
             Context.PauseCommand.RegisterCommand(new DelegateCommand(Pause));
             Context.NextTrackCommand.RegisterCommand(new DelegateCommand(Next));
@@ -61,6 +67,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
         private void WriteDebugInfoInText(object msg)
         {
+            /*
             var filePath = Path.Combine(Environment.CurrentDirectory, "debug.txt");
             lock (this._lockObj)
             {
@@ -69,6 +76,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                     tw.WriteLine(DateTime.Now + "      " + msg);
                 }
             }
+            */
         }
         #region 命令实现
         private void SysListCommandImpl(int? index)
@@ -102,7 +110,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                     this._navigationService.RequestNavigate(Context.RegionName, nameof(DownloadManagerView));
                     break;
                 case 2:
-                    this._navigationService.RequestNavigate(Context.RegionName, nameof(RecentlyPlayView));break;
+                    this._navigationService.RequestNavigate(Context.RegionName, nameof(RecentlyPlayView)); break;
                 case 3:
                     this._navigationService.RequestNavigate(Context.RegionName, nameof(CloudMusicView));
                     break;
@@ -110,7 +118,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         }
         private void AddPlayListCommandExecute()
         {
-            if (Session.IsLoginIn)
+            if (this._dentityService.CurrentUser!=null)
                 AddPlayListRequest.Raise(new Confirmation { Title = "哈哈哈哈" }, async x => await AddPlayListAsync(x));
 
         }
@@ -120,9 +128,17 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 string title = confirmation.Content?.ToString();
                 if (CreatedTracks.Count(y => y.Name == title) != 0) { return; }//添加提示信息
-                var json = await this._netWorkServices.GetAsync("User", "CreatePlayList", new { name = title });
-                var playList = JsonConvert.DeserializeObject<PlayList>(json);
-                CreatedTracks.Add(playList);
+                var netWorkDataResult= await this._netWorkServices.GetAsync<PlayList>("User", "CreatePlayList", new { name = title });
+                if (netWorkDataResult.Successed)
+                {
+                    var playList = netWorkDataResult.Data;
+                    CreatedTracks.Add(playList); 
+                }
+                else
+                {
+                    Context.AutoDisplayPopupRequest.Raise(new Notification { Content = "网络不给力额，请检查你的网络连接~", Title = "我和" });
+
+                }
             }
         }
         private void UserPlayListCommandExecute(PlayList obj)
@@ -156,7 +172,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         {
             if (music == null) throw new ArgumentNullException(nameof(music));
             bool result = false;
-            if (Session.IsLoginIn)
+            if (this._dentityService.CurrentUser!=null)
             {
                 PayRequest.Raise(new Confirmation { Content = music.Id, Title = "买它狗日的" }, x =>
                   {
@@ -227,7 +243,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
                     CurrentPlayList.Add(music);
                     CurrentPlayMusic = music;
-                  
+
                 }
                 WriteDebugInfoInText("play传入音乐在播放列表未找到或者找到，为当前音乐赋值++++++++");
                 WriteDebugInfoInText("当前音乐ididca" + CurrentPlayMusic?.Id);
@@ -237,13 +253,19 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
             // if (string.IsNullOrEmpty(music.Url))  
             {
-                var json = await this._netWorkServices.GetAsync("Common", "GetMusicById", new { music.Id });
-                var url = JsonConvert.DeserializeObject<Music>(json)?.Url;
+                var netWorkDataResult = await this._netWorkServices.GetAsync<Music>("Common", "GetMusicById", new { music.Id });
+                if (!netWorkDataResult.Successed)
+                {
+                    Context.AutoDisplayPopupRequest.Raise(new Notification { Content = "网络不给力额，请检查你的网络连接~", Title = "我和" });
+
+                    return;
+                }
+                var url = netWorkDataResult.Data.Url;
                 music.Url = url;
                 WriteDebugInfoInText("play请求url++++++++");
                 WriteDebugInfoInText("请求音乐的id" + CurrentPlayMusic?.Id);
                 WriteDebugInfoInText("请求音乐地址" + url);
-                WriteDebugInfoInText("请求音乐名称" + JsonConvert.DeserializeObject<Music>(json)?.Name);
+                WriteDebugInfoInText("请求音乐名称" + netWorkDataResult.Data.Name);
                 WriteDebugInfoInText("play请求url，为当前音乐赋值++++++++");
                 //music.Url = $"https://music.163.com/song/media/outer/url?id={ music.Id}.mp3";
             }
@@ -257,8 +279,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
                 if (PayMusicProgress(music))
                 {
-                    var json = await this._netWorkServices.GetAsync("Common", "GetMusicById", new { music.Id });
-                    var url = JsonConvert.DeserializeObject<Music>(json)?.Url;
+                    var netWorkDataResult = await this._netWorkServices.GetAsync<Music>("Common", "GetMusicById", new { music.Id });
+                    if (!netWorkDataResult.Successed)
+                    {
+                        Context.AutoDisplayPopupRequest.Raise(new Notification { Content = "网络不给力额，请检查你的网络连接~", Title = "我和" });
+
+                        return;
+                    }
+                    var url = netWorkDataResult.Data.Url;
                     music.Url = url;
                     if (!string.IsNullOrEmpty(music.Url))//如果没有权限或者需要购买等
                     {
@@ -266,7 +294,10 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                         // IsPlaying = true;
                         await TimeRefresherAsync();
                     }
-
+                    else
+                    {
+                        Context.AutoDisplayPopupRequest.Raise(new Notification { Title="asdg",Content="购买vip失败，你可能忘了充钱~"});
+                    }
                 }
             }
         }
@@ -367,19 +398,23 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             RaisePropertyChanged(nameof(TotalTimeSpan));
             try
             {
-                await Task.Factory.StartNew(() =>
+                var thePlayFlag = false;
+                thePlayFlag= await Task.Factory.StartNew(() =>
                    {
-                       while ((TotalTimeSpan - CurrentTimeSpan).TotalMilliseconds > 100)
+                       while (true)
                        {
-
-                           RaisePropertyChanged(nameof(CurrentTimeSpan));
-
+                           if (TotalTimeSpan == TimeSpan.Zero)
+                               continue;
+                           if ((TotalTimeSpan - CurrentTimeSpan).TotalMilliseconds > 100)
+                               RaisePropertyChanged(nameof(CurrentTimeSpan));
+                           else return true;
                            Thread.Sleep(150);
                        }
                    }, this._timerCancelToken.Token);
                 WriteDebugInfoInText("刷新时间的下一曲++++++++");
                 WriteDebugInfoInText("当前的音乐id" + CurrentPlayMusic?.Id);
                 WriteDebugInfoInText("刷新时间的下一曲++++++++");
+                if(thePlayFlag)
                 Context.NextTrackCommand.Execute(null);
             }
             catch (OperationCanceledException)
@@ -395,12 +430,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// <summary>
         /// 载入数据
         /// </summary>
-        private async void InitData()
-        {
-            Session.LoginStateChanged += Session_LoginStateChanged;
-            await Task.Delay(100);
+        //private async void InitData()
+        //{
+        //    await Task.Delay(100);
 
-        }
+        //}
 
         private async void Session_LoginStateChanged(object sender, bool e)
         {
@@ -408,12 +442,20 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             FavoriteTracks.Clear();
             if (e)
             {
-                var json = await this._netWorkServices.GetAsync("User", "GetUserPlayList", new { limit = Context.LimitPerPage, offset = 0, id = Session.CurrentUser.UserId });
-                var temp = JsonConvert.DeserializeObject<PlayList[]>(json);
-                var query = temp.GroupBy(x => x.CreateUser.UserId == Session.CurrentUser.UserId).ToDictionary(x => x.Key, x => x.Select(y => y));
-                CreatedTracks.AddRange(query[true]);
-                FavoriteTracks.AddRange(query[false]);
-                RaisePropertyChanged(nameof(LoginInUser));
+                var netWorkDataResult = await this._netWorkServices.GetAsync<PlayList[]>("User", "GetUserPlayList", new { limit = Context.LimitPerPage, offset = 0, id = this._dentityService.CurrentUser.UserId });
+                if (netWorkDataResult.Successed)
+                {
+                    var temp = netWorkDataResult.Data;
+                    var query = temp.GroupBy(x => x.CreateUser.UserId == this._dentityService.CurrentUser.UserId).ToDictionary(x => x.Key, x => x.Select(y => y));
+                    CreatedTracks.AddRange(query[true]);
+                    FavoriteTracks.AddRange(query[false]);
+                    RaisePropertyChanged(nameof(LoginInUser)); 
+                }
+                else
+                {
+                    Context.AutoDisplayPopupRequest.Raise(new Notification { Content = "网络不给力额，请检查你的网络连接~", Title = "我和" });
+
+                }
             }
 
         }
@@ -467,9 +509,9 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         {
             get
             {
-                if (Session.CurrentUser == null)
+                if (this._dentityService.CurrentUser == null)
                     return this._defaultUser ?? (this._defaultUser = new User());
-                return Session.CurrentUser;
+                return this._dentityService.CurrentUser;
             }
         }
         #region 绑定的命令
@@ -550,7 +592,17 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         /// </summary>
         public TimeSpan TotalTimeSpan
         {
-            get { return CurrentPlayMusic?.Duration ?? TimeSpan.Zero; }
+            get
+            {
+                var result = CurrentPlayMusic?.Duration;
+                if (result.HasValue&&result>TimeSpan.Zero)
+                {
+                    return result.Value;
+                }
+
+                return this._audioPlayableServices?.Length ?? TimeSpan.Zero;
+                // return CurrentPlayMusic?.Duration ?? TimeSpan.Zero;
+            }
             // private set { SetProperty(ref _totalTimeSpan, value); }
         }
         /// <summary>
@@ -562,7 +614,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             set
             {
                 if (CurrentPlayMusic == null || value == CurrentPlayMusic.IsLike) return;
-                if (!Session.IsLoginIn)
+                if (this._dentityService.CurrentUser==null)
                 {
                     LoginRequest.Raise(new Confirmation { Title = "登陆" });
                     RaisePropertyChanged();

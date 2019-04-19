@@ -33,10 +33,18 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         }
         protected override async void SetById(long id)
         {
-            var json = await this._netWorkServices.GetAsync("Album", "GetAlbumDetailById", new { id });
-            _innerAlbum = JsonConvert.DeserializeObject<Album>(json);
-            await this.AlbumMusics.AddRangeAsync(_innerAlbum.Musics);
-            RaiseAllPropertyChanged();
+            var netWorkDataResult= await this._netWorkServices.GetAsync<Album>("Album", "GetAlbumDetailById", new { id });
+            if (netWorkDataResult.Successed)
+            {
+                _innerAlbum = netWorkDataResult.Data;
+                await this.AlbumMusics.AddRangeAsync(_innerAlbum.Musics);
+                RaiseAllPropertyChanged();
+            }
+            else
+            {
+                //todo 网络相关提示信息
+            }
+            
         }
         private async void SelectedCommandExecute(IEnumerable items)
         {
