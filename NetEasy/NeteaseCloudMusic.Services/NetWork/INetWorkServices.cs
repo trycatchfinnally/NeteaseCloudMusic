@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -46,5 +47,9 @@ namespace NeteaseCloudMusic.Services.NetWork
         /// 获取或设置用于通过处理程序存储服务器 Cookie 的 Cookie 容器。
         /// </summary>
         System.Net.CookieContainer Cookie { get; set; }
+        /// <summary>
+        /// 当请求网络发生异常或错误的时候需要执行的委托
+        /// </summary>
+        Action<string> HttpExceptionAction { get; set; }
     }
 }

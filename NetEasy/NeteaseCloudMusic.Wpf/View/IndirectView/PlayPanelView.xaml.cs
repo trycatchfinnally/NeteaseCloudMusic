@@ -42,7 +42,7 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
         private PlayPanelViewModel ViewModel => DataContext as PlayPanelViewModel;
         private void ContentControl_Loaded(object sender, RoutedEventArgs e)
         {
-            RefreshLyric();
+            RefreshLyric(); 
         }
 
         /// <summary>

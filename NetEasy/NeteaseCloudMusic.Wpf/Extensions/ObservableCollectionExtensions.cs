@@ -44,5 +44,25 @@ namespace NeteaseCloudMusic.Wpf.Extensions
             }
             callBack?.Invoke(source);
         }
+        public static async Task AddRangeAsync<T>(this List<T> source, IEnumerable<T> addItems, Action<List<T>> callBack = null)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+            source.Clear();
+            if (addItems != null)
+            {
+                if (!(addItems is System.Collections.IList || addItems is Array))
+                    addItems = addItems.ToArray();
+                int pageCount = (int)Math.Ceiling(addItems.Count() / (double)CountPerTime);
+                for (int i = 0; i < pageCount; i++)
+                {
+                    source.AddRange(addItems.Skip(i * CountPerTime).Take(CountPerTime));
+                    await Task.Delay(AwaitMillSeconds);
+                }
+            }
+            callBack?.Invoke(source);
+        }
     }
 }

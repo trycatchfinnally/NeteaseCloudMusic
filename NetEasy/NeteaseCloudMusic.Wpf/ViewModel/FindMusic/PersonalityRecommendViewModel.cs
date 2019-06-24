@@ -10,6 +10,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using NeteaseCloudMusic.Services.Identity;
+using NeteaseCloudMusic.Wpf.Properties;
+using NeteaseCloudMusic.Wpf.Proxy;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -18,14 +20,19 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
         private readonly IdentityService _dentityService;
+        private readonly PlayPartCore _playPart;
+        private readonly InteractionRequestsProxy _interactionRequestsProxy;
 
         public PersonalityRecommendViewModel(INetWorkServices netWorkServices, 
-            IRegionManager navigationService,IdentityService dentityService)
+            IRegionManager navigationService,IdentityService dentityService
+            ,PlayPartCore playPart,InteractionRequestsProxy interactionRequestsProxy)
         {
 
             this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
             this._dentityService = dentityService;
+            this._playPart = playPart;
+            this._interactionRequestsProxy = interactionRequestsProxy;
             InitData();
             MoreCommand = new DelegateCommand<string>(MoreCommandExecute);
             RecommendPlayListCommend = new DelegateCommand<PlayList>(RecommendPlayListCommendExecute);
@@ -46,10 +53,10 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 if (netWorkDataResult.Successed)
                 {
                     var temp = netWorkDataResult.Data;
-                    await Context.CurrentPlayMusics.AddRangeAsync(temp, x => Context.PlayCommand.Execute(x[0]));
+                    await this._playPart.MusicsListCollection.AddRangeAsync(temp, async x =>await this._playPart.Play(x[0]));
                     var parmater = new NavigationParameters();
                     parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, temp[0].Id);
-                    this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayPanelView), parmater); 
+                    this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(PlayPanelView), parmater); 
                 }
                 else
                 {
@@ -58,7 +65,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
             else
             {
-                InteractionRequests.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
+                this._interactionRequestsProxy.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
                 {
                     Title = "登陆"
                 }, x =>
@@ -70,7 +77,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
         private void BillBoardCommandExecute()
         {
-            this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.BillBoardView));
+            this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.BillBoardView));
         }
 
         private void NewMvCommandExecute(Mv mv)
@@ -83,9 +90,9 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         private void EveryDayMusicRecommendCommandExecute()
         {
             if (this._dentityService.CurrentUser!= null)
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.EveryDayMusicRecommendView));
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.EveryDayMusicRecommendView));
             else
-                InteractionRequests.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
+                this._interactionRequestsProxy.LoginInteractionRequest.Raise(new Prism.Interactivity.InteractionRequest.Confirmation
                 {
                     Title = "登陆"
                 }, x =>
@@ -100,7 +107,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, mvId.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(MvPlayView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(MvPlayView), parmater);
             }
         }
 
@@ -108,7 +115,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         {
             if (music != null)
             {
-                Context.PlayCommand.Execute(music);
+                this._playPart.Play(music).Wait(1000);
             }
         }
 
@@ -117,13 +124,13 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             switch (arg)
             {
                 case "1":
-                    this._navigationService.RequestNavigate(Context.RegionName, nameof(FindMusicView) + "?TabIndex=1");
+                    this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(FindMusicView) + "?TabIndex=1");
                     break;
                 case "2":
                     //独家放送实现
                     break;
                 case "3":
-                    this._navigationService.RequestNavigate(Context.RegionName, nameof(FindMusicView) + "?TabIndex=3");
+                    this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(FindMusicView) + "?TabIndex=3");
 
                     break;
                 case "4":
@@ -139,7 +146,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         {
             var parmater = new NavigationParameters();
             parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, playListModel.Id);
-            this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayListDetailView), parmater);
+            this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(PlayListDetailView), parmater);
             // this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayListDetailView)+ $"?PlayListId={playListModel.Id}");
         }
         private void PrivateContentCommandExecute(PictureListBoxItem pictureListBoxItem)

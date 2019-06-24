@@ -12,7 +12,13 @@ namespace NeteaseCloudMusic.Wpf.BindingConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-
+            if (values[0].GetType()==typeof(double))
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    values[i] = TimeSpan.FromMilliseconds((double)values[i]);
+                }
+            }
             try
             {
                 var temp1 = values[0].ToString().Split(':').Select(double.Parse).ToArray();

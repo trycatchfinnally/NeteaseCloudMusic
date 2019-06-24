@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Properties;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -53,7 +54,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, playListModel.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayListDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(PlayListDetailView), parmater);
             }
 
         }

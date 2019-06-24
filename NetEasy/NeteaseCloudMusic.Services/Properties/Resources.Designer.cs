@@ -61,7 +61,7 @@ namespace NeteaseCloudMusic.Services.Properties {
         }
         
         /// <summary>
-        ///   查找类似 http://47.101.43.134 的本地化字符串。
+        ///   查找类似 https://www.aspnetcore.store:10086 的本地化字符串。
         /// </summary>
         internal static string ServiceUri {
             get {

@@ -9,6 +9,7 @@ using Prism.Regions;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using NeteaseCloudMusic.Services.NetWork;
+using NeteaseCloudMusic.Wpf.Properties;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -97,7 +98,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             if (SelectedIndex==0&&!_dataIsInit)
             {
 
-                var netWorkDataResult = await _netWorkServices.GetAsync<Global.Model.Mv[]>("Mv", "GetNetMv", new { limit = Context.LimitPerPage });
+                var netWorkDataResult = await _netWorkServices.GetAsync<Global.Model.Mv[]>("Mv", "GetNetMv", new { limit = Settings.Default.LimitPerPage });
 
                 if (netWorkDataResult.Successed)
                 {

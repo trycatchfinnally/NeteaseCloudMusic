@@ -13,7 +13,7 @@ namespace NeteaseCloudMusic.Wpf.BindingConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is double && Math.Abs(System.Convert.ToDouble(value)) < 1e-8)
+            if ((value is double ||value is int)&& Math.Abs(System.Convert.ToDouble(value)) < 1e-8)
             {
                 return Visibility.Collapsed;
             }

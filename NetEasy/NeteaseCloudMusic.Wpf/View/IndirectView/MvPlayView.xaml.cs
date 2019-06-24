@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using NeteaseCloudMusic.Wpf.Proxy;
 
 namespace NeteaseCloudMusic.Wpf.View.IndirectView
 {
@@ -21,9 +22,11 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
     /// </summary>
     public partial class MvPlayView
     {
+        private readonly PlayPartCore _playPart;
 
-        public MvPlayView(MvPlayViewModel viewModel)
+        public MvPlayView(MvPlayViewModel viewModel,PlayPartCore playPart)
         {
+            _playPart = playPart;
             this.DataContext = viewModel;
             viewModel.RefreshCompleated += ViewModel_RefreshCompleated;
             InitializeComponent();
@@ -42,7 +45,7 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
             if (playButton.IsChecked == true)
             {
                 this.mvPlayer.Play();
-                Context.PauseCommand.Execute(null);
+                _playPart.Pause();
             }
             else { this.mvPlayer.Pause(); }
         }
@@ -84,7 +87,7 @@ namespace NeteaseCloudMusic.Wpf.View.IndirectView
             if (playButton.IsChecked == true)
             {
                 this.mvPlayer.Play();
-                Context.PauseCommand.Execute(null);
+                _playPart.Pause();
             }
             this.tgVideoPiex.Content = ((KeyValuePair<int, string>)e.AddedItems[0]).Key;
         }

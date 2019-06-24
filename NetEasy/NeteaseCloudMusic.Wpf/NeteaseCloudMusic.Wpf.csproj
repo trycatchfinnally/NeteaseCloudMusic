@@ -15,6 +15,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <PublishUrl>ftp://47.101.43.134/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -32,8 +34,7 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -248,13 +249,15 @@
     <Compile Include="BindingConverter\TimeSpan2MillSecondsConverter.cs" />
     <Compile Include="BindingConverter\TimeSpan2TextConverter.cs" />
     <Compile Include="BindingConverter\ValueConverterFactory.cs" />
-    <Compile Include="Context.cs" />
+    <Compile Include="Controls\Pager.xaml.cs">
+      <DependentUpon>Pager.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PlayPartCore.cs" />
     <Compile Include="Controls\ImageButton.cs" />
     <Compile Include="Controls\MenuPartControl.cs" />
     <Compile Include="Controls\TitleButton.cs" />
     <Compile Include="Controls\TwoLineLabel.cs" />
     <Compile Include="Extensions\ObservableCollectionExtensions.cs" />
-    <Compile Include="InteractionRequests.cs" />
     <Compile Include="Model\AnchorRadioCatalogueModel.cs" />
     <Compile Include="Model\ArtistModel.cs" />
     <Compile Include="Model\BannerModel.cs" />
@@ -268,6 +271,7 @@
     <Compile Include="Model\PlayListModel.cs" />
     <Compile Include="Model\RadioModel.cs" />
     <Compile Include="Modules\MainRegionModule.cs" />
+    <Compile Include="Proxy\InteractionRequestsProxy.cs" />
     <Compile Include="Services\WindowsFileServices.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SplashscreenWindow.xaml.cs">
@@ -406,6 +410,10 @@
       <DependentUpon>PersonalityRecommendView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Search\SearchViewModel.cs" />
+    <Page Include="Controls\Pager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

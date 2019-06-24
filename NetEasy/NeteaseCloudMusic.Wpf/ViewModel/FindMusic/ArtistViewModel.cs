@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Properties;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -49,7 +50,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
             }
         }
 
@@ -59,7 +60,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, id.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.UserZoneView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.UserZoneView), parmater);
             }
         }
 
@@ -84,7 +85,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                     var netWorkDataResult = await this._netWorkServices.GetAsync<KeyValuePair<bool, Global.Model.Artist[]>>("FindMusic", "ArtistsList",
                         new
                         {
-                            limit = Context.LimitPerPage,
+                            limit = Settings.Default.LimitPerPage,
                             offset = this._offset,
                             cat = int.Parse(catString),
                             initial = SelectedPinYin == "99" ? 0 : Convert.ToChar(SelectedPinYin)

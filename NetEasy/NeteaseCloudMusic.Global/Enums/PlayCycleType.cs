@@ -1,22 +1,29 @@
-﻿namespace NeteaseCloudMusic.Global.Enums
+﻿using System.ComponentModel;
+
+namespace NeteaseCloudMusic.Global.Enums
 {
-  public   enum PlayCycleType
+    public enum PlayCycleType
     {
         /// <summary>
         /// 全部重复
         /// </summary>
-        RepeatAll=0,
+        [DescriptionAttribute("列表循环")]
+        RepeatAll = 0,
         /// <summary>
         /// 单曲重复
         /// </summary>
-        RepeatOne=1,
+        [DescriptionAttribute("单曲循环")]
+        RepeatOne = 1,
         /// <summary>
         /// 顺序播放
         /// </summary>
-        Order=2,
+        [DescriptionAttribute("顺序播放")]
+        Order = 2,
         /// <summary>
         /// 随机播放
         /// </summary>
-        Random=3
+        [DescriptionAttribute("随机播放")]
+        Random = 3
+
     }
 }

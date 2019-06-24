@@ -12,6 +12,7 @@ using NeteaseCloudMusic.Global.Enums;
 using Prism.Commands;
 using NeteaseCloudMusic.Global.Model;
 using NeteaseCloudMusic.Services.NetWork;
+using NeteaseCloudMusic.Wpf.Properties;
 using Prism.Regions;
 using Newtonsoft.Json;
 using NeteaseCloudMusic.Wpf.View.IndirectView;
@@ -41,7 +42,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(MvPlayView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(MvPlayView), parmater);
             }
         }
 

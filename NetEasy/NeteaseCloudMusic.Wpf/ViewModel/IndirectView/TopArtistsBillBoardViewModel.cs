@@ -8,6 +8,7 @@ using System.Windows.Input;
 using NeteaseCloudMusic.Global.Model;
 using NeteaseCloudMusic.Services.NetWork;
 using NeteaseCloudMusic.Wpf.Extensions;
+using NeteaseCloudMusic.Wpf.Properties;
 using NeteaseCloudMusic.Wpf.View.IndirectView;
 using Newtonsoft.Json;
 using Prism.Commands;
@@ -32,7 +33,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             if (obj == null) return;
             var parmater = new NavigationParameters();
             parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-            this._navigationService.RequestNavigate(Context.RegionName, nameof(ArtistDetailView), parmater);
+            this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(ArtistDetailView), parmater);
         }
 
         bool INavigationAware.IsNavigationTarget(NavigationContext navigationContext)

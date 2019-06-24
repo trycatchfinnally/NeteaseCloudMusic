@@ -95,7 +95,7 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
-        <prism:InteractionRequestTrigger  SourceObject="{ x:Static local:Context.AutoDisplayPopupRequest}">
+        <prism:InteractionRequestTrigger  SourceObject="{Binding AutodisappeaRequest}">
             <prism:PopupWindowAction IsModal="False" CenterOverAssociatedObject="True"    >
                 <prism:PopupWindowAction.WindowStyle>
                     <Style TargetType="Window">
@@ -234,7 +234,7 @@
                                       Command="{Binding OpenPlayPanelCommand}">
 
                 </controls:ImageButton>
-                <Button Grid.Column=" 1"   Width=" 30" Height=" 30" Command="{x:Static local:Context.PrevTrackCommand}">
+                <Button Grid.Column=" 1"   Width=" 30" Height=" 30" Command="{Binding PrevCommand}">
                     <StackPanel >
                         <Rectangle />
 
@@ -283,7 +283,7 @@
                         <SolidColorBrush Color="{StaticResource WindowTitleColor}"/>
                     </ToggleButton.Background>
                 </ToggleButton>
-                <Button Grid.Column=" 3"   Width=" 30" Height=" 30" Command="{x:Static local:Context.NextTrackCommand}">
+                <Button Grid.Column=" 3"   Width=" 30" Height=" 30" Command="{Binding NextCommand}">
                     <StackPanel  >
                         <ed:RegularPolygon   >
                             <ed:RegularPolygon.RenderTransform>
@@ -336,15 +336,18 @@
                     <TextBlock  Width="60"  Grid.Column=" 1">
                         <TextBlock.Text>
                             <MultiBinding Converter="{x:Static converter:MultiValueConverterFactory.TimeSpan2TextConverter}">
-                                <Binding Path="CurrentTimeSpan" />
+                                <Binding Path="PositionMilliseconds" />
 
-                                <Binding Path="TotalTimeSpan" />
+                                <Binding Path="DurationMilliseconds" />
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>
                 </Grid>
-                <Slider Grid.Row=" 1"  Maximum="{Binding TotalTimeSpan,Converter={x:Static converter:ValueConverterFactory.TimeSpan2MillSecondsConverter}}"  
-                        Value="{Binding CurrentTimeSpan,Converter={x:Static converter:ValueConverterFactory.TimeSpan2MillSecondsConverter}}" />
+                <Slider Grid.Row=" 1"  
+                        x:Name="positionSlider"
+                        Maximum="{Binding DurationMilliseconds}"
+Value="{Binding PositionMilliseconds}"
+                        />
 
 
             </Grid>
@@ -688,7 +691,7 @@
                         Margin="5,5,0,5">
                                 <Image.Source>
                                     <BitmapImage DecodePixelWidth="30" 
-                                                 UriSource="{Binding LoginInUser.UserImage,FallbackValue=Assets/TestImages/最新音乐测试.png}"/>
+                                                 UriSource="{Binding LoginInUser.UserImage,TargetNullValue=Assets/TestImages/最新音乐测试.png}"/>
                                 </Image.Source>
                                 <Image.Clip>
                                     <EllipseGeometry RadiusX="15" RadiusY="15" Center="15,15"></EllipseGeometry>

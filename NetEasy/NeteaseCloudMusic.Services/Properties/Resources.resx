@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ServiceUri" xml:space="preserve">
-    <value>http://47.101.43.134</value>
+    <value>https://www.aspnetcore.store:10086</value>
     <comment>服务器地址</comment>
   </data>
 </root>

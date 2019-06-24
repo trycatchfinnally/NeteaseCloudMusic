@@ -28,7 +28,6 @@ namespace NeteaseCloudMusic.Wpf.View.Popup
             InitializeComponent();
         }
 
-        public bool KeepAlive => false;
 
         private async void ContentControl_Loaded(object sender, RoutedEventArgs e)
         {

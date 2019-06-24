@@ -15,14 +15,18 @@ using Prism.Commands;
 using System.Collections;
 using NeteaseCloudMusic.Wpf.View.IndirectView;
 using System.Threading;
+using Microsoft.Expression.Controls;
+using NeteaseCloudMusic.Wpf.Properties;
+using NeteaseCloudMusic.Wpf.Proxy;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 {
     public class ArtistDetailViewModel : IndirectViewModelBase
     {
-        private const int RequireCountPerPage = Context.LimitPerPage;
+        private readonly int RequireCountPerPage = Settings.Default.LimitPerPage;
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
+        private readonly PlayPartCore _playPart;
         private bool _isSelectedModel;
         private Artist _innerArtist = new Artist();
         private Music[] selectedMusics;
@@ -30,10 +34,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         private CancellationTokenSource _mvOffsetCancellationToken;
 
         public ArtistDetailViewModel(INetWorkServices netWorkServices,
-            IRegionManager navigationService)
+            IRegionManager navigationService,PlayPartCore playPart)
         {
             this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
+            _playPart = playPart;
             PlayAllCommand = new DelegateCommand(PlayAllCommandExecute);
             SelectedCommand = new DelegateCommand<IEnumerable>(SelectedCommandExecute);
             HotMusicMvCommand = new DelegateCommand<long?>(HotMusicMvCommandExecute);
@@ -125,7 +130,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(NavigationIdParmmeterName, mvId.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(MvPlayView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(MvPlayView), parmater);
             }
         }
 
@@ -159,17 +164,15 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
                    SimiArtists.AddRangeAsync(task5.Result.Data));
                 RaiseAllPropertyChanged();
             }
-            else
-            {
-                //todo 网络连接四百
-            }
+            
 
         }
         private async void PlayAllCommandExecute()
         {
-            Context.CurrentPlayMusics.Clear();
+            _playPart.MusicsListCollection.Clear();
+            _playPart.Stop();
             if (HotMusics.Count == 0) return;
-            await Context.CurrentPlayMusics.AddRangeAsync(HotMusics, range => Context.PlayCommand.Execute(range.First()));
+            await _playPart.MusicsListCollection.AddRangeAsync(HotMusics, async range => await _playPart.Play(range.First()));
 
         }
         private async void SelectedCommandExecute(IEnumerable items)
@@ -182,11 +185,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var temp = items.Cast<Music>().FirstOrDefault();
                 if (temp != null)
-                    Context.PlayCommand.Execute(temp);
+                    await _playPart.Play(temp);
                 return;
             }
 
-            await Context.CurrentPlayMusics.AddRangeAsync(selectedMusics, source => Context.PlayCommand.Execute(source.First()));
+            await _playPart.MusicsListCollection.AddRangeAsync(selectedMusics, async source => await _playPart.Play(source.First()));
             selectedMusics = null;
         }
         /// <summary>

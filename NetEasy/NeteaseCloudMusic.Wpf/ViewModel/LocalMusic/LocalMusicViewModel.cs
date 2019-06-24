@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Properties;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -109,7 +110,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 if (!string.IsNullOrEmpty(temp))
                 {
                     List<string> files = new List<string>();
-                    var extensions = Context.SupportFileExtension.Split('|');
+                    var extensions =Settings.Default.SupportFileExtension.Split('|');
                     foreach (var item in extensions)
                     {
                         files.AddRange(this._fileServices.GetFiles(temp, true, item));
@@ -118,11 +119,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 }
                 return Array.Empty<string>();
             }, state: selectPath);
-            int totalPage = (int)Math.Ceiling(result.Length / (double)Context.LimitPerPage);
+            int totalPage = (int)Math.Ceiling(result.Length / (double)Settings.Default.LimitPerPage);
             var tasks = new List<Task<LocalMusic[]>>();
             for (int i = 0; i < totalPage; i++)
             {
-                var tmp = result.Skip(i * Context.LimitPerPage).Take(Context.LimitPerPage);
+                var tmp = result.Skip(i * Settings.Default.LimitPerPage).Take(Settings.Default.LimitPerPage);
                 tasks.Add(SelectMethod(tmp));
             }
 

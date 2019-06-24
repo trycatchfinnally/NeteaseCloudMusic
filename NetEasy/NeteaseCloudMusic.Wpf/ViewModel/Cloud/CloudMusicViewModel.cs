@@ -10,32 +10,36 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Properties;
+using NeteaseCloudMusic.Wpf.Proxy;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel.Cloud
 {
     public class CloudMusicViewModel : NavigationViewModelBase
     {
         private Global.Model.CloudDisk _innerModel = new Global.Model.CloudDisk();
-        private bool _dataIsInit = false;
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
-        public CloudMusicViewModel(INetWorkServices netWorkServvices, IRegionManager navigationService)
+        private readonly PlayPartCore _playPart;
+        private bool _dataIsInit;
+        public CloudMusicViewModel(INetWorkServices netWorkServices, IRegionManager navigationService, PlayPartCore playPart)
         {
-            this._netWorkServices = netWorkServvices;
+            this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
+            this._playPart = playPart;
             PlayAllCloudMusicCommand = new DelegateCommand(PlayAllCloudMusicCommandExecute);
             AlbumCommand = new DelegateCommand<long?>(AlbumCommandExecute);
             ArtistCommand = new DelegateCommand<long?>(ArtistCommandExecute);
             SelectedCommand = new DelegateCommand<IEnumerable>(SelectedCommandExecute);
         }
 
-        private void SelectedCommandExecute(IEnumerable obj)
+        private async void SelectedCommandExecute(IEnumerable obj)
         {
             if (obj == null) return;
             var tmp = obj.Cast<CloudMusic>().ToArray();
             if (tmp.Length == 1)
             {
-                Context.PlayCommand.Execute(new Music
+                await this._playPart.Play(new Music
                 {
                     Id = tmp[0].Id,
                     Name = tmp[0].Name,
@@ -50,7 +54,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.Cloud
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
             }
         }
 
@@ -60,7 +64,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.Cloud
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.AlbumView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.AlbumView), parmater);
             }
         }
 
@@ -68,13 +72,13 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.Cloud
         {
             if (CloudMusics.Count > 0)
             {
-                await Context.CurrentPlayMusics.AddRangeAsync(CloudMusics.Select(x => new Music
+                await this._playPart.MusicsListCollection.AddRangeAsync(CloudMusics.Select(x => new Music
                 {
                     Id = x.Id,
                     Name = x.Name,
                     Duration = x.SimpleMusic?.Duration ?? TimeSpan.Zero,
 
-                }), x => Context.PlayCommand.Execute(x[0]));
+                }), async x => await this._playPart.Play(x[0]));
             }
         }
 
@@ -95,7 +99,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.Cloud
                 }
                 else
                 {
-                   //显示网络连接失败的提示信息
+
+                    //显示网络连接失败的提示信息
                 }
 
             }

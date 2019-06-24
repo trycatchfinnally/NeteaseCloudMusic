@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using NeteaseCloudMusic.Global.Model;
 using NeteaseCloudMusic.Services.NetWork;
 using NeteaseCloudMusic.Wpf.Extensions;
-using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Regions;
 
@@ -19,21 +15,23 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
     {
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
+        private readonly PlayPartCore _playPart;
         private Global.Model.Album _innerAlbum = new Global.Model.Album();
         private bool _isSelectedModel;
-        private Music[] selectedMusics;
+        private Music[] _selectedMusics;
         public AlbumViewModel(INetWorkServices netWorkServices,
-            IRegionManager navigationService)
+            IRegionManager navigationService, PlayPartCore playPart)
         {
             this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
+            this._playPart = playPart;
             PlayAllCommand = new DelegateCommand(PlayAllCommandExecute);
             this.SelectedCommand = new DelegateCommand<IEnumerable>(SelectedCommandExecute);
 
         }
         protected override async void SetById(long id)
         {
-            var netWorkDataResult= await this._netWorkServices.GetAsync<Album>("Album", "GetAlbumDetailById", new { id });
+            var netWorkDataResult = await this._netWorkServices.GetAsync<Album>("Album", "GetAlbumDetailById", new { id });
             if (netWorkDataResult.Successed)
             {
                 _innerAlbum = netWorkDataResult.Data;
@@ -44,33 +42,34 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 //todo 网络相关提示信息
             }
-            
+
         }
         private async void SelectedCommandExecute(IEnumerable items)
         {
             if (IsSelectedModel)
             {
-                this.selectedMusics = items.Cast<Music>().ToArray(); return;
+                this._selectedMusics = items.Cast<Music>().ToArray(); return;
             }
-            else if (selectedMusics == null)
+            else if (_selectedMusics == null)
             {
                 var temp = items.Cast<Music>().FirstOrDefault();
                 if (temp != null)
-                    Context.PlayCommand.Execute(temp);
+                    await this._playPart.Play(temp);
                 return;
             }
 
-            await Context.CurrentPlayMusics.AddRangeAsync(selectedMusics, source => Context.PlayCommand.Execute(source.First()));
-            selectedMusics = null;
+            await this._playPart.MusicsListCollection.AddRangeAsync(_selectedMusics, async source => await this._playPart.Play(source[0]));
+            _selectedMusics = null;
         }
         private async void PlayAllCommandExecute()
         {
             if (this.AlbumMusics.Count == 0)
             {
-                Context.CurrentPlayMusics.Clear();
+                this._playPart.MusicsListCollection.Clear();
+                this._playPart.Stop();
                 return;
             }
-            await Context.CurrentPlayMusics.AddRangeAsync(AlbumMusics, range => Context.PlayCommand.Execute(range.First()));
+            await this._playPart.MusicsListCollection.AddRangeAsync(AlbumMusics, async range => await this._playPart.Play(range.First()));
 
         }
         /// <summary>

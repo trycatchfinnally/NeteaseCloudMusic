@@ -8,6 +8,7 @@
                   xmlns:prism="http://www.codeplex.com/prism"
                 xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
                 xmlns:converter="clr-namespace:NeteaseCloudMusic.Wpf.BindingConverter"
+                xmlns:controls="clr-namespace:NeteaseCloudMusic.Wpf.Controls"
                 mc:Ignorable="d" 
              d:DesignHeight="1800" d:DesignWidth="800"  Unloaded="ContentControl_Unloaded">
     <ScrollViewer>
@@ -358,7 +359,7 @@
                                 <!--<Rectangle Style="{StaticResource HorizontalDecorationRectangleStyle}"/>-->
                                 <ListBox  ItemsSource="{Binding NewComments}"/>
                             </StackPanel>
-                            <StackPanel HorizontalAlignment="Center" Margin="0,30" Orientation="Horizontal">
+                            <!--<StackPanel HorizontalAlignment="Center" Margin="0,30" Orientation="Horizontal">
                                 <Button  >
                                     <Path Stretch="Uniform" Width=" 8" Data="M0,50 l40,50 M0,50 l40,-50" StrokeThickness="2.5" >
                                         <Path.Stroke>
@@ -379,7 +380,8 @@
                                     </Path>
                                 </Button>
 
-                            </StackPanel>
+                            </StackPanel>-->
+                            <controls:Pager Total="{Binding CommentCount}" CurrentPage="{Binding CurrentPage,Mode=TwoWay}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <TextBlock Style="{StaticResource DarkBottomTextBoxStyle}" Text="MV介绍"/>

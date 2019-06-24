@@ -13,6 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Properties;
+using NeteaseCloudMusic.Wpf.Proxy;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 {
@@ -20,16 +22,19 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
     {
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
-        private Music[] selectedMusics;
+        private readonly PlayPartCore _playPart;
+        private Music[] _selectedMusics;
         private bool _isSelectedModel;
         //是否已经加载好数据，如果已经加载，重新导航到当前页面时不执行联网操作
         private bool _isdataInit;
-        public EveryDayMusicRecommendViewModel(INetWorkServices netWorkServices, IRegionManager navigationService)
+        public EveryDayMusicRecommendViewModel(INetWorkServices netWorkServices, IRegionManager navigationService,
+            PlayPartCore playPart)
         {
             this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
+            this._playPart = playPart;
             RecomendMvCommand = new DelegateCommand<long?>(RecomendMvCommandExecute);
-            PlayAllCommand =new DelegateCommand(PlayAllCommandExecute);
+            PlayAllCommand = new DelegateCommand(PlayAllCommandExecute);
             SelectedCommand = new DelegateCommand<IEnumerable>(SelectedCommandExecute);
             MusicAlbumCommand = new DelegateCommand<Album>(MusicAlbumCommandExecute);
             MusicArtistCommand = new DelegateCommand<long?>(MusicArtistCommandExecute);
@@ -40,8 +45,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             if (id > 0)
             {
                 var parmater = new NavigationParameters();
-                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName,id.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
+                parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, id.Value);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
             }
         }
 
@@ -51,32 +56,41 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.AlbumView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.AlbumView), parmater);
             }
         }
-
-        private async  void PlayAllCommandExecute()
+        /// <summary>
+        /// 播放全部的命令
+        /// </summary>
+        private async void PlayAllCommandExecute()
         {
-            Context.CurrentPlayMusics.Clear();
-            if (RecommendMusics.Count == 0) return;
-            await Context.CurrentPlayMusics.AddRangeAsync(RecommendMusics, range => Context.PlayCommand.Execute(range.First()));
+            var temp = this._playPart.MusicsListCollection;
+            temp.Clear();
+            if (RecommendMusics.Count != 0)
+            {
+                await temp.AddRangeAsync(RecommendMusics, range => this._playPart.Play(range[0]).Wait(100));
+            }
         }
+        /// <summary>
+        /// 选择按钮
+        /// </summary>
+        /// <param name="items"></param>
         private async void SelectedCommandExecute(IEnumerable items)
         {
             if (IsSelectedModel)
             {
-                this.selectedMusics = items.Cast<Music>().ToArray(); return;
+                this._selectedMusics = items.Cast<Music>().ToArray(); return;
             }
-            else if (selectedMusics == null)
+            else if (this._selectedMusics == null)
             {
                 var temp = items.Cast<Music>().FirstOrDefault();
                 if (temp != null)
-                    Context.PlayCommand.Execute(temp);
+                    await this._playPart.Play(temp);
                 return;
             }
 
-            await Context.CurrentPlayMusics.AddRangeAsync(selectedMusics, source => Context.PlayCommand.Execute(source.First()));
-            selectedMusics = null;
+            await this._playPart.MusicsListCollection.AddRangeAsync(RecommendMusics, range => this._playPart.Play(range[0]).Wait(100));
+            this._selectedMusics = null;
         }
         private void RecomendMvCommandExecute(long? mvId)
         {
@@ -84,7 +98,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, mvId.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.MvPlayView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.MvPlayView), parmater);
             }
         }
         public override void OnNavigatedTo(NavigationContext navigationContext)
@@ -97,11 +111,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         }
         private async void InitData()
         {
-            var netWorkDataResult=await _netWorkServices.GetAsync<Music[]>("FindMusic", "GetEveryDayMusicRecommend");
+            var netWorkDataResult = await _netWorkServices.GetAsync<Music[]>("FindMusic", "GetEveryDayMusicRecommend");
             if (netWorkDataResult.Successed)
             {
                 var temp = netWorkDataResult.Data;
-                await RecommendMusics.AddRangeAsync(temp); 
+                await RecommendMusics.AddRangeAsync(temp);
             }
             else
             {
@@ -126,6 +140,9 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         public ICommand SelectedCommand { get; }
         public ICommand MusicAlbumCommand { get; }
         public ICommand MusicArtistCommand { get; }
+        /// <summary>
+        /// 代表推荐的音乐
+        /// </summary>
         public ObservableCollection<Global.Model.Music> RecommendMusics { get; } = new ObservableCollection<Global.Model.Music>();
     }
 }

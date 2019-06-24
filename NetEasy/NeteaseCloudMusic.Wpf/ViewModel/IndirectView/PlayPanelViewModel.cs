@@ -8,8 +8,11 @@ using Prism.Regions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Properties;
+using NeteaseCloudMusic.Wpf.Proxy;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 {
@@ -17,16 +20,20 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
     {
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
-
+        private readonly PlayPartCore _playPart;
+        private uint _currentPage = 1;
         private Music _innerMusic = new Music();
-        private  CommentCollection _innerComment;
+        private CommentCollection _innerComment;
         public PlayPanelViewModel(INetWorkServices netWorkServices,
-            IRegionManager navigationService, IEventAggregator eventAggregator
+            IRegionManager navigationService,
+
+            PlayPartCore playPart
             )
         {
             this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
-            eventAggregator.GetEvent<CurrentPlayMusicChangeEventArgs>().Subscribe(RefreshMusic);
+            _playPart = playPart;
+            playPart.MusicChanged += (sender, e) => RefreshMusic(e);
             UserCommand = new DelegateCommand<long?>(UserCommandExecute);
             AlbumCommand = new DelegateCommand<long?>(AlbumCommandExecute);
             ArtistCommand = new DelegateCommand<long?>(ArtistCommandExecute);
@@ -35,20 +42,41 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             AddCommentCommand = new DelegateCommand<string>(AddCommentCommandExecute);
             ThumbsUpCommand = new DelegateCommand<long?>(ThumbsUpCommandExecute);
         }
-
+        /// <summary>
+        /// 当当前页发生变化的时候，刷新
+        /// </summary>
+        private async void OnCurrentPageChanged()
+        {
+            if (this._innerComment.More)
+            {
+                var ccDataResult = await this._netWorkServices.GetAsync<CommentCollection>("Common", "GetCommentById", new
+                {
+                    commentThreadId = $"R_SO_4_{Id}",
+                    offset = ((int)CurrentPage-1) * Settings.Default.LimitPerPage,
+                    limit = Settings.Default.LimitPerPage
+                });
+                if (ccDataResult.Successed)
+                {
+                    this._innerComment = ccDataResult.Data;
+                    await Task.WhenAll(NewComments.AddRangeAsync(this._innerComment.Comments),
+                        HotComments.AddRangeAsync(this._innerComment.HotComments));
+                   // RaiseAllPropertyChanged();
+                }
+            }
+        }
         private async void ThumbsUpCommandExecute(long? obj)
         {
             if (obj > 0)
             {
-                 await this._netWorkServices.GetAsync<Dictionary<string ,object>>("Common", "ThumbsUpComment", new
+                await this._netWorkServices.GetAsync<Dictionary<string, object>>("Common", "ThumbsUpComment", new
                 {
                     commentId = obj.Value,
                     commentThreadId = Global.Enums.CommentType.R_SO_4_.ToString() + Id,
                     thumbsUp = true
                 });
-                var query = HotComments.Select((x, i) => new {Model = x, Index = i})
+                var query = HotComments.Select((x, i) => new { Model = x, Index = i })
                     .FirstOrDefault(x => x.Model.CommentId == obj);
-                if (query!=null )
+                if (query != null)
                 {
                     query.Model.LikedCount++;
                     HotComments.RemoveAt(query.Index);
@@ -69,11 +97,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 
         private async void AddCommentCommandExecute(string commentContent)
         {
-            if (string.IsNullOrEmpty(commentContent)||!Id.HasValue)
+            if (string.IsNullOrEmpty(commentContent) || !Id.HasValue)
             {
                 return;
             }
-            var netWorkDataResult= await this._netWorkServices.GetAsync<Comment>("Common", "AddComment", new
+            var netWorkDataResult = await this._netWorkServices.GetAsync<Comment>("Common", "AddComment", new
             {
                 resourceId = Id.Value,
                 type = Global.Enums.CommentType.R_SO_4_,
@@ -109,14 +137,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.PlayListDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.PlayListDetailView), parmater);
             }
         }
-        private void SimiMusicCommandExecute(Music music)
+        private async void SimiMusicCommandExecute(Music music)
         {
             if (music != null)
             {
-                Context.PlayCommand.Execute(music);
+                await this._playPart.Play(music);
             }
         }
         private void UserCommandExecute(long? id)
@@ -125,7 +153,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(NavigationIdParmmeterName, id.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.UserZoneView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.UserZoneView), parmater);
             }
         }
         private void AlbumCommandExecute(long? id)
@@ -134,7 +162,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(NavigationIdParmmeterName, id.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.AlbumView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.AlbumView), parmater);
             }
         }
         private void ArtistCommandExecute(long? id)
@@ -143,7 +171,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(NavigationIdParmmeterName, id.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
             }
         }
         protected override async void SetById(long id)
@@ -155,10 +183,10 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             var task5 = this._netWorkServices.GetAsync<PlayList[]>("Music", "GetSimiPlayList", new { id });
             await Task.WhenAll(task1, task2, task3, task4, task5);
 
-            if (task1.Result.Successed&&
-                task2.Result.Successed&&
-                task3.Result.Successed&&
-                task4.Result.Successed&&
+            if (task1.Result.Successed &&
+                task2.Result.Successed &&
+                task3.Result.Successed &&
+                task4.Result.Successed &&
                 task5.Result.Successed)
             {
                 this._innerMusic = task1.Result.Data;
@@ -170,6 +198,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
                 HotComments.AddRangeAsync(this._innerComment.HotComments),
                  Lryics.AddRangeAsync(task4.Result.Data),
                  ContainsThisTrackList.AddRangeAsync(task5.Result.Data));
+                this._currentPage = 1;
                 RaiseAllPropertyChanged();
             }
             else
@@ -180,7 +209,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         }
         public override void OnNavigatedTo(NavigationContext navigationContext)
         {
-            if (navigationContext.Parameters.ContainsKey(nameof(Id)) && Id> 0)
+            if (navigationContext.Parameters.ContainsKey(nameof(Id)) && Id > 0)
             {
                 var id = System.Convert.ToInt64(navigationContext.Parameters[nameof(Id)]);
                 if (id != Id)
@@ -189,7 +218,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
                 }
             }
 
-            
+
             base.OnNavigatedTo(navigationContext);
         }
         /// <summary>
@@ -205,8 +234,35 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         /// </summary>
         public string AlbumName => this._innerMusic.Album?.Name;
         public long? AlbumId => this._innerMusic.Album?.Id;
+        /// <summary>
+        /// 表示评论的数量
+        /// </summary>
+        public uint CommentCount
+        {
+            get
+            {
+                var temp = this._innerComment?.Total;
+                if (temp >= 0)
+                {
+                    return System.Convert.ToUInt32(temp.Value);
+                }
+
+                return 0;
+            }
+        }
+
+        public uint CurrentPage
+        {
+            get { return this._currentPage; }
+            set
+            {
+                SetProperty(ref this._currentPage, value);
+                OnCurrentPageChanged();
+            }
+        }
+
         public ObservableCollection<Artist> Artists { get; } = new ObservableCollection<Artist>();
-        public int CommentCount => this._innerComment?.Total ?? 0;
+
         /// <summary>
         /// 代表歌词的
         /// </summary>

@@ -14,6 +14,9 @@ using System.Windows.Media.Animation;
 using System.Xml.Linq;
 using NeteaseCloudMusic.Services.HttpCookie;
 using NeteaseCloudMusic.Services.Identity;
+using NeteaseCloudMusic.Wpf.Proxy;
+using Prism.Interactivity.InteractionRequest;
+using Prism.Logging;
 
 namespace NeteaseCloudMusic.Wpf
 {
@@ -22,20 +25,22 @@ namespace NeteaseCloudMusic.Wpf
     /// </summary>
     public partial class App : PrismApplication
     {
-        protected override   Window CreateShell()
+        protected override Window CreateShell()
         {
+            var inetworkService = Container.Resolve<INetWorkServices>();
+            inetworkService.HttpExceptionAction = content => Container.Resolve<InteractionRequestsProxy>().AutoDisappearPopupRequest.Raise(new Notification { Title = "sdfg", Content = content });
             return Container.Resolve<MainWindow>();
         }
         protected override async void OnStartup(StartupEventArgs e)
         {
             Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
-           // var dentityService = CommonServiceLocator.ServiceLocator.Current.GetInstance<IdentityService>();
+            // var dentityService = CommonServiceLocator.ServiceLocator.Current.GetInstance<IdentityService>();
             SplashscreenWindow sw = new Wpf.SplashscreenWindow();
             try
             {
                 FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(
                     XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
-                var rect = ( NeteaseCloudMusic.Wpf.Properties.Settings.Default.WindowLocation);
+                var rect = (NeteaseCloudMusic.Wpf.Properties.Settings.Default.WindowLocation);
                 sw.Left = rect.Left;
                 sw.Top = rect.Top;
                 sw.Width = rect.Width;
@@ -82,12 +87,18 @@ namespace NeteaseCloudMusic.Wpf
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<ICookieService,LocalFileCookieService>();
+            containerRegistry.RegisterSingleton<ICookieService, LocalFileCookieService>();
             containerRegistry.RegisterSingleton<INetWorkServices, NeteaseCloundMusicNetWorkServices>();
             containerRegistry.RegisterSingleton<IAudioPlayableServices, NAudioPlayableServices>();
             containerRegistry
                 .RegisterSingleton<NeteaseCloudMusic.Services.LocalFile.IFileServices, Services.WindowsFileServices>();
-            containerRegistry.RegisterSingleton<IdentityService,DefaultIdentityService>();
+            containerRegistry.RegisterSingleton<IdentityService, DefaultIdentityService>();
+            containerRegistry.RegisterSingleton(typeof(InteractionRequestsProxy));
+            containerRegistry.RegisterSingleton(typeof(PlayPartCore));
+
+
+
+
         }
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {

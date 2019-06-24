@@ -2,11 +2,14 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using NeteaseCloudMusic.Services.AudioDecode;
+using NeteaseCloudMusic.Wpf.Properties;
 using Unity;
 using Unity.Attributes;
 
@@ -17,17 +20,15 @@ namespace NeteaseCloudMusic.Wpf
     /// </summary>
     public partial class MainWindow
     {
-        public MainWindow()
+        public MainWindow(MainWindowViewModel viewModel )
         {
+            DataContext = viewModel;
             InitializeComponent();
+        
+        }
+     
 
-        }
-        [DependencyAttribute]
-        public MainWindowViewModel ViewModel
-        {
-            get { return DataContext as MainWindowViewModel; }
-            set { DataContext = value; }
-        }
+        
 
         private async void btnClose_Click(object sender, RoutedEventArgs e)
         {
@@ -69,22 +70,22 @@ namespace NeteaseCloudMusic.Wpf
         }
         protected override void OnClosing(CancelEventArgs e)
         {
-            Properties.Settings.Default.WindowLocation= this.RestoreBounds;
+            Properties.Settings.Default.WindowLocation = this.RestoreBounds;
             Properties.Settings.Default.Save();
             base.OnClosing(e);
         }
 
         private async void BtnNavBack_Loaded(object sender, RoutedEventArgs e)
         {
-           
+
             var button = e.Source as Button;
 
             while (true)
             {
                 var navSer = CommonServiceLocator.ServiceLocator.Current.GetInstance<Prism.Regions.IRegionManager>();
-                if (navSer != null && navSer.Regions.ContainsRegionWithName(Context.RegionName))
+                if (navSer != null && navSer.Regions.ContainsRegionWithName(Settings.Default.RegionName))
                 {
-                    navSer.Regions[Context.RegionName].NavigationService.Navigated += (xxx, xx) =>
+                    navSer.Regions[Settings.Default.RegionName].NavigationService.Navigated += (xxx, xx) =>
                     {
 
                         button.Visibility = xx.NavigationContext.NavigationService.Journal.CanGoBack ? Visibility.Visible : Visibility.Collapsed;
@@ -102,8 +103,8 @@ namespace NeteaseCloudMusic.Wpf
 
         private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            
-            if (tgSwitch.IsChecked==true)
+
+            if (tgSwitch.IsChecked == true)
             {
                 this.leftPartPanel.Width = 140;
                 this.bottomUserPart.Orientation = Orientation.Horizontal;

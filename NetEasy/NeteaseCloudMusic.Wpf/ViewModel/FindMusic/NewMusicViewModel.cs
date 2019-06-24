@@ -15,6 +15,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Properties;
+using NeteaseCloudMusic.Wpf.Proxy;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -26,16 +28,18 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
 
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
+        private readonly PlayPartCore _playPart;
         private bool _isSelectModel;
         private Global.Model.Music[] selectedMusics;
         private int _pageOffset = 0;
         private int _totalSize;
         private CancellationTokenSource _offsetCancellationToken;
 
-        public NewMusicViewModel(INetWorkServices netWorkServices, IRegionManager navigationService)
+        public NewMusicViewModel(INetWorkServices netWorkServices, IRegionManager navigationService, PlayPartCore playPart)
         {
             this._netWorkServices = netWorkServices;
             this._navigationService = navigationService;
+            this._playPart = playPart;
             PlayAllOrSelectedCommand = new DelegateCommand(PlayAllOrSelectedCommandImpl);
             NewMusicOrDiskCommand = new DelegateCommand<string>(NewMusicOrDiskCommandImpl);
             LanguageCommand = new DelegateCommand<string>(GetTopMusic);
@@ -53,7 +57,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.AlbumView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.AlbumView), parmater);
             }
         }
 
@@ -73,7 +77,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(ArtistDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(ArtistDetailView), parmater);
             }
         }
 
@@ -81,7 +85,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         {
             NewMusicList.Clear();
             var temp = string.IsNullOrEmpty(type) ? 1 : int.Parse(type);
-            var netWorkDataResult= await this._netWorkServices.GetAsync< Music[]>("FindMusic", "TopMusics", new { Type = temp });
+            var netWorkDataResult = await this._netWorkServices.GetAsync<Music[]>("FindMusic", "TopMusics", new { Type = temp });
             if (netWorkDataResult.Successed)
             {
                 await NewMusicList.AddRangeAsync(netWorkDataResult.Data);
@@ -112,12 +116,12 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             this._offsetCancellationToken = newCancel;
             try
             {
-                if (this._totalSize <= this._pageOffset * Context.LimitPerPage) return;
-                var netWorkDataResult= await this._netWorkServices.GetAsync< KeyValuePair<int, Album[]>>("FindMusic", "TopAlbum",
+                if (this._totalSize <= this._pageOffset * Settings.Default.LimitPerPage) return;
+                var netWorkDataResult = await this._netWorkServices.GetAsync<KeyValuePair<int, Album[]>>("FindMusic", "TopAlbum",
                     new
                     {
-                        limit = Context.LimitPerPage,
-                        offset = this._pageOffset
+                        limit = Settings.Default.LimitPerPage,
+                        offset = this._pageOffset * Settings.Default.LimitPerPage
                     });
                 if (netWorkDataResult.Successed)
                 {
@@ -126,8 +130,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                     NewAlbumList.AddRange(temp.Value);
                     this._pageOffset++;
                 }
-              //  var temp = JsonConvert.DeserializeObject<KeyValuePair<int, Album[]>>(json);
-                
+                //  var temp = JsonConvert.DeserializeObject<KeyValuePair<int, Album[]>>(json);
+
             }
             catch (OperationCanceledException)
             {
@@ -142,7 +146,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             if (!IsSelectModel && NewMusicList.Count > 0)
             {
 
-                await Context.CurrentPlayMusics.AddRangeAsync(NewMusicList, x => Context.PlayCommand.Execute(x.First()));
+                await this._playPart.MusicsListCollection.AddRangeAsync(NewMusicList, async x => await this._playPart.Play(x.First()));
 
             }
 
@@ -166,7 +170,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             }
             else if (temp.Length > 0)
             {
-                Context.PlayCommand.Execute(temp[0]);
+                await this._playPart.Play(temp[0]);
                 return;
             }
             if (this.selectedMusics == null)
@@ -174,7 +178,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             //_mainWindowViewModel.CurrentPlayList.Clear();
             //_mainWindowViewModel.CurrentPlayList.AddRange(selectedMusics);
             //_mainWindowViewModel.PlayFirstOrDefault();
-            await Context.CurrentPlayMusics.AddRangeAsync(this.selectedMusics, x => Context.PlayCommand.Execute(x.First()));
+            await this._playPart.MusicsListCollection.AddRangeAsync(this.selectedMusics, async x => await this._playPart.Play(x.First()));
             this.selectedMusics = null;
 
         }

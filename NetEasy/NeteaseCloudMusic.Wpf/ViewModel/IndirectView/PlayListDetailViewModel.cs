@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Proxy;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 {
@@ -22,16 +23,18 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
     {
         private PlayListDetail _innerPlayList;
         private readonly INetWorkServices _netWorkServices;
+        private readonly PlayPartCore _playPart;
         private bool _isSelectedModel;
         private ObservableCollection<Music> _tracks;
         private ObservableCollection<Music> _displayTracks;
         private string _serachKeyword;
-        private Music[] selectedMusics;
+        private Music[] _selectedMusics;
         // public  event EventHandler RefreshCompleated  ;
 
-        public PlayListDetailViewModel(INetWorkServices netWorkServices)
+        public PlayListDetailViewModel(INetWorkServices netWorkServices, PlayPartCore playPart)
         {
             this._netWorkServices = netWorkServices;
+            _playPart = playPart;
             _innerPlayList = new PlayListDetail();
             PlayAllCommand = new DelegateCommand(PlayAllCommandExecute);
             this.SelectedCommand = new DelegateCommand<IEnumerable>(SelectedCommandExecute);
@@ -46,14 +49,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         protected override async void SetById(long id)
         {
             Console.WriteLine(id);
-            var netWorkDataResult= await this._netWorkServices.GetAsync<PlayListDetail>("Common", "GetPlaylistById", new { id });
+            var netWorkDataResult = await this._netWorkServices.GetAsync<PlayListDetail>("Common", "GetPlaylistById", new { id });
             if (netWorkDataResult.Successed)
             {
                 var model = netWorkDataResult.Data;
                 this._innerPlayList = model;
                 _tracks = null;//更新数据
                 OnSearchKeyWordChanged();
-                RaiseAllPropertyChanged(); 
+                RaiseAllPropertyChanged();
             }
             else
             {
@@ -62,9 +65,10 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         }
         private async void PlayAllCommandExecute()
         {
-            Context.CurrentPlayMusics.Clear();
+         _playPart.MusicsListCollection.Clear();
+         _playPart.Stop();
             if (DisplayTracks.Count == 0) return;
-            await Context.CurrentPlayMusics.AddRangeAsync(DisplayTracks, range => Context.PlayCommand.Execute( range.First()));
+            await _playPart.MusicsListCollection.AddRangeAsync(DisplayTracks, async range =>await  _playPart.Play (range.First()));
 
         }
         private async void OnSearchKeyWordChanged()
@@ -98,29 +102,29 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
         {
             if (IsSelectedModel)
             {
-                this.selectedMusics = items.Cast<Music>().ToArray(); return;
+                this._selectedMusics = items.Cast<Music>().ToArray(); return;
             }
-            else if (selectedMusics == null)
+            else if (_selectedMusics == null)
             {
                 var temp = items.Cast<Music>().FirstOrDefault();
                 if (temp != null)
-                    Context.PlayCommand.Execute(temp);
+                    await _playPart.Play(temp);
                 return;
             }
 
-            await Context.CurrentPlayMusics.AddRangeAsync(selectedMusics, source => Context.PlayCommand.Execute( source.First()));
-            selectedMusics = null;
+            await _playPart.MusicsListCollection.AddRangeAsync(_selectedMusics, async source => await _playPart.Play (source.First()));
+            _selectedMusics = null;
         }
-        
 
 
 
-        
+
+
 
 
 
         /// <summary> 
-       
+
         /// 对应图片
         /// </summary>
         public string PlayListPic

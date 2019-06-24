@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Properties;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 {
@@ -36,11 +37,11 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayListDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(PlayListDetailView), parmater);
             }
             else
             {
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(TopArtistsBillBoardView));
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(TopArtistsBillBoardView));
 
             }
         }

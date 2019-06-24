@@ -14,6 +14,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using NeteaseCloudMusic.Wpf.Properties;
+using NeteaseCloudMusic.Wpf.Proxy;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel
 {
@@ -21,6 +23,8 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
     {
         private readonly INetWorkServices _netWorkServices;
         private readonly IRegionManager _navigationService;
+        private readonly PlayPartCore _playPart;
+
         #region 分页相关的字段
         /// <summary>
         /// 对应每一个标签页和其页面的偏移
@@ -67,11 +71,14 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         private CancellationTokenSource _searchResultCancel;
         private CancellationTokenSource _nextPageCancel;
         private System.Windows.Visibility _searchResultPanelVisiable = System.Windows.Visibility.Collapsed;
-        public SearchViewModel(INetWorkServices netWorkServvices, IRegionManager navigationService)
+        public SearchViewModel(INetWorkServices netWorkServvices, 
+            IRegionManager navigationService,
+           PlayPartCore playPart)
         {
             this._netWorkServices = netWorkServvices;
             this._navigationService = navigationService;
-
+            _playPart = playPart;
+           
             // SearchRecomend.AddRange(new[] { "陈奕迅", "明年今日", "起风了", "陈奕迅", "明年今日", "起风了", "陈奕迅", "明年今日", "起风了" });
             SearchHistory.AddRange(new[] { "习近平", "江泽民", "哈哈", "上台拿衣服", "三个戴表", "苟利国家生死以" });
             DeleteHistoryCommand = new DelegateCommand<string>(DeleteHistoryCommandImpl);
@@ -97,7 +104,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                 this._nextPageCancel?.Cancel();
                 var newCancel = new CancellationTokenSource();
                 this._nextPageCancel = newCancel;
-                if (Context.LimitPerPage * (_tabKeyAndOffset[tabKey] + 1) < _tabKeyAndTotal[tabKey])
+                if (Settings.Default.LimitPerPage * (_tabKeyAndOffset[tabKey] + 1) < _tabKeyAndTotal[tabKey])
                 {
                     try
                     {
@@ -106,7 +113,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
                             {
                                 KeyWord,
                                 SearchResultType = this._tabKeyAndType[tabKey],
-                                limit = Context.LimitPerPage,
+                                limit = Settings.Default.LimitPerPage,
                                 offset = ++this._tabKeyAndOffset[tabKey]
                             });
                         if (!netWorkDataResult.Successed)
@@ -161,7 +168,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.UserId);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.UserZoneView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.UserZoneView), parmater);
             }
         }
 
@@ -171,7 +178,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(PlayListDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(PlayListDetailView), parmater);
             }
         }
 
@@ -181,7 +188,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(MvPlayView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(MvPlayView), parmater);
             }
         }
 
@@ -191,7 +198,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.ArtistDetailView), parmater);
             }
         }
 
@@ -201,15 +208,15 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, obj.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.AlbumView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.AlbumView), parmater);
             }
         }
 
-        private void MusicSelectCommandExecute(Music obj)
+        private async void MusicSelectCommandExecute(Music obj)
         {
             if (obj != null)
             {
-                Context.PlayCommand.Execute(obj);
+              await   _playPart.Play (obj);
             }
         }
 
@@ -219,7 +226,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(IndirectView.IndirectViewModelBase.NavigationIdParmmeterName, mvId.Value);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(MvPlayView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(MvPlayView), parmater);
             }
         }
         #endregion
@@ -318,7 +325,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel
         }
         private async Task SearchAllResultAsync()
         {
-            var netWorkDataResult = await this._netWorkServices.GetAsync<SearchResultModel>("Search", "Search", new { keyWord = KeyWord, Global.Enums.SearchResultType.All, limit = Context.LimitPerPage });
+            var netWorkDataResult = await this._netWorkServices.GetAsync<SearchResultModel>("Search", "Search", new { keyWord = KeyWord, Global.Enums.SearchResultType.All, limit = Settings.Default.LimitPerPage });
             if (netWorkDataResult.Successed)
             {
 

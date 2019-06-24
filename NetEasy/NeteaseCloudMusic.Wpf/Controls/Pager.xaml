@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="NeteaseCloudMusic.Wpf.Controls.Pager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:NeteaseCloudMusic.Wpf.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="300" MinWidth="150" SizeChanged="UserControl_SizeChanged">
+    <UserControl.Resources>
+        <Style TargetType="Button"  >
+            <Setter Property="Height" Value="30"></Setter>
+            <Setter Property="MinWidth" Value="30"></Setter>
+            <Setter Property="Margin" Value="5"></Setter>
+            <Setter Property="Padding" Value="7.5"></Setter>
+            <Setter Property="Background" Value ="Transparent"></Setter>
+            <Setter Property ="BorderThickness" Value="1"></Setter>
+            <Setter Property="Foreground">
+                <Setter.Value>
+                    <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"></SolidColorBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Path">
+            <Setter Property="Stretch"   Value="Uniform"></Setter>
+            <Setter Property="Stroke">
+                <Setter.Value>
+                    <SolidColorBrush Color="{StaticResource WindowForeDarkColor}"></SolidColorBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid x:Name="controlLayout" HorizontalAlignment="Center">
+            <DockPanel LastChildFill="True">
+                <Button DockPanel.Dock="Left" x:Name="prevButton" Click="PrevButton_OnClick">
+                    <Path   Data="M500,500 L750,250 M500,500 L750,750"    ></Path>
+                </Button>
+                <Button DockPanel.Dock="Right" x:Name="nextButton" Click="NextButton_OnClick">
+                    <Path   Data="M500,500 L250,250 M500,500 L250,750"   ></Path>
+                </Button>
+                <StackPanel x:Name="pagePanel" Orientation="Horizontal"/>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</UserControl>

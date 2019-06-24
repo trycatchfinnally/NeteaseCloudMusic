@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NeteaseCloudMusic.Wpf.Properties;
 
 namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
 {
@@ -35,7 +36,7 @@ namespace NeteaseCloudMusic.Wpf.ViewModel.IndirectView
             {
                 var parmater = new NavigationParameters();
                 parmater.Add(NavigationIdParmmeterName, model.Id);
-                this._navigationService.RequestNavigate(Context.RegionName, nameof(View.IndirectView.PlayListDetailView), parmater);
+                this._navigationService.RequestNavigate(Settings.Default.RegionName, nameof(View.IndirectView.PlayListDetailView), parmater);
             }
 
         }
