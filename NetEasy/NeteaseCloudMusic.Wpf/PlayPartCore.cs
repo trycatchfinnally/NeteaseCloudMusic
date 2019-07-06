@@ -27,13 +27,15 @@ namespace NeteaseCloudMusic.Wpf
         private readonly IdentityService _dentityService;
         private readonly InteractionRequestsProxy _interactionRequestsProxy;
         private Music _currentMusic;
-
+        private PlayTypes _playType = PlayTypes.Online;
         private PlayCycleType _currentCycleType = PlayCycleType.Order;
         private int[] _randomIndex;
         /// <summary>
         /// 当播放状态发生变化时，例如从暂停变为播放
         /// </summary>
         public event EventHandler<PlayState> PlayStateChanged;
+
+        public event EventHandler PlayTypesChanged;
         /// <summary>
         /// 当音乐变化的时候。例如下一曲
         /// </summary>
@@ -124,7 +126,22 @@ namespace NeteaseCloudMusic.Wpf
 
             }
         }
-
+        /// <summary>
+        /// 表示当前播放的类型
+        /// </summary>
+        public PlayTypes PlayType
+        {
+            get { return _playType; }
+            set
+            {
+                if (value==this._playType)
+                {
+                    return;
+                }
+                this._playType = value; 
+                PlayTypesChanged?.Invoke(this,EventArgs.Empty);
+            }
+        }
         /// <summary>
         /// 代表当前的播放列表
         /// </summary>

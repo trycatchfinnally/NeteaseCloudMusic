@@ -271,6 +271,7 @@
     <Compile Include="Model\PlayListModel.cs" />
     <Compile Include="Model\RadioModel.cs" />
     <Compile Include="Modules\MainRegionModule.cs" />
+    <Compile Include="PlayTypes.cs" />
     <Compile Include="Proxy\InteractionRequestsProxy.cs" />
     <Compile Include="Services\WindowsFileServices.cs" />
     <Compile Include="Settings.cs" />
